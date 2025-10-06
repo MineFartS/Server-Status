@@ -1,0 +1,55 @@
+
+$HardDrives = @{}
+
+$__SerialNumbers = (Get-Content "C:/Scripts/Devices/Hard Drives.json" | ConvertFrom-Json)
+
+$__SerialNumbers.PSObject.Properties | ForEach-Object -Process {
+
+    $BaseName = $_.Name
+
+    $_.Value.PSObject.Properties | ForEach-Object -Process {
+
+        if ($_.Value.Count -gt 0) {
+            
+            $HardDrives["$BaseName $($_.Name)"] = Get-PhysicalDisk -SerialNumber $_.Value
+
+        }
+
+    }
+
+}
+
+# ================================================================================================
+
+$PCIeCards = @{}
+
+$__DeviceIds = (Get-Content "C:/Scripts/Devices/PCIe Cards.json" | ConvertFrom-Json)
+
+$__DeviceIds.PSObject.Properties | ForEach-Object -Process {
+
+    $PCIECards[$_.Name] = Get-PnpDevice -DeviceId $_.Value -ErrorAction SilentlyContinue
+
+}
+
+# ================================================================================================
+
+function LogStatus {
+
+    param(
+        [string] $label,
+        [bool] $connected
+    )
+
+    Write-Host '    ' $label.PadRight(15, ' ') ':: ' -NoNewline -ForegroundColor Cyan
+
+    if ($connected) {
+
+        Write-Host "Connected" -ForegroundColor Green
+
+    } else {
+
+        Write-Host "Missing" -ForegroundColor Red
+
+    }
+
+}
