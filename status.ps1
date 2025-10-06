@@ -2,7 +2,7 @@
 while ($true) {
 
     # Import Objects
-    . C:/Scripts/Devices/__init__.ps1
+    . ./__init__.ps1
 
     Write-Output "|-----------------------------------| Server Status |-----------------------------------|"
 
@@ -42,4 +42,5 @@ while ($true) {
     Clear-Host
 
 }
+
 
