@@ -14,11 +14,9 @@ while ($true) {
     # Check Disks
     $HardDrives.Keys | Sort-Object | ForEach-Object -Process {
 
-        $disk = $HardDrives[$_]
-
         LogStatus `
             -label $_ `
-            -connected ($disk.FriendlyName.Length -gt 0)
+            -connected (diskConnected -SerialNumber $HardDrives[$_])
 
     }
 

@@ -1,4 +1,22 @@
 
+Set-Location $PSScriptRoot
+
+function diskConnected($SerialNumber) {
+
+    $Disk = Get-PhysicalDisk -SerialNumber $SerialNumber
+
+    if ($Disk.FriendlyName.Length -gt 0) {
+        try {
+            return (($Disk.OperationalStatus -join '') -ne 'Lost Communication')
+        } catch {
+            return $False 
+        }
+    } else {
+        return $False
+    }
+
+}
+
 $HardDrives = @{}
 
 $__SerialNumbers = (Get-Content "./Hard Drives.json" | ConvertFrom-Json)
@@ -11,7 +29,7 @@ $__SerialNumbers.PSObject.Properties | ForEach-Object -Process {
 
         if ($_.Value.Count -gt 0) {
             
-            $HardDrives["$BaseName $($_.Name)"] = Get-PhysicalDisk -SerialNumber $_.Value
+            $HardDrives["$BaseName $($_.Name)"] = $_.Value
 
         }
 
