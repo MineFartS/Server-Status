@@ -1,7 +1,7 @@
 
 $HardDrives = @{}
 
-$__SerialNumbers = (Get-Content "C:/Scripts/Devices/Hard Drives.json" | ConvertFrom-Json)
+$__SerialNumbers = (Get-Content "./Hard Drives.json" | ConvertFrom-Json)
 
 $__SerialNumbers.PSObject.Properties | ForEach-Object -Process {
 
@@ -23,7 +23,7 @@ $__SerialNumbers.PSObject.Properties | ForEach-Object -Process {
 
 $PCIeCards = @{}
 
-$__DeviceIds = (Get-Content "C:/Scripts/Devices/PCIe Cards.json" | ConvertFrom-Json)
+$__DeviceIds = (Get-Content "./PCIe Cards.json" | ConvertFrom-Json)
 
 $__DeviceIds.PSObject.Properties | ForEach-Object -Process {
 

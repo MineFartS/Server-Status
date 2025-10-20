@@ -1,4 +1,6 @@
 
+Set-Location $PSScriptRoot
+
 while ($true) {
 
     # Import Objects
@@ -42,5 +44,4 @@ while ($true) {
     Clear-Host
 
 }
-
 
