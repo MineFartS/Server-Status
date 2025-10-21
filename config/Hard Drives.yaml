@@ -1,0 +1,29 @@
+
+# Tower[A/B/C/EXT], Type[SATA/USB], IDNumber, SerialNumber
+
+[
+
+    [A, SATA, 01, PBEHHBB250616011613],
+    [A, SATA, 02, 0000DHM1],
+#    [A, SATA, 03, null],
+    [C, SATA, 04, YHHPB2LA],
+    [C, SATA, 05, YHKK76GG],
+    [C, SATA, 06, YHKPSRSA],
+    [A, SATA, 07, '134605400828'],
+    [A, SATA, 08, YXGLGSXG],
+    [A, SATA, 09, S3TCNC0M500604],
+    [A, SATA, 10, QNVZGLRX],
+    [B, USB, 11, 01CB9083B07Z],
+#    [C, SATA, 12, QNVZGLVW],
+    [C, SATA, 13, V8H6T9ZR],
+    [C, SATA, 14, YVJ42ZAA],
+    [A, SATA, 15, UGXVK01J7BANIX],
+    [B, SATA, 16, ZR11FS39],
+    [B, SATA, 17, ZGY43H7A],
+    [B, SATA, 18, Z5M3K0R6FUUB],
+    [B, SATA, 19, Z5H1K13BFUUB],
+
+    [EXT, USB, 01, WXK2E20DRV19],
+    [EXT, USB, 02, '2100120608000000']
+
+]

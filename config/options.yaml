@@ -1,0 +1,12 @@
+
+restart:
+    
+    enabled: false
+
+    delay: 120
+
+alert:
+
+    sms: false
+    
+    popup: true

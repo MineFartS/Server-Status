@@ -1,0 +1,10 @@
+
+startup: "C:/Scripts/exec/startup.py"
+
+status: "C:/Scripts/exec/status.py"
+
+day: "G:/Scripts/Intervals/day.py"
+
+hour: "G:/Scripts/Intervals/hour.py"
+
+week: "G:/Scripts/Intervals/week.py"
