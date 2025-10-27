@@ -3,6 +3,8 @@ startup: "C:/Scripts/exec/startup.py"
 
 status: "C:/Scripts/exec/status.py"
 
+backup: "C:/Scripts/exec/backup.py"
+
 day: "E:/Intervals/Day.py"
 
 hour: "E:/Intervals/Hour.py"

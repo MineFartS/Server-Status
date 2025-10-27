@@ -96,7 +96,7 @@ for vdisk in devices.VirtualDisks:
 # ===============================================================================================================
 # Send Notification with Startup Status
 
-if (mnt.C.exists()) and (mnt.E.exists()):
+if mnt.E.exists():
 # If mount succeeds
 
     # Send alert
