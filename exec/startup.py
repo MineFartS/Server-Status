@@ -1,7 +1,8 @@
-from __init__ import devices, options, mnt, alert, this
-from philh_myftp_biz.pc import power, Task, cls
+from __init__ import devices, options, mnt, alert, this, AI, Web
+from philh_myftp_biz.pc import power, Task, cls, pause
 from philh_myftp_biz.web import online, get, IP
 from philh_myftp_biz import run
+from philh_myftp_biz.modules import fetch
 
 # ===============================================================================================================
 
@@ -9,7 +10,7 @@ from philh_myftp_biz import run
 cls()
 
 # Remove the 'Nvidia Display Manager' Popup
-Task("NVDisplay.Container").stop()
+Task("NVDisplay.Container.exe").stop()
 
 # ===============================================================================================================
 
@@ -95,14 +96,23 @@ for vdisk in devices.VirtualDisks:
 # ===============================================================================================================
 # Send Notification with Startup Status
 
-if (mnt.F.exists()) and (mnt.G.exists()):
+if (mnt.C.exists()) and (mnt.E.exists()):
 # If mount succeeds
-
-    # Run main startup script
-#    this.run('startup/main')
 
     # Send alert
     alert('Startup Complete')
+
+    # Start Ollama Service
+    AI.start('StartOllama')
+
+    # List all modules
+    for m in fetch():
+
+        # Install/Update all dependencies
+        m.install(hide=False)
+
+    Web.run('index')
+    Web.start('start')
 
 elif options['restart']['enabled']:
 # If mount fails and restart is enabled
@@ -125,3 +135,6 @@ else:
 # ===============================================================================================================
 # Display a window with the system status
 this.start('run', 'status', True)
+
+# Pause to view output
+pause()

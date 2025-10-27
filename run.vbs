@@ -13,7 +13,7 @@ Method = LCase(WScript.Arguments(0))
 if WScript.Arguments.Count = 2 then
     Visible = CBool(WScript.Arguments(1))
 else
-    Visible = True
+    Visible = False
 end if
 
 ' Open Dictionary File

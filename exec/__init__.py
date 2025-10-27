@@ -1,5 +1,5 @@
 from philh_myftp_biz.web import online, get
-from philh_myftp_biz.file import yaml
+from philh_myftp_biz.file import YAML
 from philh_myftp_biz.modules import Module
 from philh_myftp_biz.pc import Path, script_dir
 from philh_myftp_biz import run
@@ -8,12 +8,14 @@ from typing import Literal
 # ===============================================================================================================
 
 this = Module(script_dir(__file__).parent())
+AI = Module('E:/AI')
+Web = Module('E:/Web')
 
-options = yaml(this.file('config/options')).read()
+options = YAML(this.file('config/options')).read()
 
 class mnt:
-    F = Path('F:/')
-    G = Path('G:/')
+    C = Path('C:/')
+    E = Path('E:/')
 
 # ===============================================================================================================
 
@@ -97,7 +99,7 @@ class devices:
 
     HardDrives: list['HardDrive'] = []
 
-    for tower, type, id, sn in yaml(this.file('config/Hard Drives')).read():
+    for tower, type, id, sn in YAML(this.file('config/Hard Drives')).read():
         HardDrives += [HardDrive(
             tower = tower,
             type = type,
@@ -141,7 +143,7 @@ class devices:
     
     PCIeCards: list['PCIeCard'] = []
 
-    for slot, lanes, id in yaml(this.file('config/PCIe Cards')).read():
+    for slot, lanes, id in YAML(this.file('config/PCIe Cards')).read():
         PCIeCards += [PCIeCard(
             slot = slot,
             lanes = lanes,
@@ -177,14 +179,14 @@ class devices:
                     self.Connected = self.Healthy 
 
                     break
-    
+
     VirtualDisks: list['VirtualDisk'] = []
 
     for name in ['Server', 'Local Disk']:
         VirtualDisks += [VirtualDisk(
             name = name
         )]
-    
+
     # ===============================================================================================================
     # TOWERS
 
