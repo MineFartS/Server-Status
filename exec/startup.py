@@ -94,6 +94,10 @@ for vdisk in devices.VirtualDisks:
         )
 
 # ===============================================================================================================
+# Display a window with the system status
+this.start('run', 'status', True)
+
+# ===============================================================================================================
 # Send Notification with Startup Status
 
 if mnt.E.exists():
@@ -133,8 +137,6 @@ else:
     alert('Startup Failed')
 
 # ===============================================================================================================
-# Display a window with the system status
-this.start('run', 'status', True)
-
 # Pause to view output
+
 pause()
