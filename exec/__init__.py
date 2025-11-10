@@ -157,7 +157,7 @@ class devices:
     class VirtualDisk:
 
         __PS_Data: list[dict] = run(
-            "Get-VirtualDisk -StoragePool (Get-StoragePool -FriendlyName 'Main') | Select-Object FriendlyName, UniqueId, HealthStatus | ConvertTo-Json",
+            "Get-VirtualDisk -StoragePool (Get-StoragePool -FriendlyName 'Main Pool') | Select-Object FriendlyName, UniqueId, HealthStatus | ConvertTo-Json",
             wait = True,
             terminal = 'ps',
             hide = True
@@ -183,7 +183,7 @@ class devices:
 
     VirtualDisks: list['VirtualDisk'] = []
 
-    for name in ['Server', 'Local Disk']:
+    for name in ['Main Disk']:
         VirtualDisks += [VirtualDisk(
             name = name
         )]
