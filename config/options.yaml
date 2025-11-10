@@ -1,9 +1,9 @@
 
 restart:
     
-    enabled: false
+    enabled: true
 
-    delay: 120
+    delay: 30
 
 alert:
 
