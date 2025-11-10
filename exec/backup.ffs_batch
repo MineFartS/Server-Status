@@ -11,7 +11,7 @@
             <Left Create="right" Update="right" Delete="right"/>
             <Right Create="right" Update="right" Delete="right"/>
         </Changes>
-        <DeletionPolicy>RecycleBin</DeletionPolicy>
+        <DeletionPolicy>Permanent</DeletionPolicy>
         <VersioningFolder Style="Replace"/>
     </Synchronize>
     <Filter>
@@ -27,15 +27,22 @@
             <Item>\__temp__\</Item>
             <Item>*\__pycache__\</Item>
             <Item>*.DS_Store</Item>
+            <Item>\Plex\Media\Shows\</Item>
+            <Item>\Plex\Media\Movies\</Item>
             <Item>\Plex\Plex Media Server\Cache\</Item>
             <Item>\Plex\Plex Media Server\Plug-in Support\Caches\</Item>
             <Item>\Plex\Media\*.log</Item>
+            <Item>\AI\.ollama\models\</Item>
         </Exclude>
         <SizeMin Unit="None">0</SizeMin>
         <SizeMax Unit="None">0</SizeMax>
         <TimeSpan Type="None">0</TimeSpan>
     </Filter>
     <FolderPairs>
+        <Pair>
+            <Left>E:\</Left>
+            <Right>B:\</Right>
+        </Pair>
         <Pair>
             <Left>E:\</Left>
             <Right>D:\</Right>
