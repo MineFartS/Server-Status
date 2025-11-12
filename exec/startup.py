@@ -1,8 +1,8 @@
 from __init__ import devices, options, mnt, alert, this, AI, Web
 from philh_myftp_biz.pc import power, Task, cls, pause
 from philh_myftp_biz.web import online, get, IP
-from philh_myftp_biz import run
 from philh_myftp_biz.modules import fetch
+from philh_myftp_biz import run
 
 # ===============================================================================================================
 
@@ -116,7 +116,7 @@ if mnt.E.exists():
         m.install(hide=False)
 
     Web.run('index')
-    Web.start('start')
+    Web.start('API/start')
 
 elif options['restart']['enabled']:
 # If mount fails and restart is enabled

@@ -1,15 +1,20 @@
-from philh_myftp_biz.web import online, get
-from philh_myftp_biz.file import YAML
-from philh_myftp_biz.modules import Module
 from philh_myftp_biz.pc import Path, script_dir
+from philh_myftp_biz.web import online, get
+from philh_myftp_biz.modules import Module
+from philh_myftp_biz.file import YAML
 from philh_myftp_biz import run
 from typing import Literal
 
 # ===============================================================================================================
 
 this = Module(script_dir(__file__).parent())
-AI = Module('E:/AI')
-Web = Module('E:/Web')
+
+try:
+    AI = Module('E:/AI')
+    Web = Module('E:/Website')
+except ModuleNotFoundError:
+    AI = None
+    Web = None
 
 options = YAML(this.file('config/options')).read()
 
