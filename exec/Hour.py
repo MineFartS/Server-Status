@@ -1,6 +1,18 @@
 from philh_myftp_biz.modules import Module
 from philh_myftp_biz.time import now
 from philh_myftp_biz.pc import Path
+from philh_myftp_biz.web import online
+from philh_myftp_biz import run
+
+# ==================================================
+
+if not online():
+    
+    run([
+        'netsh', 'wlan', 'connect',
+        'ssid=FiOS-6AMDP', 
+        'name=FiOS-6AMDP'
+    ])
 
 # ==================================================
 
