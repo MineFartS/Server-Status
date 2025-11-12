@@ -4,7 +4,7 @@ This software is designed for a specific system, but can be forked and modified 
 
 <hr>
 
-![python "exec/status.py"](.images/image.jpg)
+![](https://raw.githubusercontent.com/MineFartS/Server-Status/refs/heads/main/.images/Image.PNG)
 
 <hr>
 
