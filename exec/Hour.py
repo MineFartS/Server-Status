@@ -10,8 +10,8 @@ if not online():
     
     run([
         'netsh', 'wlan', 'connect',
-        'ssid=FiOS-6AMDP', 
-        'name=FiOS-6AMDP'
+        'ssid=1337 14n', 
+        'name=1337 14n'
     ])
 
 # ==================================================
@@ -28,6 +28,8 @@ minAge = (now().unix - 43200) # 12 hours ago
 
 # Get all files in the temp dir
 for p in temp.descendants():
+
+    #
     if p.isfile():
     
         # If file is more than 12 hours old
