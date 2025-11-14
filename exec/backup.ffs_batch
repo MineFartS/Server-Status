@@ -25,6 +25,7 @@
             <Item>\Recovery\</Item>
             <Item>*\thumbs.db</Item>
             <Item>\__temp__\</Item>
+            <Item>\__System__\</Item>
             <Item>*\__pycache__\</Item>
             <Item>*.DS_Store</Item>
             <Item>\Plex\Media\Shows\</Item>
