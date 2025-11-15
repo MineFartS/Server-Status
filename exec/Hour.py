@@ -1,18 +1,16 @@
 from philh_myftp_biz.modules import Module
+from philh_myftp_biz.web import online
 from philh_myftp_biz.time import now
 from philh_myftp_biz.pc import Path
-from philh_myftp_biz.web import online
-from philh_myftp_biz import run
+from __init__ import wifi
 
 # ==================================================
 
+# If the server is disconnected from the internet
 if not online():
-    
-    run([
-        'netsh', 'wlan', 'connect',
-        'ssid=1337 14n', 
-        'name=1337 14n'
-    ])
+
+    # Connect to the wifi network named '1337 14n'
+    wifi.connect('1337 14n')
 
 # ==================================================
 

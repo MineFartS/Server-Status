@@ -1,5 +1,5 @@
+from philh_myftp_biz.web import online, get, WiFi
 from philh_myftp_biz.pc import Path, script_dir
-from philh_myftp_biz.web import online, get
 from philh_myftp_biz.modules import Module
 from philh_myftp_biz.file import YAML
 from philh_myftp_biz import run
@@ -22,6 +22,8 @@ class mnt:
     C = Path('C:/')
     E = Path('E:/')
     D = Path('D:/')
+
+wifi = WiFi()
 
 # ===============================================================================================================
 
