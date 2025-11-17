@@ -39,11 +39,11 @@
     <FolderPairs>
         <Pair>
             <Left>E:\</Left>
-            <Right>B:\</Right>
+            <Right>H:\</Right>
         </Pair>
         <Pair>
             <Left>E:\</Left>
-            <Right>D:\</Right>
+            <Right>G:\</Right>
         </Pair>
     </FolderPairs>
     <Errors Ignore="true" Retry="0" Delay="5"/>
