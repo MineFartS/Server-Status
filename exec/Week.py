@@ -4,11 +4,13 @@ for gen in (mnt.E.descendants(), mnt.C.descendants()):
 
     for p in gen:
 
-        if p.seg().startswith('.'):
-            print(p)
+        s = p.seg()
 
-        if p.isdir() and (p.name() == '__pycache__'):
-            print(p)
+        if s.startswith('.'):
+            p.visibility.hide()
+            
+        elif s.startswith('__') and s.endswith('__'):
+            p.visibility.hide()
 
-        elif p.seg() in ['.DS_Store', 'Thumbs.db', 'desktop.ini']:            
-            print(p)
+        elif s in ['.DS_Store', 'Thumbs.db', 'desktop.ini']:            
+            p.visibility.hide()
