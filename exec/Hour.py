@@ -10,7 +10,7 @@ from __init__ import wifi
 if not online():
 
     # Connect to the wifi network named '1337 14n'
-    wifi.connect('1337 14n')
+    wifi.connect('FiOS-6AMDP')
 
 # ==================================================
 
