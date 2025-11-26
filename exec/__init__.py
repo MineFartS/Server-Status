@@ -1,5 +1,5 @@
+from philh_myftp_biz.pc import Path, script_dir, Task
 from philh_myftp_biz.web import online, get, WiFi
-from philh_myftp_biz.pc import Path, script_dir
 from philh_myftp_biz.modules import Module
 from philh_myftp_biz.file import YAML
 from philh_myftp_biz import run
@@ -24,6 +24,8 @@ class mnt:
     D = Path('D:/')
 
 wifi = WiFi()
+
+NVDisplay = Task("NVDisplay.Container.exe")
 
 # ===============================================================================================================
 
