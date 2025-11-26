@@ -1,12 +1,13 @@
 from __init__ import mnt
-from philh_myftp_biz.pc import Path
+from philh_myftp_biz.pc import Path, print
 
-def hide(path:Path):    
+def hide(path:Path):
     try:
         path.visibility.hide()
-        print(path)
+        print(path, color='GREEN')
+        
     except PermissionError:
-        pass
+        print(path, color='RED')
 
 for gen in (mnt.E.descendants(), mnt.C.descendants()):
 
