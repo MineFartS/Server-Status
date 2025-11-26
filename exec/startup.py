@@ -1,7 +1,7 @@
 from __init__ import devices, options, mnt, alert, this, AI, Web
-from philh_myftp_biz.pc import power, Task, cls, pause
+from philh_myftp_biz.pc import Task, cls, pause
 from philh_myftp_biz.web import online, get, IP
-from philh_myftp_biz.modules import fetch
+from philh_myftp_biz.modules import Scanner
 from philh_myftp_biz import run
 
 # ===============================================================================================================
@@ -94,7 +94,7 @@ for vdisk in devices.VirtualDisks:
         )
 
 # ===============================================================================================================
-# Display a window with the system status
+# Open a new window with the system status
 this.start('run', 'status', True)
 
 # ===============================================================================================================
@@ -110,7 +110,7 @@ if mnt.E.exists():
     AI.start('StartOllama')
 
     # List all modules
-    for m in fetch():
+    for m in Scanner():
 
         # Install/Update all dependencies
         m.install(hide=False)
@@ -125,10 +125,14 @@ elif options['restart']['enabled']:
     alert('Startup Failed - Restarting ...')
 
     # Show Prompt to abort shutdown
-    this.start('startup/abort')
+    this.start('exec/abort')
 
     # Restart with the configured delay
-    power.restart(options['restart']['delay'])
+    run([
+        'shutdown',
+        '/r',
+        '/t', options['restart']['delay']
+    ])
 
 else:
 # If mount fails and restart is disabled
