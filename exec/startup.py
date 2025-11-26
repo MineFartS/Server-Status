@@ -9,12 +9,9 @@ from philh_myftp_biz import run
 # Clear the Terminal Window
 cls()
 
-# Remove the 'Nvidia Display Manager' Popup
-Task("NVDisplay.Container.exe").stop()
-
 # ===============================================================================================================
 
-# Check if server is online
+# if server is online
 if online():
 
     # Update IP Address Registry with current active IP
@@ -109,14 +106,20 @@ if mnt.E.exists():
     # Start Ollama Service
     AI.start('StartOllama')
 
-    # List all modules
+    # Start Plex Service
+    run('C:/Program Files/Plex/Plex Media Server/Plex Media Server.exe')
+
+    # Iter through all main modules
     for m in Scanner():
 
         # Install/Update all dependencies
         m.install(hide=False)
 
-    Web.run('index')
+    # Start Website Service
     Web.start('API/start')
+
+    # Remove the 'Nvidia Display Manager' Popup
+    Task("NVDisplay.Container.exe").stop()
 
 elif options['restart']['enabled']:
 # If mount fails and restart is enabled
