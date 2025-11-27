@@ -4,8 +4,6 @@
 
     "status": "python status.py",
 
-    "backup": "\"C:/Program Files/FreeFileSync/FreeFileSync.exe\" backup.ffs_batch",
-
     "day": "python Day.py",
 
     "hour": "python Hour.py",
