@@ -113,6 +113,9 @@ if mnt.E.exists():
         # Unlock module
         m.lock.unlock()
 
+    # Run Website Indexer 
+    Web.run('Indexer/run')
+
     # Start Website Service
     Web.start('API/start')
 
