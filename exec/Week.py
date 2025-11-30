@@ -1,5 +1,5 @@
 from philh_myftp_biz.pc import print
-from __init__ import mnt, Plex
+from __init__ import mnt
 
 # =================================================================================
 
@@ -29,6 +29,3 @@ for gen in (mnt.E.descendants(), mnt.C.descendants()):
                 print(p, color='RED')
 
 # =================================================================================
-
-# Download 150 items to plex
-Plex.run('torrenting/run', '--limit', '150')
