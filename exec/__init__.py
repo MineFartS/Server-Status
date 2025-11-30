@@ -110,12 +110,7 @@ class devices:
     HardDrives: list['HardDrive'] = []
 
     for tower, type, id, sn in YAML(this.file('config/Hard Drives')).read():
-        HardDrives += [HardDrive(
-            tower = tower,
-            type = type,
-            id = id,
-            sn = sn
-        )]
+        HardDrives += [HardDrive(tower, type, id, sn)]
 
     # ===============================================================================================================
     # PCIE CARDS
@@ -172,30 +167,24 @@ class devices:
             hide = True
         ).output('json')
 
+        if isinstance(__PS_Data, dict):
+            __PS_Data = [__PS_Data]
+
         def __init__(self, name:str):
             
             self.Name = name
-            
             self.UniqueID = None
-            self.Healthy = False
             self.Connected = False
 
             for device in self.__PS_Data:
+
                 if device['FriendlyName'] == name:
 
-                    self.Healthy = (device['HealthStatus'] != 'Unhealthy')
-
-                    # TODO
-                    self.Connected = self.Healthy 
+                    self.Connected = (device['HealthStatus'] != 'Unhealthy')
 
                     break
 
-    VirtualDisks: list['VirtualDisk'] = []
-
-    for name in ['Main Disk']:
-        VirtualDisks += [VirtualDisk(
-            name = name
-        )]
+    VirtualDisks = [VirtualDisk('Main Disk')]
 
     # ===============================================================================================================
     # TOWERS
@@ -221,10 +210,7 @@ class devices:
                 connected = True
                 break
 
-        Towers += [Tower(
-            id = id,
-            connected = connected
-        )]
+        Towers += [Tower(id, connected)]
 
     # ===============================================================================================================
 
