@@ -11,5 +11,5 @@ for mod in Scanner():
 
     mod.git('commit', '-a', '-m', 'Automated Commit')
 
-# Download 15 items to plex
-Plex.run('torrenting/run', '--limit', '15')
+# Download 75 media items
+Plex.run('torrenting/run', '--limit', '75')
