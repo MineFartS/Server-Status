@@ -1,25 +1,34 @@
-from __init__ import mnt
-from philh_myftp_biz.pc import Path, print
+from philh_myftp_biz.pc import print
+from __init__ import mnt, Plex
 
-def hide(path:Path):
-    try:
-        path.visibility.hide()
-        print(path, color='GREEN')
-        
-    except PermissionError:
-        print(path, color='RED')
+# =================================================================================
 
+# Iter through all files on the 'C' and 'E' volumes
 for gen in (mnt.E.descendants(), mnt.C.descendants()):
 
     for p in gen:
 
         s = p.seg()
 
-        if s.startswith('.'):
-            hide(p)
+        if not s.startswith('.'):
+            continue
             
-        elif s.startswith('__') and s.endswith('__'):
-            hide(p)
+        elif not (s.startswith('__') and s.endswith('__')):
+            continue
 
-        elif s in ['.DS_Store', 'Thumbs.db', 'desktop.ini']:            
-            hide(p)
+        elif s not in ['.DS_Store', 'Thumbs.db', 'desktop.ini']:            
+            continue
+
+        else:
+
+            try:
+                p.visibility.hide()
+                print(p, color='GREEN')
+                
+            except PermissionError:
+                print(p, color='RED')
+
+# =================================================================================
+
+# Download 150 items to plex
+Plex.run('torrenting/run', '--limit', '150')

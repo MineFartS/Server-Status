@@ -115,6 +115,9 @@ if mnt.E.exists():
         # Install/Update all dependencies
         m.install(hide=False)
 
+        # Unlock module
+        m.lock.unlock()
+
     # Start Website Service
     Web.start('API/start')
 

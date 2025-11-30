@@ -12,9 +12,11 @@ this = Module(script_dir(__file__).parent())
 try:
     AI = Module('E:/AI')
     Web = Module('E:/Website')
+    Plex = Module('E:/Plex')
 except ModuleNotFoundError:
     AI = None
     Web = None
+    Plex = None
 
 options = YAML(this.file('config/options')).read()
 
