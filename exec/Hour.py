@@ -1,22 +1,20 @@
-from philh_myftp_biz.modules import Module
 from philh_myftp_biz.web import online
 from philh_myftp_biz.time import now
 from philh_myftp_biz.pc import Path
-from __init__ import wifi
+from __init__ import wifi, Web
 
 # ==================================================
 
 # If the server is disconnected from the internet
 if not online():
 
-    # Connect to the wifi network named '1337 14n'
+    # Connect to wifi
     wifi.connect('FiOS-6AMDP')
 
 # ==================================================
 
-website = Module('E:/Website')
-
-website.run('index')
+# Run the Website Indexer
+Web.run('Indexer/run')
 
 # ==================================================
 
