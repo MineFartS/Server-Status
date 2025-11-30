@@ -1,13 +1,8 @@
 from __init__ import devices, options, mnt, alert, this, AI, Web
-from philh_myftp_biz.pc import Task, cls, pause
 from philh_myftp_biz.web import online, get, IP
 from philh_myftp_biz.modules import Scanner
+from philh_myftp_biz.pc import Task, pause
 from philh_myftp_biz import run
-
-# ===============================================================================================================
-
-# Clear the Terminal Window
-cls()
 
 # ===============================================================================================================
 
@@ -65,7 +60,7 @@ for hdd in devices.HardDrives:
 for vdisk in devices.VirtualDisks:
 
     # Check if vdisk is Unhealthy 
-    if not vdisk.Healthy:
+    if not vdisk.Connected:
 
         print(f'Repairing "{vdisk.Name}" ...')
 
