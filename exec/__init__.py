@@ -184,7 +184,10 @@ class devices:
 
                     break
 
-    VirtualDisks = [VirtualDisk('Main Disk')]
+    VirtualDisks: list[VirtualDisk] = []
+
+    for name in YAML(this.file('config/vDisks')).read():
+        VirtualDisks += [VirtualDisk(name)]
 
     # ===============================================================================================================
     # TOWERS
@@ -199,18 +202,23 @@ class devices:
 
             self.Connected = connected
             
-    Towers: list[Tower] = [Tower('A', True)]
+    Towers: list[Tower] = []
 
-    for id in ['B', 'C']:
-        
-        connected = False
+    for id in ['A', 'B', 'C']:
 
         for hdd in HardDrives:
+            
             if (hdd.Tower == id) and hdd.Connected:
-                connected = True
+                
+                Towers += [Tower(id, True)]
+
                 break
 
-        Towers += [Tower(id, connected)]
+        # If no connected hard drives are found for the tower
+        else:
+
+            # Append the tower
+            Towers += [Tower(id, False)]
 
     # ===============================================================================================================
 
