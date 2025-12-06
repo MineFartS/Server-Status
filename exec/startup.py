@@ -1,4 +1,4 @@
-from __init__ import devices, options, mnt, alert, this, AI, Web
+from __init__ import devices, options, mnt, alert, this, AI, Web, Plex
 from philh_myftp_biz.web import online, get, IP
 from philh_myftp_biz.modules import Scanner
 from philh_myftp_biz.pc import Task, pause
@@ -102,7 +102,7 @@ if mnt.E.exists():
     AI.start('StartOllama')
 
     # Start Plex Service
-    run('C:/Program Files/Plex/Plex Media Server/Plex Media Server.exe')
+    Plex.run('start')
 
     # Iter through all main modules
     for m in Scanner():
