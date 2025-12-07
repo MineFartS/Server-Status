@@ -1,4 +1,4 @@
-from __init__ import devices, options, mnt, alert, this, AI, Web, Plex
+from __init__ import devices, options, mnt, alert, this, services
 from philh_myftp_biz.web import online, get, IP
 from philh_myftp_biz.modules import Scanner
 from philh_myftp_biz.pc import Task, pause
@@ -107,17 +107,9 @@ if mnt.E.exists():
         # Unlock module
         m.lock.unlock()
 
-    # Start AI Ollama Service
-    AI.run('Ollama/Start')
-
-    # Start Plex Service
-    Plex.run('Start')
-
-    # Start Website Indexer Service 
-    Web.run('Indexer/Start')
-
-    # Start Website API Service
-    Web.start('API/Start')
+    # Start All Services
+    for service in services:
+        service.Start()
 
     # Remove the 'Nvidia Display Manager' Popup
     Task("NVDisplay.Container.exe").stop()

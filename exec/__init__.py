@@ -1,6 +1,6 @@
 from philh_myftp_biz.web import online, get, WiFi
 from philh_myftp_biz.pc import Path, script_dir
-from philh_myftp_biz.modules import Module
+from philh_myftp_biz.modules import Module, Service
 from philh_myftp_biz.file import YAML
 from philh_myftp_biz import run
 from typing import Literal
@@ -19,6 +19,22 @@ except ModuleNotFoundError:
     Plex = None
 
 options = YAML(this.file('config/options')).read()
+
+services = [
+
+    Service(AI, '/Ollama/'),
+
+    Service(Web, '/API/'),
+
+    Service(Web, '/Indexer/'),
+
+    Service(Plex, '/'),
+
+    Service(Plex, '/Torrenting/'),
+
+    Service(Plex, '/Optimizer/')
+
+]
 
 class mnt:
     C = Path('C:/')
