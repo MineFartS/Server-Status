@@ -16,6 +16,12 @@ if not online():
 # Run the Website Indexer
 Web.run('Indexer/run')
 
+# If the website API service is not running
+if not Web.run('API/Running').output('json'):
+    
+    # Start the website API service
+    Web.run('API/Start')
+
 # ==================================================
 
 temp = Path('E:/__temp__')
