@@ -98,12 +98,6 @@ if mnt.E.exists():
     # Send alert
     alert('Startup Complete')
 
-    # Start Ollama Service
-    AI.start('StartOllama')
-
-    # Start Plex Service
-    Plex.run('start')
-
     # Iter through all main modules
     for m in Scanner():
 
@@ -113,11 +107,17 @@ if mnt.E.exists():
         # Unlock module
         m.lock.unlock()
 
-    # Run Website Indexer 
-    Web.run('Indexer/run')
+    # Start AI Ollama Service
+    AI.run('Ollama/Start')
 
-    # Start Website Service
-    Web.start('API/start')
+    # Start Plex Service
+    Plex.run('Start')
+
+    # Start Website Indexer Service 
+    Web.run('Indexer/Start')
+
+    # Start Website API Service
+    Web.start('API/Start')
 
     # Remove the 'Nvidia Display Manager' Popup
     Task("NVDisplay.Container.exe").stop()

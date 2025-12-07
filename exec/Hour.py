@@ -1,7 +1,7 @@
 from philh_myftp_biz.web import online
 from philh_myftp_biz.time import now
+from __init__ import wifi, Web, Plex
 from philh_myftp_biz.pc import Path
-from __init__ import wifi, Web
 
 # ==================================================
 
@@ -13,14 +13,23 @@ if not online():
 
 # ==================================================
 
-# Run the Website Indexer
-Web.run('Indexer/run')
+# If the Website Indexing Service is not running
+if not Web.cap('Indexer/Running'):
 
-# If the website API service is not running
-if not Web.run('API/Running').output('json'):
+    # Start the Website Indexing Service
+    Web.run('Indexer/Start')
+
+# If the Website API Service is not running
+if not Web.cap('API/Running'):
     
     # Start the website API service
     Web.run('API/Start')
+
+# If the Plex Torrenting Service is not running
+if not Plex.cap('Torrenting/Running'):
+
+    # Start Plex Torrenting Service
+    Plex.run('Torrenting/Run')
 
 # ==================================================
 
