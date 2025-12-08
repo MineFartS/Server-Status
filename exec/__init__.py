@@ -20,21 +20,21 @@ except ModuleNotFoundError:
 
 options = YAML(this.file('config/options')).read()
 
-services = [
+services = {
 
-    Service(AI, '/Ollama/'),
+    'AI/Ollama': Service(AI, '/Ollama/'),
 
-    Service(Web, '/API/'),
+    'Website/API': Service(Web, '/API/'),
 
-    Service(Web, '/Indexer/'),
+    'Website/Indexer': Service(Web, '/Indexer/'),
 
-    Service(Plex, '/'),
+    'Plex/': Service(Plex, '/'),
 
-    Service(Plex, '/Torrenting/'),
+    'Plex/Torrenting': Service(Plex, '/Torrenting/'),
 
-    Service(Plex, '/Optimizer/')
+    'Plex/Optimization': Service(Plex, '/Optimization/')
 
-]
+}
 
 class mnt:
     C = Path('C:/')
@@ -60,20 +60,23 @@ def alert(m):
 
 def LogStatus(name:str, connected:bool):
     from philh_myftp_biz.pc import print
+    from philh_myftp_biz.text import abbreviate
+
+    fname = abbreviate(12, name, end='.').ljust(12, ' ')
 
     print(
-        '   {} : '.format(name.ljust(12, ' ')),
+        f'   {fname} : ',
         end = ''
     )
 
     if connected:
         print(
-            'Connected',
+            'Active',
             color = 'GREEN'
         )
     else:
         print(
-            'Missing',
+            'Inactive',
             color = 'RED'
         )
 

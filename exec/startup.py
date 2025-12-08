@@ -86,10 +86,6 @@ for vdisk in devices.VirtualDisks:
         )
 
 # ===============================================================================================================
-# Open a new window with the system status
-this.start('run', 'status', True)
-
-# ===============================================================================================================
 # Send Notification with Startup Status
 
 if mnt.E.exists():
@@ -105,8 +101,8 @@ if mnt.E.exists():
         m.install(hide=False)
 
     # Start All Services
-    for service in services:
-        service.Start()
+    for s in services:
+        services[s].Start()
 
     # Remove the 'Nvidia Display Manager' Popup
     Task("NVDisplay.Container.exe").stop()
@@ -134,6 +130,9 @@ else:
     alert('Startup Failed')
 
 # ===============================================================================================================
-# Pause to view output
 
+# Open a new window with the system status
+this.start('run', 'status', True)
+
+# Pause to view output
 pause()

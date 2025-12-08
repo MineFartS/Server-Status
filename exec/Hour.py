@@ -14,8 +14,8 @@ if not online():
 # ==================================================
 
 # Ensure all Services are Running
-for service in services:
-    service.Start()
+for s in services:
+    services[s].Start()
 
 # ==================================================
 
