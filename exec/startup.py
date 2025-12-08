@@ -133,6 +133,3 @@ else:
 
 # Open a new window with the system status
 this.start('run', 'status', True)
-
-# Pause to view output
-pause()
