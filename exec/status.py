@@ -1,6 +1,7 @@
 from __init__ import devices, LogStatus, services
-from philh_myftp_biz.pc import pause, cls
 from philh_myftp_biz.text import abbreviate
+from philh_myftp_biz.pc import pause, cls
+from philh_myftp_biz.time import sleep
 
 while True:
 
@@ -48,4 +49,4 @@ while True:
 
     print("\n|---------------------------------------------------------------------------------------|\n")
 
-    pause()
+    sleep(15, True)
