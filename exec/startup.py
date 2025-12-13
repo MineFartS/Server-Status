@@ -72,18 +72,15 @@ for vdisk in devices.VirtualDisks:
             hide = True
         )
 
-    # Check if vdisk is disconnected
-    if not vdisk.Connected:
+    print(f'Mounting "{vdisk.Name}" ...')
 
-        print(f'Mounting "{vdisk.Name}" ...')
-
-        # Connect vdisk
-        run(
-            f"Connect-VirtualDisk -UniqueId '{vdisk.UniqueID}'",
-            wait = True,
-            terminal = 'ps',
-            hide = True
-        )
+    # Connect vdisk
+    run(
+        f"Connect-VirtualDisk -UniqueId '{vdisk.UniqueID}'",
+        wait = True,
+        terminal = 'ps',
+        hide = True
+    )
 
 # ===============================================================================================================
 # Send Notification with Startup Status

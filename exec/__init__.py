@@ -199,6 +199,8 @@ class devices:
 
                 if device['FriendlyName'] == name:
 
+                    self.UniqueID: str = device['UniqueId']
+
                     self.Connected = (device['HealthStatus'] != 'Unhealthy')
 
                     break
