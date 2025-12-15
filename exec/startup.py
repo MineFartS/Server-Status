@@ -1,8 +1,12 @@
-from __init__ import devices, options, mnt, alert, this, services
 from philh_myftp_biz.web import online, get, IP
+from __init__ import options, mnt, alert, this
 from philh_myftp_biz.modules import Scanner
-from philh_myftp_biz.pc import Task, pause
+from philh_myftp_biz.pc import Task
 from philh_myftp_biz import run
+
+from items.Virtual_Disks import VirtualDisks
+from items.Hard_Drives import HardDrives
+from items.Services import Services
 
 # ===============================================================================================================
 
@@ -22,7 +26,7 @@ if online():
 # Unretire and Fix Names for Physical Disks 
 
 # Iter through Hard Drives
-for hdd in devices.HardDrives:
+for hdd in HardDrives:
 
     # Check if disk is connected
     if hdd.Connected:
@@ -57,7 +61,7 @@ for hdd in devices.HardDrives:
 # Repair and Mount Virtual Disks
 
 # Iter through Virtual Disks
-for vdisk in devices.VirtualDisks:
+for vdisk in VirtualDisks:
 
     # Check if vdisk is Unhealthy 
     if not vdisk.Connected:
@@ -98,8 +102,8 @@ if mnt.E.exists():
         m.install(hide=False)
 
     # Start All Services
-    for s in services:
-        services[s].Start()
+    for service in Services:
+        service.Start(force=True)
 
     # Remove the 'Nvidia Display Manager' Popup
     Task("NVDisplay.Container.exe").stop()

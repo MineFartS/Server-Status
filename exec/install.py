@@ -7,7 +7,6 @@ run(
 )
 
 from philh_myftp_biz.modules import Scanner
-from philh_myftp_biz.pc import Path
 
 for m in Scanner():
     

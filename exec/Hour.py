@@ -1,7 +1,8 @@
 from philh_myftp_biz.web import online
 from philh_myftp_biz.time import now
-from __init__ import wifi, services
 from philh_myftp_biz.pc import Path
+from items.Services import Services
+from __init__ import wifi
 
 # ==================================================
 
@@ -14,8 +15,8 @@ if not online():
 # ==================================================
 
 # Ensure all Services are Running
-for s in services:
-    services[s].Start()
+for service in Services:
+    service.Start(force=False)
 
 # ==================================================
 
