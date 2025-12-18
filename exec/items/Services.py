@@ -12,9 +12,17 @@ Services: list[Service] = []
 
 for paths in config.read():
 
-    Services += [Service(
-        module = Module(paths[0]),
-        path = paths[1]
-    )]
+    try:
+        
+        Services += [Service(
+            
+            module = Module(paths[0]),
+        
+            path = paths[1]
+        
+        )]
+        
+    except ModuleNotFoundError:
+        pass    
 
 # ===============================================================================================================
