@@ -1,7 +1,7 @@
 from philh_myftp_biz.file import YAML
 from philh_myftp_biz import run
 from typing import Literal
-from __init__ import this
+from . import this
 
 # ===============================================================================================================
 

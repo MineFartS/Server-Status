@@ -4,9 +4,9 @@ from philh_myftp_biz.modules import Scanner
 from philh_myftp_biz.pc import Task
 from philh_myftp_biz import run
 
-from items.Virtual_Disks import VirtualDisks
-from items.Hard_Drives import HardDrives
-from items.Services import Services
+from Status_Items.Virtual_Disks import VirtualDisks
+from Status_Items.Hard_Drives import HardDrives
+from Status_Items.Services import Services
 
 # ===============================================================================================================
 

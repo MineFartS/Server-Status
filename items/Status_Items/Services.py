@@ -1,6 +1,6 @@
 from philh_myftp_biz.modules import Service, Module
 from philh_myftp_biz.file import YAML
-from __init__ import this
+from . import this
 
 # ===============================================================================================================
 

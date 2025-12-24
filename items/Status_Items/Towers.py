@@ -1,4 +1,4 @@
-from items.Hard_Drives import HardDrives
+from .Hard_Drives import HardDrives
 
 # ===============================================================================================================
 
