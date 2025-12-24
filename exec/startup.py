@@ -22,6 +22,9 @@ if online():
         }
     )
 
+# Install the 'Status_Items' package
+this.run('/items/install')
+
 # ===============================================================================================================
 # Unretire and Fix Names for Physical Disks 
 
