@@ -32,7 +32,7 @@ while True:
 
                             out = out()
 
-                        if out:
+                        if out != None:
                             print(out)
 
                         break
