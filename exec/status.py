@@ -15,10 +15,10 @@ def LogStatus(
     from philh_myftp_biz.text import abbreviate
     from philh_myftp_biz.pc import print
 
-    fname = abbreviate(12, name, end='.').ljust(12, ' ')
+    fname = name.ljust(35, '.')
 
     print(
-        f'   {fname} : ',
+        f'   {fname}: ',
         end = ''
     )
 
@@ -70,14 +70,8 @@ while True:
     print('\nServices:')
     for s in Services:
 
-        sname = abbreviate(
-            num = 4,
-            string = s.module.name,
-            end = '.'
-        )
-
         LogStatus(
-            name = sname + s.path,
+            name = s.path,
             connected = s.Running()
         )
 
