@@ -1,5 +1,5 @@
+from philh_myftp_biz.process import RunHidden
 from philh_myftp_biz.file import YAML
-from philh_myftp_biz import run
 from . import this
 
 # ===============================================================================================================
@@ -8,11 +8,9 @@ config = YAML(this.file('config/vDisks'))
 
 # ===============================================================================================================
 
-_raw: list[dict] = run(
+_raw: list[dict] = RunHidden(
     "Get-VirtualDisk -StoragePool (Get-StoragePool -FriendlyName 'Main Pool') | Select-Object FriendlyName, UniqueId, HealthStatus | ConvertTo-Json",
-    wait = True,
-    terminal = 'ps',
-    hide = True
+    terminal = 'ps'
 ).output('json')
 
 if isinstance(_raw, dict):

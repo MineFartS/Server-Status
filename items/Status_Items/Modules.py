@@ -1,24 +1,23 @@
-from philh_myftp_biz.modules import Service
+from philh_myftp_biz.modules import Module
 from philh_myftp_biz.file import YAML
-from .Modules import Modules
 from . import this
 
 # ===============================================================================================================
 
-config = YAML(this.file('config/services'))
+config = YAML(this.file('config/modules')).read()
 
 # ===============================================================================================================
 
-Services: list[Service] = []
+Modules: dict[str, Module] = {}
 
-for m, p in config.read():
- 
-    Services += [Service(
+for m in config:
+
+    try:
+        Modules[m.lower()] = Module(config[m])
         
-        module = Modules[m.lower()],
-    
-        path = p
-    
-    )]
+    except ModuleNotFoundError:
+        pass
+
+print('modules:', Modules)  
 
 # ===============================================================================================================

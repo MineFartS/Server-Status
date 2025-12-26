@@ -1,9 +1,9 @@
-from philh_myftp_biz.modules import Scanner
+from .Modules import Modules
 
 # ==================================================
 
 # Iter through all main modules
-for mod in Scanner():
+for mod in Modules:
 
     # Install/Upgrade all dependencies
     mod.install()

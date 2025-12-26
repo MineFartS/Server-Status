@@ -1,6 +1,5 @@
-from philh_myftp_biz.text import abbreviate
+from philh_myftp_biz.terminal import cls, print
 from philh_myftp_biz.time import sleep
-from philh_myftp_biz.pc import cls
 
 from Status_Items.Virtual_Disks import VirtualDisks
 from Status_Items.Hard_Drives import HardDrives
@@ -12,8 +11,6 @@ def LogStatus(
     name: str,
     connected: bool
 ):
-    from philh_myftp_biz.text import abbreviate
-    from philh_myftp_biz.pc import print
 
     fname = name.ljust(35, '.')
 

@@ -1,12 +1,12 @@
 from philh_myftp_biz.web import online, get, IP
 from __init__ import options, mnt, alert, this
-from philh_myftp_biz.modules import Scanner
+from philh_myftp_biz.process import RunHidden
 from philh_myftp_biz.pc import Task
-from philh_myftp_biz import run
 
 from Status_Items.Virtual_Disks import VirtualDisks
 from Status_Items.Hard_Drives import HardDrives
 from Status_Items.Services import Services
+from Status_Items.Modules import Modules
 
 # ===============================================================================================================
 
@@ -40,11 +40,9 @@ for hdd in HardDrives:
             print(f'Renaming "{hdd.FriendlyName}" to "{hdd.Name}" ...')
             
             # Set the new Friendly Name
-            run(
+            RunHidden(
                 f"Set-PhysicalDisk -UniqueId '{hdd.UniqueID}' -NewFriendlyName '{hdd.Name}'",
-                wait = True,
-                terminal = 'ps',
-                hide = True
+                terminal = 'ps'
             )
 
         # Check if disk is retired 
@@ -53,11 +51,9 @@ for hdd in HardDrives:
             print(f'Reactivating "{hdd.Name}" ...')
 
             # Update the disk 'Usage' to 'AutoSelect'
-            run(
+            RunHidden(
                 f"Set-PhysicalDisk -UniqueId '{hdd.UniqueID}' -Usage AutoSelect",
-                wait = True,
-                terminal = 'ps',
-                hide = True
+                terminal = 'ps'
             )
 
 # ===============================================================================================================
@@ -72,21 +68,17 @@ for vdisk in VirtualDisks:
         print(f'Repairing "{vdisk.Name}" ...')
 
         # Repair vdisk
-        run(
+        RunHidden(
             f"Repair-VirtualDisk -UniqueId '{vdisk.UniqueID}'",
-            wait = True,
-            terminal = 'ps',
-            hide = True
+            terminal = 'ps'
         )
 
     print(f'Mounting "{vdisk.Name}" ...')
 
     # Connect vdisk
-    run(
+    RunHidden(
         f"Connect-VirtualDisk -UniqueId '{vdisk.UniqueID}'",
-        wait = True,
-        terminal = 'ps',
-        hide = True
+        terminal = 'ps'
     )
 
 # ===============================================================================================================
@@ -99,10 +91,10 @@ if mnt.E.exists():
     alert('Startup Complete')
 
     # Iter through all main modules
-    for m in Scanner():
+    for m in Modules:
 
         # Install/Update all dependencies
-        m.install(hide=False)
+        m.install()
 
     # Start All Services
     for service in Services:
@@ -121,7 +113,7 @@ elif options['restart']['enabled']:
     this.start('exec/abort')
 
     # Restart with the configured delay
-    run([
+    RunHidden([
         'shutdown',
         '/r',
         '/t', options['restart']['delay']

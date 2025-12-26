@@ -6,8 +6,13 @@ run(
     cwd = 'C:/Users/Administrator/Documents/GitHub/philh_myftp_biz/'
 )
 
-from philh_myftp_biz.modules import Scanner
+run(
+    args = [executable, '-m', 'pip', 'install', '.'],
+    cwd = 'C:/Scripts/items/'
+)
 
-for m in Scanner():
+from Status_Items.Modules import Modules
+
+for m in Modules:
     
-    m.install(hide=False)
+    m.install()

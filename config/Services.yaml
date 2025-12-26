@@ -1,10 +1,10 @@
 
 [
-    ['E:/AI/', '/Ollama/'],
-    ['E:/Website/', '/API/'],
-    ['E:/Website/', '/Indexer/'],
-    ['E:/Plex/', '/'],
-    ['E:/Plex/', '/Torrenting/'],
-    ['E:/Plex/', '/Optimization/']
+    ['AI', '/Ollama/'],
+    ['Website', '/API/'],
+    ['Website', '/Indexer/'],
+    ['Plex', '/'],
+    ['Plex', '/Torrenting/'],
+    #['Plex', '/Optimization/']
 
 ]

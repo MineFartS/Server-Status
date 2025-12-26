@@ -1,5 +1,5 @@
+from philh_myftp_biz.process import RunHidden
 from philh_myftp_biz.file import YAML
-from philh_myftp_biz import run
 from typing import Literal
 from . import this
 
@@ -9,11 +9,9 @@ config = YAML(this.file('config/PCIe Cards'))
 
 # ===============================================================================================================
 
-_raw: list[dict] = run(
+_raw: list[dict] = RunHidden(
     "Get-PnpDevice | Where-Object InstanceId -like 'PCI\\*' | Select-Object DeviceId, Status | ConvertTo-Json",
-    wait = True,
-    terminal = 'ps',
-    hide = True
+    terminal = 'ps'
 ).output('json')
 
 # ===============================================================================================================
