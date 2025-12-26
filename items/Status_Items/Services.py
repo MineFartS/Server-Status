@@ -13,12 +13,13 @@ Services: list[Service] = []
 
 for m, p in config.read():
  
-    Services += [Service(
+    try:
+        Services += [Service(    
+            module = Modules[m.lower()],
+            path = p
+        )]
         
-        module = Modules[m.lower()],
-    
-        path = p
-    
-    )]
+    except KeyError:
+        pass
 
 # ===============================================================================================================
