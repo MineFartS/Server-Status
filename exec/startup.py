@@ -2,12 +2,19 @@ from philh_myftp_biz.process import RunHidden, SysTask
 from philh_myftp_biz.web import online, get, IP
 from __init__ import options, mnt, alert, this
 
+# ===============================================================================================================
+# Import Items
+
+# Install the 'Status_Items' package
+this.run('/items/install')
+
 from Status_Items.Virtual_Disks import VirtualDisks
 from Status_Items.Hard_Drives import HardDrives
 from Status_Items.Services import Services
 from Status_Items.Modules import Modules
 
 # ===============================================================================================================
+# IP Registry
 
 # if server is online
 if online():
@@ -20,9 +27,6 @@ if online():
             'ip': IP('public')
         }
     )
-
-# Install the 'Status_Items' package
-this.run('/items/install')
 
 # ===============================================================================================================
 # Unretire and Fix Names for Physical Disks 
