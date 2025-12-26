@@ -5,6 +5,6 @@
     ['Website', '/Indexer/'],
     ['Plex', '/'],
     ['Plex', '/Torrenting/'],
-    #['Plex', '/Optimization/']
+    ['Plex', '/Optimization/']
 
 ]
