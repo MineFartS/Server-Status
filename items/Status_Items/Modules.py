@@ -18,6 +18,4 @@ for m in config:
     except ModuleNotFoundError:
         pass
 
-print('modules:', Modules)  
-
 # ===============================================================================================================

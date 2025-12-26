@@ -1,5 +1,5 @@
 from Status_Items.Services import Services
-from philh_myftp_biz.pc import cls
+from philh_myftp_biz.terminal import cls
 from shlex import split
 
 # Loop Forever

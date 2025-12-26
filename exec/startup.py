@@ -1,7 +1,6 @@
+from philh_myftp_biz.process import RunHidden, SysTask
 from philh_myftp_biz.web import online, get, IP
 from __init__ import options, mnt, alert, this
-from philh_myftp_biz.process import RunHidden
-from philh_myftp_biz.pc import Task
 
 from Status_Items.Virtual_Disks import VirtualDisks
 from Status_Items.Hard_Drives import HardDrives
@@ -94,14 +93,14 @@ if mnt.E.exists():
     for m in Modules:
 
         # Install/Update all dependencies
-        m.install()
+        Modules[m].install()
 
     # Start All Services
     for service in Services:
         service.Start(force=True)
 
     # Remove the 'Nvidia Display Manager' Popup
-    Task("NVDisplay.Container.exe").stop()
+    SysTask("NVDisplay.Container.exe").stop()
 
 elif options['restart']['enabled']:
 # If mount fails and restart is enabled
@@ -126,6 +125,3 @@ else:
     alert('Startup Failed')
 
 # ===============================================================================================================
-
-# Open a new window with the system status
-this.start('run', 'status', True)
