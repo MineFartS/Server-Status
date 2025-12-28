@@ -1,12 +1,16 @@
-from philh_myftp_biz.pc import print
-from __init__ import mnt
+from philh_myftp_biz.terminal import print
+from philh_myftp_biz.pc import Path
 
 # =================================================================================
 
-# Iter through all files on the 'C' and 'E' volumes
-for gen in (mnt.E.descendants(), mnt.C.descendants()):
+C = Path('C:/').descendants()
+E = Path('E:/').descendants()
 
+# Iter through all files on the 'C' and 'E' volumes
+for gen in (E, C):
     for p in gen:
+
+        print(p)
 
         s = p.seg()
 

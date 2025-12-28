@@ -1,16 +1,6 @@
-from Status_Items.Services import Services
-from philh_myftp_biz.web import online
+from ..Items.Services import Services
 from philh_myftp_biz.time import now
 from philh_myftp_biz.pc import Path
-from __init__ import wifi
-
-# ==================================================
-
-# If the server is disconnected from the internet
-if not online():
-
-    # Connect to wifi
-    wifi.connect('FiOS-6AMDP')
 
 # ==================================================
 

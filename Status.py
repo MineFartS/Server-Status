@@ -1,11 +1,12 @@
+
 from philh_myftp_biz.terminal import cls, print
 from philh_myftp_biz.time import sleep
 
-from Status_Items.Virtual_Disks import VirtualDisks
-from Status_Items.Hard_Drives import HardDrives
-from Status_Items.PCIe_Cards import PCIeCards
-from Status_Items.Services import Services
-from Status_Items.Towers import Towers
+from .Items.Virtual_Disks import VirtualDisks
+from .Items.Hard_Drives import HardDrives
+from .Items.PCIe_Cards import PCIeCards
+from .Items.Services import Services
+from .Items.Towers import Towers
 
 def LogStatus(
     name: str,
@@ -68,7 +69,7 @@ while True:
     for s in Services:
 
         LogStatus(
-            name = s.path,
+            name = str(s.path),
             connected = s.Running()
         )
 

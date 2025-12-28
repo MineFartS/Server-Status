@@ -1,20 +1,13 @@
+# ===============================================================================================================
+# PARSER
+
 from philh_myftp_biz.process import RunHidden
-from philh_myftp_biz.file import YAML
 from typing import Literal
-from . import this
-
-# ===============================================================================================================
-
-config = YAML(this.file('config/PCIe Cards'))
-
-# ===============================================================================================================
 
 _raw: list[dict] = RunHidden(
     "Get-PnpDevice | Where-Object InstanceId -like 'PCI\\*' | Select-Object DeviceId, Status | ConvertTo-Json",
     terminal = 'ps'
 ).output('json')
-
-# ===============================================================================================================
 
 class PCIeCard:
 
@@ -41,15 +34,34 @@ class PCIeCard:
                 break
 
 # ===============================================================================================================
+# CONFIGURATION
 
-PCIeCards: list['PCIeCard'] = []
+PCIeCards = [
 
-for slot, lanes, id in config.read():
-    
-    PCIeCards += [PCIeCard(
-        slot = slot,
-        lanes = lanes,
-        id = id
-    )]
+    PCIeCard(
+        slot = 1,
+        lanes = 1,
+        id = "PCI\\VEN_1B21&DEV_2142&SUBSYS_21421B21&REV_00\\4&33FC7E38&0&00E0"
+    ),
+
+    PCIeCard(
+        slot = 2,
+        lanes = 16,
+        id = "PCI\\VEN_10DE&DEV_13BA&SUBSYS_109710DE&REV_A2\\4&787313E&0&0008"
+    ),
+
+    PCIeCard(
+        slot = 3,
+        lanes = 4,
+        id = "PCI\\VEN_1B21&DEV_1064&SUBSYS_21161B21&REV_02\\4&F6FAD87&0&00E8"
+    ),
+
+    PCIeCard(
+        slot = 'M.2',
+        lanes = 4,
+        id = "PCI\\VEN_1B21&DEV_1166&SUBSYS_21162116&REV_02\\4&1E804E93&0&00D8"
+    )
+
+]
 
 # ===============================================================================================================

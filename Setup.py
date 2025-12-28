@@ -6,12 +6,7 @@ run(
     cwd = 'C:/Users/Administrator/Documents/GitHub/philh_myftp_biz/'
 )
 
-run(
-    args = [executable, '-m', 'pip', 'install', '.'],
-    cwd = 'C:/Scripts/items/'
-)
-
-from Status_Items.Modules import Modules
+from .Items.Modules import Modules
 
 for m in Modules:
     

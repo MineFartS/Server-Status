@@ -1,32 +1,11 @@
 from philh_myftp_biz.process import RunHidden, SysTask
-from philh_myftp_biz.web import online, get, IP
-from __init__ import options, mnt, alert, this
+from .. import options, alert, this
+from philh_myftp_biz.pc import Path
 
-# ===============================================================================================================
-# Import Items
-
-# Install the 'Status_Items' package
-this.run('/items/install')
-
-from Status_Items.Virtual_Disks import VirtualDisks
-from Status_Items.Hard_Drives import HardDrives
-from Status_Items.Services import Services
-from Status_Items.Modules import Modules
-
-# ===============================================================================================================
-# IP Registry
-
-# if server is online
-if online():
-
-    # Update IP Address Registry with current active IP
-    get(
-        url = 'https://script.google.com/macros/s/AKfycbx4POaZ4dAKsPtlNZLFTf5_HkCCx8HM8DhznDoop7radoV-Amgzix7aMl2c9lZ0MbqyaA/exec',
-        params = {
-            'pc': 1,
-            'ip': IP('public')
-        }
-    )
+from ..Items.Virtual_Disks import VirtualDisks
+from ..Items.Hard_Drives import HardDrives
+from ..Items.Services import Services
+from ..Items.Modules import Modules
 
 # ===============================================================================================================
 # Unretire and Fix Names for Physical Disks 
@@ -87,17 +66,17 @@ for vdisk in VirtualDisks:
 # ===============================================================================================================
 # Send Notification with Startup Status
 
-if mnt.E.exists():
+if Path('E:/').exists():
 # If mount succeeds
 
     # Send alert
     alert('Startup Complete')
 
     # Iter through all main modules
-    for m in Modules:
+    for mod in Modules:
 
         # Install/Update all dependencies
-        Modules[m].install()
+        mod.install()
 
     # Start All Services
     for service in Services:
