@@ -7,6 +7,6 @@ restart:
 
 alert:
 
-    sms: false
+    sms: true
     
     popup: true
