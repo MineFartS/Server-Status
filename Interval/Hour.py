@@ -1,3 +1,4 @@
+from philh_myftp_biz.modules import ServiceDisabledError
 from ..Items.Services import Services
 from philh_myftp_biz.time import now
 from philh_myftp_biz.pc import Path
@@ -6,7 +7,12 @@ from philh_myftp_biz.pc import Path
 
 # Ensure all Services are Running
 for service in Services:
-    service.Start(force=False)
+    
+    try:
+        service.Start(force=False)
+    
+    except ServiceDisabledError:
+        pass
 
 # ==================================================
 

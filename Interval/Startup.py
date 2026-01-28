@@ -1,3 +1,4 @@
+from philh_myftp_biz.modules import ServiceDisabledError
 from philh_myftp_biz.process import RunHidden, SysTask
 from .. import options, alert, this
 from philh_myftp_biz.pc import Path
@@ -80,7 +81,12 @@ if Path('E:/').exists():
 
     # Start All Services
     for service in Services:
-        service.Start(force=True)
+
+        try:
+            service.Start()
+
+        except ServiceDisabledError:
+            pass
 
     # Remove the 'Nvidia Display Manager' Popup
     SysTask("NVDisplay.Container.exe").stop()
