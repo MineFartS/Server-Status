@@ -123,13 +123,15 @@ while True:
 
             serv: Service = mem['service']
 
-            if serv.Running():
+            RUNNING = str(serv.Running())
 
-                print(' .. Service is Running ..')
+            ENABLED = str(serv.Enabled())
 
-            else:
-
-                print(' .. Service is Stopped ..')
+            print(f"""
+|================|
+| Running: {RUNNING:5} |
+| Enabled: {ENABLED:5} |   
+|================|""")
 
         #===========================================
 
@@ -139,13 +141,13 @@ while True:
     elif args[0] == 'enable':
             
         #===========================================
-        # RUNNING SERVICE
+        # ENABLE SERVICE
 
         if args[1] == 'service':
 
             serv: Service = mem['service']
 
-            # TODO
+            serv.Enable()
 
         #===========================================
 
@@ -155,12 +157,12 @@ while True:
     elif args[0] == 'disable':
             
         #===========================================
-        # RUNNING SERVICE
+        # DISABLE SERVICE
 
         if args[1] == 'service':
 
             serv: Service = mem['service']
 
-            # TODO
+            serv.Disable()
 
         #===========================================
