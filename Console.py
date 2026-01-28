@@ -53,7 +53,10 @@ while True:
 
             for x, serv in enumerate(Services):
 
-                print(x, '-', serv.path)
+                RUNNING = ('Running' if serv.Running() else 'Stopped')
+                ENABLED = (' Enabled' if serv.Enabled() else 'Disabled')
+
+                print(f'{x}: [{RUNNING}, {ENABLED}] {serv.path} ')
 
         #===========================================
 
