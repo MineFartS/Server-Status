@@ -50,13 +50,22 @@ while True:
         # LIST SERVICE
 
         if args[1] == 'service':
+            if len(args) == 2:
+                
+                for x, serv in enumerate(Services):
+                    print(f'{x}: {serv.path} ')
 
-            for x, serv in enumerate(Services):
+            #===========================================
+            # LIST SERVICE FULL
 
-                RUNNING = ('Running' if serv.Running() else 'Stopped')
-                ENABLED = (' Enabled' if serv.Enabled() else 'Disabled')
+            elif args[2] == 'full':
 
-                print(f'{x}: [{RUNNING}, {ENABLED}] {serv.path} ')
+                for x, serv in enumerate(Services):
+
+                    RUNNING = ('Running' if serv.Running() else 'Stopped')
+                    ENABLED = (' Enabled' if serv.Enabled() else 'Disabled')
+
+                    print(f'{x}: [{RUNNING}, {ENABLED}] {serv.path} ')
 
         #===========================================
 
