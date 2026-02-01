@@ -8,11 +8,25 @@
 CMD = "python.exe -m Scripts " & WScript.Arguments(0)
 
 '=======================================================
+' VISIBLE PARG
 
 if WScript.Arguments.Count = 2 then
     Visible = CBool(WScript.Arguments(1))
 else
     Visible = True
+end if
+
+'=======================================================
+' VERBOSE PARG
+
+if WScript.Arguments.Count = 3 then
+    Verbose = CBool(WScript.Arguments(2))
+else
+    Verbose = False
+end if
+
+if Verbose then
+    CMD = CMD & " -v"
 end if
 
 '=======================================================
