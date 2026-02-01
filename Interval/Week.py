@@ -19,10 +19,14 @@ for gen in (C, E):
         RECYCLED = '/$recycle.bin/' in PATH
         HIDDEN   = p.visibility.hidden()
 
-        Log.VERB(f'Scanning: {PATH}\n{HASDOT=} | {MANGLED=} | {ISDB=} | {RECYCLED=} | {HIDDEN=}')
-
         DO_HIDE = ((HASDOT or MANGLED) and (not HIDDEN))
         DO_DEL  = (ISDB or RECYCLED)
+
+        Log.VERB(
+            f'Scanning: {PATH}\n'+ \
+            f'{HASDOT=} | {MANGLED=} | {ISDB=} | {RECYCLED=} | {HIDDEN=}\n'+ \
+            f'{DO_HIDE=} | {DO_DEL=}'
+        )
 
         if DO_DEL:
         # DELETE ITEM
