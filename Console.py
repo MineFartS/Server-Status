@@ -1,7 +1,13 @@
+from philh_myftp_biz.process import RunHidden
 from philh_myftp_biz.modules import Service
 from philh_myftp_biz.terminal import cls
+from philh_myftp_biz.modules import Module
 from .Items.Services import Services
+from philh_myftp_biz import VERBOSE
 from shlex import split
+
+
+this = Module('C:/Scripts')
 
 # Session Memory
 mem = {}
@@ -13,52 +19,143 @@ print(f"""
 
      MANAGEMENT  CONSOLE
 |---------------------------|
+
+Type 'help' for a list of commands
 """)
 
 while True:
 
     args = split(input('\n\\> ').lower())
 
-    #===========================================
-    # EXIT
+    if len(args) == 0:
+        print("""
+NO COMMAND GIVEN
 
-    if   args[0] == 'exit':
+Type 'help' for a list of commands
+""")
+    
+    #===========================================
+    elif args[0] == 'exit':
+    # EXIT
+    
         exit()
 
+        raise 
+
     #===========================================
+    elif args[0] == 'cls':
     # CLS
 
-    elif args[0] == 'cls':
         cls()
 
     #===========================================
-    # HELP
-
     elif args[0] == 'help':
-        print("""
-           
-              
-              
-        """)
+        if len(args) == 1:
+    # HELP
+        
+            print("""
+----------------------------------------
 
-    #===========================================
-    # LIST
+CLS  | Clear the Terminal
+EXIT | Exit the terminal
 
-    elif args[0] == 'list':
+----------------------------------------
+
+LIST    | List items
+SELECT  | Select an item
+START   | Start an item
+STOP    | Stop an item
+STATUS  | Get the status of an item
+ENABLE  | Enable an item
+DISABLE | Disable an item
+RUN     | Run a script
+
+Run 'help *cmd*' for more details about a specific command
+
+----------------------------------------
+""")
 
         #===========================================
-        # LIST SERVICE
+        elif args[1] == 'list':
+        # HELP LIST
 
+            print("""
+LIST SERVICE      | Get a list of services
+LIST SERVICE FULL | Get a detailed list of services
+""")
+
+        #===========================================
+        elif args[1] == 'select':
+        # HELP SELECT
+
+            print("""
+SELECT SERVICE # | Select a service by number 
+""")
+
+                #===========================================
+        elif args[1] == 'start':
+        # HELP START
+
+            print("""
+START SERVICE | Start the selected service
+""")
+
+                #===========================================
+        elif args[1] == 'stop':
+        # HELP STOP
+
+            print("""
+STOP SERVICE | Stop the selected service
+""")
+
+        #===========================================
+        elif args[1] == 'status':
+        # HELP STATUS
+
+            print("""
+STATUS SERVICE | Get the status of the selected service 
+""")
+
+                #===========================================
+        elif args[1] == 'enable':
+        # HELP ENABLE
+
+            print("""
+ENABLE SERVICE | Enable the selected service
+""")
+
+        #===========================================
+        elif args[1] == 'disable':
+        # HELP DISABLE
+
+            print("""
+DISABLE SERVICE | Disable the selected service 
+""")
+
+                #===========================================
+        elif args[1] == 'run':
+        # HELP RUN
+
+            print("""
+RUN *SCRIPT*    | Run a script in a new tab (Ex: run Interval.Startup)
+RUN *SCRIPT* -v | Run a script in a new tab with the verbose flag (Ex: run Interval.Startup -v)
+""")
+
+    #===========================================
+    elif args[0] == 'list':
+    # LIST
+
+        #===========================================
         if args[1] == 'service':
             if len(args) == 2:
+        # LIST SERVICE
                 
                 for x, serv in enumerate(Services):
                     print(f'{x}: {serv.path} ')
 
             #===========================================
-            # LIST SERVICE FULL
-
             elif args[2] == 'full':
+            # LIST SERVICE FULL
 
                 for x, serv in enumerate(Services):
 
@@ -70,14 +167,12 @@ while True:
         #===========================================
 
     #===========================================
+    elif args[0] == 'select':
     # SELECT
 
-    elif args[0] == 'select':
-
-        #===========================================
-        # SELECT SERVICE
-            
+        #===========================================            
         if args[1] == 'service':
+        # SELECT SERVICE
 
             serv = Services[int(args[2])]
 
@@ -88,32 +183,28 @@ while True:
         #===========================================
 
     #===========================================
-    # START
-
     elif args[0] == 'start':
+    # START
             
         #===========================================
-        # START SERVICE
-
         if args[1] == 'service':
+        # START SERVICE
 
             serv: Service = mem['service']
 
             print(' .. Starting Service ..')
 
-            serv.Start()
+            serv.Start(force=True)
 
         #===========================================
 
     #===========================================
-    # STOP
-
     elif args[0] == 'stop':
+    # STOP
             
-        #===========================================
-        # STOP SERVICE
-            
+        #===========================================            
         if args[1] == 'service':
+        # STOP SERVICE
 
             serv: Service = mem['service']
 
@@ -124,14 +215,12 @@ while True:
         #===========================================
 
     #===========================================
-    # STATUS
-
     elif args[0] == 'status':
+    # STATUS
             
         #===========================================
-        # RUNNING SERVICE
-
         if args[1] == 'service':
+        # STATUS SERVICE
 
             serv: Service = mem['service']
 
@@ -148,14 +237,12 @@ while True:
         #===========================================
 
     #===========================================
-    # ENABLE
-
     elif args[0] == 'enable':
+    # ENABLE
             
         #===========================================
-        # ENABLE SERVICE
-
         if args[1] == 'service':
+        # ENABLE SERVICE
 
             serv: Service = mem['service']
 
@@ -164,17 +251,37 @@ while True:
         #===========================================
 
     #===========================================
-    # DISABLE
-
     elif args[0] == 'disable':
+    # DISABLE
             
         #===========================================
-        # DISABLE SERVICE
-
         if args[1] == 'service':
+        # DISABLE SERVICE
 
             serv: Service = mem['service']
 
             serv.Disable()
 
         #===========================================
+
+    #===========================================
+    elif args[0] == 'run':
+    # RUN
+
+        this.run(
+            'run', args[1].title(), 
+            'True', # VISIBLE
+            ('-v' in args) # VERBOSE
+        )
+
+        #===========================================
+
+    #===========================================
+    else:
+    # *UNKNOWN*
+
+        print(f"""
+"{args[0]}" NOT IMPLEMENTED
+
+Type 'help' for a list of commands
+""")
