@@ -1,4 +1,4 @@
-from philh_myftp_biz.terminal import print
+from philh_myftp_biz.terminal import Log
 from philh_myftp_biz.pc import Path
 
 # =================================================================================
@@ -7,29 +7,51 @@ C = Path('C:/').descendants()
 E = Path('E:/').descendants()
 
 # Iter through all files on the 'C' and 'E' volumes
-for gen in (E, C):
+for gen in (C, E):
     for p in gen:
 
-        print(p)
+        SEG  = p.seg().lower()
+        PATH = str(p).lower()
 
-        s = p.seg()
+        HASDOT   = SEG.startswith('.')
+        MANGLED  = SEG.startswith('__') and SEG.endswith('__') 
+        ISDB     = SEG in ['.ds_store', 'thumbs.db', 'desktop.ini']
+        RECYCLED = '/$recycle.bin/' in PATH
+        HIDDEN   = p.visibility.hidden()
 
-        if not s.startswith('.'):
-            continue
-            
-        elif not (s.startswith('__') and s.endswith('__')):
-            continue
+        Log.VERB(f'Scanning: {PATH}\n{HASDOT=} | {MANGLED=} | {ISDB=} | {RECYCLED=} | {HIDDEN=}')
 
-        elif s not in ['.DS_Store', 'Thumbs.db', 'desktop.ini']:            
-            continue
+        DO_HIDE = ((HASDOT or MANGLED) and (not HIDDEN))
+        DO_DEL  = (ISDB or RECYCLED)
 
-        else:
+        if DO_DEL:
+        # DELETE ITEM
 
             try:
-                p.visibility.hide()
-                print(p, color='GREEN')
+                
+                Log.INFO(f'Deleting: {PATH}')
+                p.delete(force=True)
+
+                DO_HIDE = False
                 
             except PermissionError:
-                print(p, color='RED')
+                Log.WARN(f'Error Deleting: {PATH}', exc_info=True)
+                DO_HIDE = True
+
+        if DO_HIDE:
+        # HIDE ITEM
+
+            if HIDDEN:
+                Log.VERB(f'Already Hidden: {PATH}')
+
+            else:
+                try:
+                    Log.INFO(f'Hiding: {PATH}')
+                    p.visibility.hide()
+                    
+                except PermissionError:
+                    Log.WARN(f'Error Hiding: {PATH}', exc_info=True)
+
+
 
 # =================================================================================
