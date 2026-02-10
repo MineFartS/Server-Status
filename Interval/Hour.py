@@ -10,7 +10,7 @@ from philh_myftp_biz.terminal import Log
 for service in Services:
     
     try:
-        service.Start(force=False)
+        service.Start()
     
     except ServiceDisabledError:
         pass
@@ -39,7 +39,6 @@ for p in temp.descendants():
         )
     
         if DELETE:
-
             # Delete File
             p.delete(force=True)
 

@@ -194,7 +194,8 @@ RUN *SCRIPT* -v | Run a script in a new tab with the verbose flag (Ex: run Inter
 
             print(' .. Starting Service ..')
 
-            serv.Start(force=True)
+            serv.Stop()
+            serv._run('Start')
 
         #===========================================
 
