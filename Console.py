@@ -69,6 +69,7 @@ STATUS  | Get the status of an item
 ENABLE  | Enable an item
 DISABLE | Disable an item
 RUN     | Run a script
+ARGS    | Set arguements
 
 Run 'help *cmd*' for more details about a specific command
 
@@ -92,7 +93,7 @@ LIST SERVICE FULL | Get a detailed list of services
 SELECT SERVICE # | Select a service by number 
 """)
 
-                #===========================================
+        #===========================================
         elif args[1] == 'start':
         # HELP START
 
@@ -100,7 +101,7 @@ SELECT SERVICE # | Select a service by number
 START SERVICE | Start the selected service
 """)
 
-                #===========================================
+        #===========================================
         elif args[1] == 'stop':
         # HELP STOP
 
@@ -116,7 +117,7 @@ STOP SERVICE | Stop the selected service
 STATUS SERVICE | Get the status of the selected service 
 """)
 
-                #===========================================
+        #===========================================
         elif args[1] == 'enable':
         # HELP ENABLE
 
@@ -132,13 +133,21 @@ ENABLE SERVICE | Enable the selected service
 DISABLE SERVICE | Disable the selected service 
 """)
 
-                #===========================================
+        #===========================================
         elif args[1] == 'run':
         # HELP RUN
 
             print("""
 RUN *SCRIPT*    | Run a script in a new tab (Ex: run Interval.Startup)
 RUN *SCRIPT* -v | Run a script in a new tab with the verbose flag (Ex: run Interval.Startup -v)
+""")
+            
+        #===========================================
+        elif args[1] == 'args':
+        # HELP ARGS
+
+            print("""
+ARGS SERVICE *arg1* *arg2* ...   | Set the args for the selected service
 """)
 
     #===========================================
@@ -276,6 +285,22 @@ RUN *SCRIPT* -v | Run a script in a new tab with the verbose flag (Ex: run Inter
         )
 
         #===========================================
+
+    #===========================================
+    elif args[0] == 'args':
+    # ARGS
+
+        #===========================================
+        if args[1] == 'service':
+        # ARGS SERVICE
+
+            mem['service'].args = args[2:]
+
+            print('Updated args for selected service')
+
+            print('Selected Service:', serv.path)
+
+            print(f'args: {args[2:]}')
 
     #===========================================
     else:
