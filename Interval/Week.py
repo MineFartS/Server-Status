@@ -1,7 +1,10 @@
 from philh_myftp_biz.terminal import Log
 from philh_myftp_biz.pc import Path
+from philh_myftp_biz.modules import Service
 
 # =================================================================================
+# HIDE ITEMS
+
 
 C = Path('C:/').descendants()
 E = Path('E:/').descendants()
@@ -56,6 +59,12 @@ for gen in (C, E):
                 except PermissionError:
                     Log.WARN(f'Error Hiding: {PATH}', exc_info=True)
 
+# =================================================================================
+# RESTART MINECRAFT
 
+MC = Service('E:/Minecraft/')
+
+MC.Stop()
+MC.Start()
 
 # =================================================================================
