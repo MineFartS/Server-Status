@@ -1,7 +1,9 @@
-from philh_myftp_biz.modules import Service
+from philh_myftp_biz.modules import Service, ServiceDisabledError
+from philh_myftp_biz.process import Run, RunHidden
 from philh_myftp_biz.terminal import Log
-from philh_myftp_biz.process import Run
 from philh_myftp_biz.pc import Path
+from philh_myftp_biz import VERBOSE
+from functools import partial
 
 C = Path('C:/')
 E = Path('E:/')
@@ -9,63 +11,69 @@ E = Path('E:/')
 # =================================================================================
 # HIDE ITEMS
 
+def paths():
+    yield from C.descendants()
+    yield from E.descendants()
+
 # Iter through all files on the 'C' and 'E' volumes
-for gen in (C.descendants(), E.descendants()):
-    for p in gen:
+for p in paths():
 
-        SEG  = p.seg().lower()
-        PATH = str(p).lower()
+    SEG  = p.seg().lower()
+    PATH = str(p).lower()
 
-        HASDOT   = SEG.startswith('.')
-        MANGLED  = SEG.startswith('__') and SEG.endswith('__') 
-        ISDB     = SEG in ['.ds_store', 'thumbs.db', 'desktop.ini']
-        RECYCLED = '/$recycle.bin/' in PATH
-        HIDDEN   = p.visibility.hidden()
+    HASDOT   = SEG.startswith('.')
+    MANGLED  = SEG.startswith('__') and SEG.endswith('__') 
+    ISDB     = SEG in ['.ds_store', 'thumbs.db', 'desktop.ini']
+    RECYCLED = '/$recycle.bin/' in PATH
+    HIDDEN   = p.visibility.hidden()
 
-        DO_HIDE = ((HASDOT or MANGLED) and (not HIDDEN))
-        DO_DEL  = (ISDB or RECYCLED)
+    DO_HIDE = ((HASDOT or MANGLED) and (not HIDDEN))
+    DO_DEL  = (ISDB or RECYCLED)
 
-        Log.VERB(
-            f'Scanning: {PATH}\n'+ \
-            f'{HASDOT=} | {MANGLED=} | {ISDB=} | {RECYCLED=} | {HIDDEN=}\n'+ \
-            f'{DO_HIDE=} | {DO_DEL=}'
-        )
+    Log.VERB(
+        f'Scanning: {PATH}\n'+ \
+        f'{HASDOT=} | {MANGLED=} | {ISDB=} | {RECYCLED=} | {HIDDEN=}\n'+ \
+        f'{DO_HIDE=} | {DO_DEL=}'
+    )
 
-        if DO_DEL:
-        # DELETE ITEM
+    if DO_DEL:
+    # DELETE ITEM
 
+        try:
+            
+            Log.INFO(f'Deleting: {PATH}')
+            p.delete(force=True)
+
+            DO_HIDE = False
+            
+        except PermissionError:
+            Log.WARN(f'Error Deleting: {PATH}', exc_info=True)
+            DO_HIDE = True
+
+    if DO_HIDE:
+    # HIDE ITEM
+
+        if HIDDEN:
+            Log.VERB(f'Already Hidden: {PATH}')
+
+        else:
             try:
-                
-                Log.INFO(f'Deleting: {PATH}')
-                p.delete(force=True)
-
-                DO_HIDE = False
+                Log.INFO(f'Hiding: {PATH}')
+                p.visibility.hide()
                 
             except PermissionError:
-                Log.WARN(f'Error Deleting: {PATH}', exc_info=True)
-                DO_HIDE = True
-
-        if DO_HIDE:
-        # HIDE ITEM
-
-            if HIDDEN:
-                Log.VERB(f'Already Hidden: {PATH}')
-
-            else:
-                try:
-                    Log.INFO(f'Hiding: {PATH}')
-                    p.visibility.hide()
-                    
-                except PermissionError:
-                    Log.WARN(f'Error Hiding: {PATH}', exc_info=True)
+                Log.WARN(f'Error Hiding: {PATH}', exc_info=True)
 
 # =================================================================================
 # RESTART MINECRAFT
 
 MC = Service('E:/Minecraft/')
 
-MC.Stop()
-MC.Start()
+try:
+    MC.Stop()
+    MC.Start()
+except ServiceDisabledError:
+    Log.WARN('', exc_info=True)
 
 # =================================================================================
 # BACKUP FILESYSTEM
@@ -78,14 +86,24 @@ folders = [
     E.child('Website/Root') # Root
 ]
 
+match VERBOSE:
+
+    case  True: RunFunc = partial(
+        Run, 
+        dir = syncord_dir, 
+        terminal = 'py'
+    )
+
+    case False: RunFunc = partial(
+        RunHidden, 
+        dir = syncord_dir, 
+        terminal = 'py'
+    )
+
 for src in folders:
 
     Log.INFO(f'Uploading Folder: {src}')
 
-    Run(
-        ['main.py', 'upload', src],
-        dir = syncord_dir,
-        terminal = 'py'
-    )
+    RunFunc(['main.py', 'upload', src])
 
 # =================================================================================
