@@ -1,16 +1,16 @@
-from philh_myftp_biz.terminal import Log
-from philh_myftp_biz.pc import Path
 from philh_myftp_biz.modules import Service
+from philh_myftp_biz.terminal import Log
+from philh_myftp_biz.process import Run
+from philh_myftp_biz.pc import Path
+
+C = Path('C:/')
+E = Path('E:/')
 
 # =================================================================================
 # HIDE ITEMS
 
-
-C = Path('C:/').descendants()
-E = Path('E:/').descendants()
-
 # Iter through all files on the 'C' and 'E' volumes
-for gen in (C, E):
+for gen in (C.descendants(), E.descendants()):
     for p in gen:
 
         SEG  = p.seg().lower()
@@ -66,5 +66,26 @@ MC = Service('E:/Minecraft/')
 
 MC.Stop()
 MC.Start()
+
+# =================================================================================
+# BACKUP FILESYSTEM
+
+syncord_dir = Path('C:/Scripts/exec/syncord/')
+
+folders = [
+    E.child('Users/philh/'), # philh
+    E.child('Virtual Machines/Hyper-V/'), # Hyper-V
+    E.child('Website/Root') # Root
+]
+
+for src in folders:
+
+    Log.INFO(f'Uploading Folder: {src}')
+
+    Run(
+        ['main.py', 'upload', src],
+        dir = syncord_dir,
+        terminal = 'py'
+    )
 
 # =================================================================================
