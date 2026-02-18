@@ -1,0 +1,4 @@
+[submodule "exec/syncord"]
+	path = exec/syncord
+	url = https://github.com/minefarts/syncord.git
+    ignore = all
