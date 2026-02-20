@@ -1,9 +1,7 @@
-from philh_myftp_biz.process import RunHidden
 from philh_myftp_biz.modules import Service
-from philh_myftp_biz.terminal import cls
 from philh_myftp_biz.modules import Module
+from philh_myftp_biz.terminal import cls
 from .Items.Services import Services
-from philh_myftp_biz import VERBOSE
 from shlex import split
 
 
@@ -38,9 +36,7 @@ Type 'help' for a list of commands
     elif args[0] == 'exit':
     # EXIT
     
-        exit()
-
-        raise 
+        exit() 
 
     #===========================================
     elif args[0] == 'cls':
@@ -147,7 +143,7 @@ RUN *SCRIPT* -v | Run a script in a new tab with the verbose flag (Ex: run Inter
         # HELP ARGS
 
             print("""
-ARGS SERVICE *arg1* *arg2* ...   | Set the args for the selected service
+ARGS SERVICE = *arg1* *arg2* ...   | Set the args for the selected service
 """)
 
     #===========================================
@@ -201,7 +197,7 @@ ARGS SERVICE *arg1* *arg2* ...   | Set the args for the selected service
 
             serv: Service = mem['service']
 
-            print(' .. Starting Service ..')
+            print('Starting Service ...')
 
             serv.Stop()
             serv._run('Start')
@@ -218,7 +214,7 @@ ARGS SERVICE *arg1* *arg2* ...   | Set the args for the selected service
 
             serv: Service = mem['service']
 
-            print(' .. Stopping Service ..')
+            print('Stopping Service ...')
 
             serv.Stop()
 
@@ -255,6 +251,8 @@ ARGS SERVICE *arg1* *arg2* ...   | Set the args for the selected service
         # ENABLE SERVICE
 
             serv: Service = mem['service']
+            
+            print('Enabling Service ...')
 
             serv.Enable()
 
@@ -270,6 +268,8 @@ ARGS SERVICE *arg1* *arg2* ...   | Set the args for the selected service
 
             serv: Service = mem['service']
 
+            print('Disabling Service ...')
+
             serv.Disable()
 
         #===========================================
@@ -278,6 +278,8 @@ ARGS SERVICE *arg1* *arg2* ...   | Set the args for the selected service
     elif args[0] == 'run':
     # RUN
 
+        print(f'Running Script: C:/Scripts/{args[1].replace('.', '/')}.py')
+        
         this.run(
             'run', args[1].title(), 
             'True', # VISIBLE
@@ -294,13 +296,9 @@ ARGS SERVICE *arg1* *arg2* ...   | Set the args for the selected service
         if args[1] == 'service':
         # ARGS SERVICE
 
-            mem['service'].args = args[2:]
+            mem['service'].args = args[3:]
 
-            print('Updated args for selected service')
-
-            print('Selected Service:', serv.path)
-
-            print(f'args: {args[2:]}')
+            print('Updated Arguements ...')
 
     #===========================================
     else:
