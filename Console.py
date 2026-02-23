@@ -279,6 +279,7 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for the selected service
     # RUN
 
         print(f'Running Script: C:/Scripts/{args[1].replace('.', '/')}.py')
+        print(f'Arguements: {args[2:]}')
         
         this.run(
             'run', args[1].title(), 
