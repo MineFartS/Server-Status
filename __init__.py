@@ -1,5 +1,6 @@
 from philh_myftp_biz.web import online, get
 from philh_myftp_biz.modules import Module
+from philh_myftp_biz.terminal import Log
 from philh_myftp_biz.file import YAML
 
 this = Module('C:/Scripts')
@@ -7,6 +8,8 @@ this = Module('C:/Scripts')
 options = YAML(this.file('options')).read()
 
 def alert(m):
+
+    Log.INFO(f'Alert: {m}')
 
     if online() and options['alert']['sms']:
         # Send SMS Alert
