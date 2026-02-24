@@ -61,6 +61,13 @@ HardDrives = [
         sn = '0000DHM1'
     ),
 
+    #HardDrive(
+    #    tower = 'A',
+    #    type = 'SATA',
+    #    id = 3,
+    #    sn = None
+    #),
+
     HardDrive(
         tower = 'C',
         type = 'SATA',
@@ -110,19 +117,19 @@ HardDrives = [
         sn = 'QNVZGLRX'
     ),
 
-    HardDrive(
-        tower = 'B',
-        type = 'SATA',
-        id = 11,
-        sn = '01CB9083B07Z'
-    ),
+    #HardDrive(
+    #    tower = 'B',
+    #    type = 'SATA',
+    #    id = 11,
+    #    sn = '01CB9083B07Z'
+    #),
 
-    HardDrive(
-        tower = 'C',
-        type = 'SATA',
-        id = 12,
-        sn = 'Z992XWLF'
-    ),
+    #HardDrive(
+    #    tower = 'C',
+    #    type = 'SATA',
+    #    id = 12,
+    #    sn = 'Z992XWLF'
+    #),
 
     HardDrive(
         tower = 'C',
