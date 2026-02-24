@@ -121,7 +121,7 @@ HardDrives = [
         tower = 'C',
         type = 'SATA',
         id = 12,
-        sn = 'QNVZGLVW'
+        sn = 'Z992XWLF'
     ),
 
     HardDrive(
