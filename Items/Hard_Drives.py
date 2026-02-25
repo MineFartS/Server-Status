@@ -5,12 +5,27 @@
 from philh_myftp_biz.process import RunHidden
 from typing import Literal
 
-_raw: list[dict] = RunHidden(
-    "Get-PhysicalDisk | Select-Object SerialNumber, FriendlyName, OperationalStatus, UniqueId, Usage | ConvertTo-Json",
+physical_disks: list[dict] = RunHidden(
+    "Get-PhysicalDisk | ConvertTo-Json",
+    terminal = 'ps'
+).output('json')
+
+wmi_objects: list[dict] = RunHidden(
+    "Get-WmiObject Win32_DiskDrive | ConvertTo-Json",
     terminal = 'ps'
 ).output('json')
 
 class HardDrive:
+
+    FriendlyName: str = None
+    
+    UniqueID: str = None
+    
+    Usage: Literal['Auto-Select', 'Retired'] = None 
+    
+    RegPath: str = None
+    
+    Connected: bool = False
 
     def __init__(self,
         tower: str,
@@ -25,20 +40,24 @@ class HardDrive:
         self.SerialNumber = sn
         self.Name = f'{str(id).zfill(2)}-{tower} [{type}]'
 
-        self.FriendlyName = None
-        self.UniqueID = None
-        self.Usage = None 
-        self.Connected = False
-
-        for device in _raw:
+        for device in physical_disks:
+            
             if device['SerialNumber'] == sn:
 
                 self.FriendlyName: str = device['FriendlyName']
-                self.UniqueID: str = device['UniqueId']
-                self.Usage: str = device['Usage']
+                self.UniqueID    : str = device['UniqueId']
+                self.Usage       : str = device['Usage']
                 
                 if len(self.FriendlyName) > 0:
                     self.Connected: bool = (device['OperationalStatus'] != 'Lost Communication')
+
+                break
+
+        for device in wmi_objects:
+
+            if device['SerialNumber'] == sn:
+
+                self.RegPath: str = f"HKLM:SYSTEM\\ControlSet001\\Enum\\" + device['PNPDeviceID'] 
 
                 break
 

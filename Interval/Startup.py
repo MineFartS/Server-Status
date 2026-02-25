@@ -27,7 +27,7 @@ for hdd in HardDrives:
     # Check if disk is connected
     if hdd.Connected:
     
-        # Check if disks FriendlyName differs from it's intended name
+        # If disk's FriendlyName differs from it's intended name
         if hdd.FriendlyName != hdd.Name:
 
             Log.VERB(f'Renaming HDD: "{hdd.FriendlyName}" to "{hdd.Name}"')
@@ -35,6 +35,15 @@ for hdd in HardDrives:
             # Set the new Friendly Name
             RunHidden(
                 f"Set-PhysicalDisk -UniqueId '{hdd.UniqueID}' -NewFriendlyName '{hdd.Name}'",
+                terminal = 'ps'
+            )
+
+        # If disk has a registry path 
+        if hdd.RegPath:
+
+            # Update the Friendly Name in the windows registry
+            RunHidden(
+                f"Set-ItemProperty '{hdd.RegPath}' FriendlyName '{hdd.Name}'",
                 terminal = 'ps'
             )
 
@@ -88,9 +97,6 @@ for vdisk in VirtualDisks:
 if Path('E:/').exists():
 # If mount succeeds
 
-    # Send alert
-    alert('Startup Complete')
-
     Log.INFO('Installing Modules')
 
     # Iter through all main modules
@@ -118,6 +124,9 @@ if Path('E:/').exists():
 
     # Remove the 'Nvidia Display Manager' Popup
     SysTask("NVDisplay.Container.exe").stop()
+
+    # Send alert
+    alert('Startup Complete')
 
 elif options['restart']['enabled']:
 # If mount fails and restart is enabled
