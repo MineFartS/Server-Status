@@ -42,7 +42,7 @@ for p in paths():
         try:
             
             Log.INFO(f'Deleting: {PATH}')
-            p.delete(force=True)
+            p.delete()
 
             DO_HIDE = False
             
@@ -67,11 +67,24 @@ for p in paths():
 # =================================================================================
 # RESTART MINECRAFT
 
-MC = Service('E:/Minecraft/')
-
 try:
-    MC.Stop()
-    MC.Start()
+
+    #
+    for p in Path('E:/Minecraft/Worlds').children():
+
+        #
+        world = Service(
+            'E:/Minecraft/', 
+            '--World', p.name()
+        )
+
+        #
+        if world.Running():
+
+            #
+            world.Stop()
+            world.Start()
+
 except ServiceDisabledError:
     Log.WARN('', exc_info=True)
 
