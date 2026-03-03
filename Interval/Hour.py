@@ -11,7 +11,7 @@ from philh_myftp_biz.pc import Path
 for service in Services:
     
     try:
-        service.Start()
+        service.start()
     
     except ServiceDisabledError:
         pass
@@ -33,7 +33,7 @@ MINIMUM = (now().unix - 3600*20) # 20 hours ago
 for p in temp.descendants:
     if p.is_file:
 
-        MODIFIED = p.mtime.get()
+        MODIFIED = p.mtime.current
         DIFF     = (MINIMUM - MODIFIED.unix)
 
         DELETE = (DIFF > 0)
@@ -48,6 +48,6 @@ for p in temp.descendants:
     
         if DELETE:
             # Delete File
-            p.delete(force=True)
+            p.delete()
 
 # ==================================================

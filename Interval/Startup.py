@@ -117,7 +117,7 @@ if Path('E:/').exists:
         Log.VERB(f'Starting Service: {service}')
 
         try:
-            service.Start()
+            service.start()
 
         except ServiceDisabledError as e:
             Log.FAIL('', exc_info=True)

@@ -82,8 +82,8 @@ try:
         if world.running:
 
             #
-            world.Stop()
-            world.Start()
+            world.stop()
+            world.start()
 
 except ServiceDisabledError:
     Log.WARN('', exc_info=True)

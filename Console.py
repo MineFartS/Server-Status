@@ -200,7 +200,7 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for the selected service
             print(f'Running Script: {serv._file('Start')}')
             print(f'Arguements: {serv.args}')
 
-            serv.Stop()
+            serv.stop()
             serv._run('Start')
 
         #===========================================
@@ -217,7 +217,7 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for the selected service
 
             print(f'Running Script: {serv._file('Stop')}')
 
-            serv.Stop()
+            serv.stop()
 
         #===========================================
 
