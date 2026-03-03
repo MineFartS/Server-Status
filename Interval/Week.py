@@ -12,8 +12,8 @@ E = Path('E:/')
 # HIDE ITEMS
 
 def paths():
-    yield from C.descendants()
-    yield from E.descendants()
+    yield from C.descendants
+    yield from E.descendants
 
 # Iter through all files on the 'C' and 'E' volumes
 for p in paths():
@@ -70,16 +70,16 @@ for p in paths():
 try:
 
     #
-    for p in Path('E:/Minecraft/Worlds').children():
+    for p in Path('E:/Minecraft/Worlds').children:
 
         #
         world = Service(
             'E:/Minecraft/', 
-            '--World', p.name()
+            '--World', p.name
         )
 
         #
-        if world.Running():
+        if world.running:
 
             #
             world.Stop()

@@ -70,7 +70,7 @@ while True:
 
         LogStatus(
             name = str(s.path),
-            connected = s.Running()
+            connected = s.running
         )
 
     print("\n|---------------------------------------------------------------------------------------|\n")

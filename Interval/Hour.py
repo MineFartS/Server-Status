@@ -30,8 +30,8 @@ temp = Path('E:/__temp__')
 MINIMUM = (now().unix - 3600*20) # 20 hours ago
 
 # Get all files in the temp dir
-for p in temp.descendants():
-    if p.isfile():
+for p in temp.descendants:
+    if p.is_file:
 
         MODIFIED = p.mtime.get()
         DIFF     = (MINIMUM - MODIFIED.unix)

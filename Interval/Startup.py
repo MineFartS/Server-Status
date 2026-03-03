@@ -94,7 +94,7 @@ for vdisk in VirtualDisks:
 # ===============================================================================================================
 # Send Notification with Startup Status
 
-if Path('E:/').exists():
+if Path('E:/').exists:
 # If mount succeeds
 
     Log.INFO('Installing Modules')

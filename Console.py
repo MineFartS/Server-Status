@@ -164,8 +164,8 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for the selected service
 
                 for x, serv in enumerate(Services):
 
-                    RUNNING = ('Running' if serv.Running() else 'Stopped')
-                    ENABLED = (' Enabled' if serv.Enabled() else 'Disabled')
+                    RUNNING = ('Running' if serv.running else 'Stopped')
+                    ENABLED = (' Enabled' if serv.enabled else 'Disabled')
 
                     print(f'{x}: [{RUNNING}, {ENABLED}] {serv.path} ')
 
@@ -231,9 +231,9 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for the selected service
 
             serv: Service = mem['service']
 
-            RUNNING = str(serv.Running())
+            RUNNING = str(serv.running)
 
-            ENABLED = str(serv.Enabled())
+            ENABLED = str(serv.enabled)
 
             print(f"""
 |================|
