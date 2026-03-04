@@ -255,7 +255,7 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for the selected service
             
             print('Enabling Service ...')
 
-            serv.Enable()
+            serv.enable()
 
         #===========================================
 
@@ -271,7 +271,7 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for the selected service
 
             print('Disabling Service ...')
 
-            serv.Disable()
+            serv.disable()
 
         #===========================================
 
