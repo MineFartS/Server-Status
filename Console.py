@@ -1,26 +1,15 @@
 from philh_myftp_biz.modules import Service
 from philh_myftp_biz.terminal import cls
+from philh_myftp_biz.text import split
 from .Items.Services import Services
-from shlex import split
 from . import this
 
 # Session Memory
 mem = {}
 
-print(f"""
-|---------------------------|
-        Phil's Server
-      [philh.myftp.biz]
+#===========================================================================
 
-     MANAGEMENT  CONSOLE
-|---------------------------|
-
-Type 'help' for a list of commands
-""")
-
-while True:
-
-    args = split(input('\n\\> ').lower())
+def run(*args:str) -> None:
 
     if len(args) == 0:
         print("""
@@ -40,6 +29,17 @@ Type 'help' for a list of commands
     # CLS
 
         cls()
+
+        print(f"""
+|---------------------------|
+        Phil's Server
+      [philh.myftp.biz]
+
+     MANAGEMENT  CONSOLE
+|---------------------------|
+
+Type 'help' for a list of commands
+""")
 
     #===========================================
     elif args[0] == 'help':
@@ -307,3 +307,15 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for the selected service
 
 Type 'help' for a list of commands
 """)
+
+#===========================================================================
+
+run('cls')
+
+while True:
+
+    rawinput = input('\n\\> ').lower()
+
+    run(*split(rawinput))
+
+#===========================================================================
