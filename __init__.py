@@ -1,3 +1,9 @@
+
+try:
+    import philh_myftp_biz # pyright: ignore[reportUnusedImport]
+except ModuleNotFoundError:
+    from . import Setup # pyright: ignore[reportUnusedImport]
+
 from philh_myftp_biz.web import is_online, get
 from philh_myftp_biz.modules import Module
 from philh_myftp_biz.terminal import Log
