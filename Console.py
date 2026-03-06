@@ -197,7 +197,7 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for the selected service
 
             serv: Service = mem['service']
 
-            print(f'Running Script: {serv._file('Start')}')
+            print(f'Running Script: {serv.file('Start')}')
             print(f'Arguements: {serv.args}')
 
             serv.stop()
@@ -215,7 +215,7 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for the selected service
 
             serv: Service = mem['service']
 
-            print(f'Running Script: {serv._file('Stop')}')
+            print(f'Running Script: {serv.file('Stop')}')
 
             serv.stop()
 
