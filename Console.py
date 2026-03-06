@@ -1,11 +1,8 @@
 from philh_myftp_biz.modules import Service
-from philh_myftp_biz.modules import Module
 from philh_myftp_biz.terminal import cls
 from .Items.Services import Services
 from shlex import split
-
-
-this = Module('C:/Scripts')
+from . import this
 
 # Session Memory
 mem = {}
