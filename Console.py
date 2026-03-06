@@ -239,10 +239,9 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for the selected service
                 ENABLED = str(serv.enabled)
 
                 print(f"""
-    |================|
-    | Running: {RUNNING:5} |
-    | Enabled: {ENABLED:5} |   
-    |================|""")
+Running: {RUNNING}
+Enabled: {ENABLED}
+""")
 
             #===========================================
 
@@ -309,11 +308,15 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for the selected service
         case 'terminate':
         # TERMINATE
 
-            PYTHON  = SysTask('python.exe')
+            PIDs = []
 
-            GECKO   = SysTask('geckodriver.exe')
+            PIDs += SysTask('python.exe').PIDs
 
-            FIREFOX = SysTask('firefox.exe')
+            PIDs += SysTask('geckodriver.exe').PIDs
+
+            PIDs += SysTask('firefox.exe').PIDs
+
+            print(PIDs)
 
             # TODO
 
@@ -322,9 +325,9 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for the selected service
         # *UNKNOWN*
 
             print(f"""
-    "{args[0]}" NOT IMPLEMENTED
+"{args[0]}" NOT IMPLEMENTED
 
-    Type 'help' for a list of commands
+Type 'help' for a list of commands
     """)
 
 #===========================================================================
