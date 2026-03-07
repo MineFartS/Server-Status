@@ -1,17 +1,9 @@
-from philh_myftp_biz.process import Run
-
-def disable_service(name:str):
-
-    # Stop Service
-    Run(['net', 'stop', name])
-
-    # Disable Service
-    Run(['sc', 'config', name, 'start=disabled'])
+from philh_myftp_biz.pc import WindowsService
 
 #====================================================
 
-disable_service('wuauserv')
+WindowsService('wuauserv').disable()
 
-disable_service('bits')
+WindowsService('bits').disable()
 
-disable_service('dosvc')
+WindowsService('dosvc').disable()
