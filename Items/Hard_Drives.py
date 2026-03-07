@@ -1,19 +1,20 @@
+from philh_myftp_biz.process import RunHidden
+from typing import Literal
 
 # ===============================================================================================================
 # PARSER
 
-from philh_myftp_biz.process import RunHidden
-from typing import Literal
-
 physical_disks: list[dict] = RunHidden(
     "Get-PhysicalDisk | ConvertTo-Json",
     terminal = 'ps'
-).output('json')
+).output(format='json')
 
 wmi_objects: list[dict] = RunHidden(
     "Get-WmiObject Win32_DiskDrive | ConvertTo-Json",
     terminal = 'ps'
-).output('json')
+).output(format='json')
+
+#==================================
 
 class HardDrive:
 
@@ -21,7 +22,7 @@ class HardDrive:
     
     UniqueID: str = None
     
-    Usage: Literal['Auto-Select', 'Retired'] = None 
+    Usage: Literal['Auto-Select', 'Retired'] = None  # pyright: ignore[reportRedeclaration]
     
     RegPath: str = None
     
@@ -32,7 +33,7 @@ class HardDrive:
         type: Literal['SATA', 'USB'],
         id: int,
         sn: str
-    ):
+    ) -> None:
         
         self.Tower = tower
         self.Type = type
@@ -64,7 +65,7 @@ class HardDrive:
 # ===============================================================================================================
 # CONFIGURATION
 
-HardDrives = [
+HardDrives: list[HardDrive] = [
 
     HardDrive(
         tower = 'A',
