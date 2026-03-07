@@ -1,4 +1,5 @@
 from philh_myftp_biz.process import RunHidden
+from functools import cache, cached_property
 from philh_myftp_biz.terminal import Log
 from typing import Literal
 
@@ -7,29 +8,23 @@ Log.VERB('Collecting Hard Drives')
 # ===============================================================================================================
 # PARSER
 
-physical_disks: list[dict] = RunHidden(
-    "Get-PhysicalDisk | ConvertTo-Json",
-    terminal = 'ps'
-).output(format='json')
+@cache
+def physical_disks() -> list[dict]:
+    return RunHidden(
+        "Get-PhysicalDisk | ConvertTo-Json",
+        terminal = 'ps'
+    ).output(format='json') # pyright: ignore[reportReturnType]
 
-wmi_objects: list[dict] = RunHidden(
-    "Get-WmiObject Win32_DiskDrive | ConvertTo-Json",
-    terminal = 'ps'
-).output(format='json')
+@cache
+def wmi_objects() -> list[dict]:
+    return RunHidden(
+        "Get-WmiObject Win32_DiskDrive | ConvertTo-Json",
+        terminal = 'ps'
+    ).output(format='json') # pyright: ignore[reportReturnType]
 
 #==================================
 
 class HardDrive:
-
-    FriendlyName: str = None
-    
-    UniqueID: str = None
-    
-    Usage: Literal['Auto-Select', 'Retired'] = None  # pyright: ignore[reportRedeclaration]
-    
-    RegPath: str = None
-    
-    Connected: bool = False
 
     def __init__(self,
         tower: str,
@@ -37,33 +32,69 @@ class HardDrive:
         id: int,
         sn: str
     ) -> None:
-        
         self.Tower = tower
         self.Type = type
         self.ID = id
         self.SerialNumber = sn
         self.Name = f'{str(id).zfill(2)}-{tower} [{type}]'
 
-        for device in physical_disks:
+    @cached_property
+    def _physical_disk(self) -> None | dict:
+
+        for device in physical_disks():
             
-            if device['SerialNumber'] == sn:
+            if device['SerialNumber'] == self.SerialNumber:
 
-                self.FriendlyName: str = device['FriendlyName']
-                self.UniqueID    : str = device['UniqueId']
-                self.Usage       : str = device['Usage']
-                
-                if len(self.FriendlyName) > 0:
-                    self.Connected: bool = (device['OperationalStatus'] != 'Lost Communication')
+                return device
+            
+    @cached_property
+    def _wmi_object(self) -> None | dict:
 
-                break
+        for device in wmi_objects():
+            
+            if device['SerialNumber'] == self.SerialNumber:
 
-        for device in wmi_objects:
+                return device
 
-            if device['SerialNumber'] == sn:
+    @cached_property
+    def FriendlyName(self) -> None | str:
+        
+        if self._physical_disk:
+            fname: str = self._physical_disk['FriendlyName']
 
-                self.RegPath: str = f"HKLM:SYSTEM\\ControlSet001\\Enum\\" + device['PNPDeviceID'] 
+            if len(fname) > 0:
+                return fname
 
-                break
+    @cached_property
+    def UniqueID(self) -> None | str:
+        if self._physical_disk:
+            return self._physical_disk['UniqueId']
+        
+    @cached_property
+    def Usage(self) -> None | Literal['Auto-Select', 'Retired']:
+        if self._physical_disk:
+            return self._physical_disk['Usage']
+
+    @cached_property
+    def Connected(self) -> bool:
+
+        if self.FriendlyName:
+            
+            OpStatus: str = self._physical_disk['OperationalStatus']
+
+            return (OpStatus != 'Lost Communication')
+        
+        else:
+            return False
+        
+    @cached_property
+    def RegPath(self) -> str | None:
+
+        if self._wmi_object:
+
+            pnpID: str = self._wmi_object['PNPDeviceID']
+
+            return f"HKLM:SYSTEM\\ControlSet001\\Enum\\{pnpID}"
 
 # ===============================================================================================================
 # CONFIGURATION
@@ -84,12 +115,12 @@ HardDrives: list[HardDrive] = [
         sn = '0000DHM1'
     ),
 
-    #HardDrive(
-    #    tower = 'A',
-    #    type = 'SATA',
-    #    id = 3,
-    #    sn = None
-    #),
+    HardDrive(
+        tower = 'A',
+        type = 'SATA',
+        id = 3,
+        sn = None
+    ),
 
     HardDrive(
         tower = 'C',
@@ -140,19 +171,19 @@ HardDrives: list[HardDrive] = [
         sn = 'QNVZGLRX'
     ),
 
-    #HardDrive(
-    #    tower = 'B',
-    #    type = 'SATA',
-    #    id = 11,
-    #    sn = '01CB9083B07Z'
-    #),
+    HardDrive(
+        tower = 'B',
+        type = 'SATA',
+        id = 11,
+        sn = '01CB9083B07Z'
+    ),
 
-    #HardDrive(
-    #    tower = 'C',
-    #    type = 'SATA',
-    #    id = 12,
-    #    sn = 'Z992XWLF'
-    #),
+    HardDrive(
+        tower = 'C',
+        type = 'SATA',
+        id = 12,
+        sn = 'Z992XWLF'
+    ),
 
     HardDrive(
         tower = 'C',
