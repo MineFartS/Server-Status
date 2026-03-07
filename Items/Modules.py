@@ -1,4 +1,7 @@
 from philh_myftp_biz.modules import Module
+from philh_myftp_biz.terminal import Log
+
+Log.VERB('Collecting Modules')
 
 # ===============================================================================================================
 # CONFIGURATION

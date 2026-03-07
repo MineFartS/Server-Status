@@ -1,6 +1,11 @@
+'=======================================================
 
 ' ARG[0]: str  = Script To Run
 ' ARG[1]: bool = Show Terminal Window (Default=True)
+' ARG[2]: bool = Verbose (Default=False)
+
+
+' EX: wscript run.vbs Interval.Startup True False
 
 '=======================================================
 
@@ -8,7 +13,7 @@
 CMD = "python.exe -m Scripts " & WScript.Arguments(0)
 
 '=======================================================
-' VISIBLE PARG
+' VISIBLE [POSITIONAL ARG]
 
 if WScript.Arguments.Count = 2 then
     Visible = CBool(WScript.Arguments(1))
@@ -17,7 +22,7 @@ else
 end if
 
 '=======================================================
-' VERBOSE PARG
+' VERBOSE [POSITIONAL ARG]
 
 if WScript.Arguments.Count = 3 then
     Verbose = CBool(WScript.Arguments(2))

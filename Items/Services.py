@@ -1,4 +1,7 @@
 from philh_myftp_biz.modules import Service
+from philh_myftp_biz.terminal import Log
+
+Log.VERB('Collecting Services')
 
 # ===============================================================================================================
 # CONFIGURATION

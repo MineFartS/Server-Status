@@ -5,6 +5,10 @@ from .. import options, alert, this
 from philh_myftp_biz.pc import Path
 from philh_myftp_biz import VERBOSE
 
+#=================
+
+Log.INFO('Collecting Items')
+
 from ..Items.Virtual_Disks import VirtualDisks
 from ..Items.Hard_Drives import HardDrives
 from ..Items.Services import Services

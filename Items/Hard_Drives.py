@@ -1,5 +1,8 @@
 from philh_myftp_biz.process import RunHidden
+from philh_myftp_biz.terminal import Log
 from typing import Literal
+
+Log.VERB('Collecting Hard Drives')
 
 # ===============================================================================================================
 # PARSER

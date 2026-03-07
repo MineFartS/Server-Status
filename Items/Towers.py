@@ -1,8 +1,10 @@
+from philh_myftp_biz.terminal import Log
+from .Hard_Drives import HardDrives
+
+Log.VERB('Collecting Towers')
 
 # ===============================================================================================================
 # PARSER
-
-from .Hard_Drives import HardDrives
 
 class Tower:
 

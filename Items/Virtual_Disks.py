@@ -1,4 +1,7 @@
 from philh_myftp_biz.process import RunHidden
+from philh_myftp_biz.terminal import Log
+
+Log.VERB('Collecting Virtual Disks')
 
 # ===============================================================================================================
 

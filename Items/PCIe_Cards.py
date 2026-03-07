@@ -1,8 +1,11 @@
+from philh_myftp_biz.process import RunHidden
+from philh_myftp_biz.terminal import Log
+from typing import Literal
+
+Log.VERB('Collecting PCIe Cards')
+
 # ===============================================================================================================
 # PARSER
-
-from philh_myftp_biz.process import RunHidden
-from typing import Literal
 
 _raw: list[dict] = RunHidden(
     "Get-PnpDevice | Where-Object InstanceId -like 'PCI\\*' | Select-Object DeviceId, Status | ConvertTo-Json",
@@ -19,7 +22,7 @@ class PCIeCard:
         
         if isinstance(slot, int):
             self.Name = f'Slot {str(slot)} [x{str(lanes)}]'
-        elif isinstance(slot, str):
+        elif isinstance(slot, str): # pyright: ignore[reportUnnecessaryIsInstance]
             self.Name = f'{slot} [x{str(lanes)}]'
 
         self.Lanes = lanes
