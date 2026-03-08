@@ -1,4 +1,5 @@
 from philh_myftp_biz.process import RunHidden
+from functools import cache, cached_property
 from philh_myftp_biz.terminal import Log
 from typing import Literal
 
@@ -7,10 +8,12 @@ Log.VERB('Collecting PCIe Cards')
 # ===============================================================================================================
 # PARSER
 
-_raw: list[dict] = RunHidden(
-    "Get-PnpDevice | Where-Object InstanceId -like 'PCI\\*' | Select-Object DeviceId, Status | ConvertTo-Json",
-    terminal = 'ps'
-).output('json')
+@cache
+def pnp_devices() -> list[dict]:
+    return RunHidden(
+        "Get-PnpDevice | Where-Object InstanceId -like 'PCI\\*' | Select-Object DeviceId, Status | ConvertTo-Json",
+        terminal = 'ps'
+    ).output('json') # pyright: ignore[reportReturnType]
 
 class PCIeCard:
 
@@ -18,23 +21,35 @@ class PCIeCard:
         slot: Literal[1, 2, 3, 4, 'M.2'],
         lanes: Literal[1, 4, 16],
         id: str
-    ):
+    ) -> None:
         
         if isinstance(slot, int):
             self.Name = f'Slot {str(slot)} [x{str(lanes)}]'
-        elif isinstance(slot, str): # pyright: ignore[reportUnnecessaryIsInstance]
+
+        elif isinstance(slot, str):
             self.Name = f'{slot} [x{str(lanes)}]'
 
-        self.Lanes = lanes
-        self.DeviceID = id
-        self.Connected = False
+        self.Lanes: int = lanes
+        
+        self.DeviceID: str = id
 
-        for device in _raw:
-            if device['DeviceId'] == id:
+    @cached_property
+    def _pnp_device(self) -> None | dict:
 
-                self.Connected: bool = (device['Status'] == 'OK')
+        for device in pnp_devices():
+            
+            if device['DeviceId'] == self.DeviceID:
 
-                break
+                return device
+
+    @cached_property
+    def Connected(self) -> bool:
+
+        if self._pnp_device:
+            return (self._pnp_device['Status'] == 'OK')
+        
+        else:
+            return False
 
 # ===============================================================================================================
 # CONFIGURATION

@@ -1,5 +1,7 @@
+from .Hard_Drives import HardDrives, HardDrive
 from philh_myftp_biz.terminal import Log
-from .Hard_Drives import HardDrives
+from functools import cached_property
+from typing import Generator
 
 Log.VERB('Collecting Towers')
 
@@ -14,15 +16,19 @@ class Tower:
 
         self.Name = f'Tower {id}'
 
-        self.Connected: bool = False
+    @cached_property
+    def HardDrives(self) -> Generator[HardDrive]:
 
         for hdd in HardDrives:
         
-            if (hdd.Tower == id) and hdd.Connected:
+            if hdd.Tower == self.ID:
 
-                self.Connected = True
+                yield hdd
 
-                break
+    @cached_property
+    def Connected(self) -> bool:
+
+        return any(hdd.Connected for hdd in self.HardDrives)
         
 # ===============================================================================================================
 # CONFIGURATION

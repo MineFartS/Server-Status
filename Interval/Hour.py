@@ -1,4 +1,4 @@
-from philh_myftp_biz.modules import ServiceDisabledError, Module
+from philh_myftp_biz.modules import Module
 from philh_myftp_biz.terminal import Log
 from ..Items.Services import Services
 from philh_myftp_biz.time import now
@@ -9,18 +9,18 @@ from philh_myftp_biz.pc import Path
 
 # Ensure all Services are Running
 for service in Services:
-    
-    try:
+
+    if (not service.running) and service.enabled:
+        
         service.start()
-    
-    except ServiceDisabledError:
-        pass
 
 # ==================================================
 # MINECRAFT
 
-# Backup Worlds
-Module('E:/Minecraft').run('Backup')
+MC = Module('E:/Minecraft')
+
+# Backup Minecraft Worlds
+MC.run('Backup')
 
 # ==================================================
 # CLEAN TEMP
@@ -34,6 +34,7 @@ for p in temp.descendants:
     if p.is_file:
 
         MODIFIED = p.mtime.current
+
         DIFF     = (MINIMUM - MODIFIED.unix)
 
         DELETE = (DIFF > 0)

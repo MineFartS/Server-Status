@@ -1,81 +1,69 @@
 from philh_myftp_biz.modules import ServiceDisabledError
 from philh_myftp_biz.process import RunHidden, SysTask
-from philh_myftp_biz.terminal import Log
+from philh_myftp_biz.terminal import Log, ParsedArgs
 from .. import options, alert, this
 from philh_myftp_biz.pc import Path
 from philh_myftp_biz import VERBOSE
 
 #=================
 
-Log.INFO('Collecting Items')
-
 from ..Items.Virtual_Disks import VirtualDisks
 from ..Items.Hard_Drives import HardDrives
 from ..Items.Services import Services
 from ..Items.Modules import Modules
 
-# TODO Add --quick/-q flag to skip the hard drives and virtual drives
+#=================
 
-# TODO Change the error checking to an explicit check for the M.2 Card
+args = ParsedArgs()
+
+args.Flag(
+    name = 'quick',
+    letter = 'q'
+)
 
 # ===============================================================================================================
 # Unretire and Fix Names for Physical Disks 
 
-Log.INFO('Initializing Hard Drives')
+if not args['quick']:
 
-# Iter through Hard Drives
-for hdd in HardDrives:
+    Log.INFO('Processing Hard Drives')
 
-    Log.VERB(
-        f'Found Hard Drive:\n'+ \
-        f"name='{hdd.Name}'\n"+ \
-        f"connected={hdd.Connected}"
-    )
+    # Iter through Hard Drives
+    for hdd in HardDrives:
 
-    # Check if disk is connected
-    if hdd.Connected:
-    
-        # If disk's FriendlyName differs from it's intended name
-        if hdd.FriendlyName != hdd.Name:
+        Log.VERB(
+            f'Processing Hard Drive:\n'+ \
+            f"name='{hdd.Name}'\n"+ \
+            f"connected={hdd.Connected}"
+        )
 
-            Log.VERB(f'Renaming HDD: "{hdd.FriendlyName}" to "{hdd.Name}"')
-            
-            # Set the new Friendly Name
-            RunHidden(
-                f"Set-PhysicalDisk -UniqueId '{hdd.UniqueID}' -NewFriendlyName '{hdd.Name}'",
-                terminal = 'ps'
-            )
+        # Check if disk is connected
+        if hdd.Connected:
+        
+            # If disk's FriendlyName differs from it's intended name
+            if hdd.FriendlyName != hdd.Name:
 
-        # If disk has a registry path 
-        if hdd.RegPath:
+                Log.VERB(f'Renaming HDD: "{hdd.FriendlyName}" to "{hdd.Name}"')
+                
+                hdd.FriendlyName = hdd.Name
 
-            # Update the Friendly Name in the windows registry
-            RunHidden(
-                f"Set-ItemProperty '{hdd.RegPath}' FriendlyName '{hdd.Name}'",
-                terminal = 'ps'
-            )
+            # Check if disk is retired 
+            if hdd.Usage == 'Retired':
 
-        # Check if disk is retired 
-        if hdd.Usage == 'Retired':
+                Log.VERB(f'Reactivating HDD: {hdd.Name}')
 
-            Log.VERB(f'Reactivating HDD: {hdd.Name}')
-
-            # Update the disk 'Usage' to 'AutoSelect'
-            RunHidden(
-                f"Set-PhysicalDisk -UniqueId '{hdd.UniqueID}' -Usage AutoSelect",
-                terminal = 'ps'
-            )
+                hdd.Usage = 'Auto-Select'
 
 # ===============================================================================================================
 # Repair and Mount Virtual Disks
 
-Log.INFO('Initializing Virtual Disks')
+Log.INFO('Processing Virtual Disks')
 
 # Iter through Virtual Disks
 for vdisk in VirtualDisks:
 
     Log.VERB(
-        f'Found Virtual Disk:\n'+ \
+        f'Processing Virtual Disk:\n'+ \
         f"name='{vdisk.Name}'\n"+ \
         f"connected={vdisk.Connected}"
     )
@@ -85,19 +73,11 @@ for vdisk in VirtualDisks:
 
         Log.VERB(f'Repairing VDisk: {vdisk.Name}')
 
-        # Repair vdisk
-        RunHidden(
-            f"Repair-VirtualDisk -UniqueId '{vdisk.UniqueID}'",
-            terminal = 'ps'
-        )
+        vdisk.repair()
 
     Log.VERB(f'Mounting VDisk: {vdisk.Name}')
 
-    # Connect vdisk
-    RunHidden(
-        f"Connect-VirtualDisk -UniqueId '{vdisk.UniqueID}'",
-        terminal = 'ps'
-    )
+    vdisk.mount()
 
 # ===============================================================================================================
 # Send Notification with Startup Status

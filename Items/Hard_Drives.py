@@ -57,24 +57,10 @@ class HardDrive:
                 return device
 
     @cached_property
-    def FriendlyName(self) -> None | str:
-        
-        if self._physical_disk:
-            fname: str = self._physical_disk['FriendlyName']
-
-            if len(fname) > 0:
-                return fname
-
-    @cached_property
     def UniqueID(self) -> None | str:
         if self._physical_disk:
             return self._physical_disk['UniqueId']
         
-    @cached_property
-    def Usage(self) -> None | Literal['Auto-Select', 'Retired']:
-        if self._physical_disk:
-            return self._physical_disk['Usage']
-
     @cached_property
     def Connected(self) -> bool:
 
@@ -95,6 +81,61 @@ class HardDrive:
             pnpID: str = self._wmi_object['PNPDeviceID']
 
             return f"HKLM:SYSTEM\\ControlSet001\\Enum\\{pnpID}"
+
+    #================
+    # FriendlyName
+
+    @property
+    def FriendlyName(self) -> None | str:
+        
+        if self._physical_disk:
+            
+            fname: str = self._physical_disk['FriendlyName']
+
+            if len(fname) > 0:
+                
+                return fname
+
+    @FriendlyName.setter
+    def FriendlyName(self,
+        name: str
+    ) -> None:
+        
+        RunHidden(
+            f"Set-PhysicalDisk -UniqueId '{self.UniqueID}' -NewFriendlyName '{name}'",
+            terminal = 'ps'
+        )
+
+        # If disk has a registry path 
+        if self.RegPath:
+
+            # Update the Friendly Name in the windows registry
+            RunHidden(
+                f"Set-ItemProperty '{self.RegPath}' FriendlyName '{self.Name}'",
+                terminal = 'ps'
+            )
+
+    #================
+    # Usage
+
+    @property
+    def Usage(self) -> None | Literal['Auto-Select', 'Retired']:
+        
+        if self._physical_disk:
+            
+            return self._physical_disk['Usage']
+        
+    @Usage.setter
+    def Usage(self,
+        usage: Literal['Auto-Select', 'Retired']
+    ) -> None:
+        
+        RunHidden(
+            f"Set-PhysicalDisk -UniqueId '{self.UniqueID}' -Usage {usage}",
+            terminal = 'ps'
+        )
+
+    #================
 
 # ===============================================================================================================
 # CONFIGURATION

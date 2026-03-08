@@ -26,12 +26,14 @@ class VirtualDisk:
     def __init__(self,
         name: str
     ) -> None:
+        
         self.Name = name
 
     @cached_property
     def UniqueID(self) -> None | str:
 
         if self._virtual_disk:
+            
             return self._virtual_disk['UniqueId']
 
     @cached_property
@@ -54,6 +56,18 @@ class VirtualDisk:
             if device['FriendlyName'].lower() == self.Name.lower():
 
                 return device
+
+    def repair(self) -> None:
+        RunHidden(
+            f"Repair-VirtualDisk -UniqueId '{self.UniqueID}'",
+            terminal = 'ps'
+        )
+
+    def mount(self) -> None:
+        RunHidden(
+            f"Connect-VirtualDisk -UniqueId '{self.UniqueID}'",
+            terminal = 'ps'
+        )
 
 # ===============================================================================================================
 

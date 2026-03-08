@@ -1,19 +1,14 @@
-from philh_myftp_biz.modules import Service, ServiceDisabledError
-from philh_myftp_biz.process import Run, RunHidden
+from philh_myftp_biz.modules import Service
 from philh_myftp_biz.terminal import Log
 from philh_myftp_biz.pc import Path
-from philh_myftp_biz import VERBOSE
-from functools import partial
-
-C = Path('C:/')
-E = Path('E:/')
+from typing import Generator
 
 # =================================================================================
 # HIDE ITEMS
 
-def paths():
-    yield from C.descendants
-    yield from E.descendants
+def paths() -> Generator[Path]:
+    yield from Path('C:/').descendants
+    yield from Path('E:/').descendants
 
 # Iter through all files on the 'C' and 'E' volumes
 for p in paths():
@@ -67,56 +62,17 @@ for p in paths():
 # =================================================================================
 # RESTART MINECRAFT
 
-try:
+# Iter through minecraft world dirs
+for p in Path('E:/Minecraft/Worlds').children:
 
-    #
-    for p in Path('E:/Minecraft/Worlds').children:
-
-        #
-        world = Service(
-            'E:/Minecraft/', 
-            '--World', p.name
-        )
-
-        #
-        if world.running:
-
-            #
-            world.stop()
-            world.start()
-
-except ServiceDisabledError:
-    Log.WARN('', exc_info=True)
-
-# =================================================================================
-# BACKUP FILESYSTEM
-
-syncord_dir = Path('C:/Scripts/exec/syncord/')
-
-folders = [
-    E.child('Users/philh/'), # philh
-    E.child('Virtual Machines/Hyper-V/'), # Hyper-V
-    E.child('Website/Root') # Root
-]
-
-match VERBOSE:
-
-    case  True: RunFunc = partial(
-        Run, 
-        dir = syncord_dir, 
-        terminal = 'py'
+    world = Service(
+        'E:/Minecraft/', 
+        '--World', p.name
     )
 
-    case False: RunFunc = partial(
-        RunHidden, 
-        dir = syncord_dir, 
-        terminal = 'py'
-    )
+    if world.running and world.enabled:
 
-for src in folders:
-
-    Log.INFO(f'Uploading Folder: {src}')
-
-    RunFunc(['main.py', 'upload', src])
+        world.stop()
+        world.start()
 
 # =================================================================================
