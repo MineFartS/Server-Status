@@ -100,7 +100,7 @@ LIST SERVICE      | Get a list of services
             # HELP SELECT
 
                 print("""
-SELECT SERVICE [#|slice|*] | Select services 
+SELECT SERVICE [#|#..|..#|#..#|#,#] | Select services (Ex: select service 1,3)
 """)
 
             #===========================================
@@ -211,7 +211,7 @@ ARGS SERVICE # = *arg1* *arg2* ...   | Set the args for a specific service
 
                 for serv in services:
 
-                    print(f'Running: {serv.file('Start')} ({serv.args})')
+                    print(f'Running: {serv.file('Start')} {serv.args}')
 
                     serv.start(force=True)
 
