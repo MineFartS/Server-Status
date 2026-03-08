@@ -2,7 +2,6 @@ from philh_myftp_biz.text import split, to_slice
 from philh_myftp_biz.terminal import cls, warn
 from philh_myftp_biz.modules import Service
 from .Items import Services, Modules
-from . import this
 
 #=============
 
@@ -298,7 +297,7 @@ ARGS SERVICE # = *arg1* *arg2* ...   | Set the args for a specific service
 
             print(f'Running: C:/Scripts/{args[1].replace('.', '/')}.py {args[2:]}')
             
-            this.run(
+            Modules[0].run(
                 'run', args[1].title(), 
                 'True', # VISIBLE
                 ('-v' in args) # VERBOSE
