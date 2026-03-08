@@ -20,7 +20,7 @@ def alert(m:str) -> None:
     if is_online() and options['alert']['sms']:
         # Send SMS Alert
         get(
-            url = 'https://script.google.com/macros/s/AKfycbztUPSGrf9lnl3_qIBjBui6pDSl_errjxdEi_9LnGNO0TjgMeZDBvWvrQBU36P80x0/exec',
+            url = 'https://script.google.com/macros/s/AKfycbyKYV2-Q1JUtMr1FdKR5eP-Bxy5m1EOd8EOFH9ghueqN-zZqQpPa9PEi8ZFz5T5uQc1Xg/exec',
             params = {'message' : m}
         )
 
