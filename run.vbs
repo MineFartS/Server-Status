@@ -4,13 +4,12 @@
 ' ARG[1]: bool = Show Terminal Window (Default=True)
 ' ARG[2]: bool = Verbose (Default=False)
 
-
 ' EX: wscript run.vbs Interval.Startup True False
 
 '=======================================================
 
 ' Get Method Name from first arguement
-CMD = "python.exe -m Scripts " & WScript.Arguments(0)
+CMD = "python.exe -m Scripts." & WScript.Arguments(0)
 
 '=======================================================
 ' VISIBLE [POSITIONAL ARG]
