@@ -75,9 +75,11 @@ for vdisk in VirtualDisks:
 
         vdisk.repair()
 
-    Log.VERB(f'Mounting VDisk: {vdisk.Name}')
+    if not vdisk.Mounted:
 
-    vdisk.mount()
+        Log.VERB(f'Mounting VDisk: {vdisk.Name}')
+
+        vdisk.Mounted = True
 
 # ===============================================================================================================
 # Send Notification with Startup Status

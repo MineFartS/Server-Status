@@ -10,7 +10,7 @@ Log.VERB('Collecting Virtual Disks')
 def virtual_disks() -> list[dict]:
 
     data: dict | list[dict] = RunHidden(
-        "Get-VirtualDisk | Select-Object FriendlyName, UniqueId, HealthStatus | ConvertTo-Json",
+        "Get-VirtualDisk | ConvertTo-Json",
         terminal = 'ps'
     ).output('json')
 
@@ -28,6 +28,14 @@ class VirtualDisk:
     ) -> None:
         
         self.Name = name
+
+    def clear_cache(self):
+
+        del self._virtual_disk
+
+        del self.Connected
+
+        virtual_disks.cache_clear()
 
     @cached_property
     def UniqueID(self) -> None | str:
@@ -63,11 +71,40 @@ class VirtualDisk:
             terminal = 'ps'
         )
 
-    def mount(self) -> None:
-        RunHidden(
-            f"Connect-VirtualDisk -UniqueId '{self.UniqueID}'",
-            terminal = 'ps'
-        )
+    #================
+    # Usage
+
+    @property
+    def Mounted(self) -> bool:
+        
+        if self._virtual_disk:
+
+            DetachedReason: str = self._virtual_disk['DetachedReason']
+            
+            return (DetachedReason == 'None')
+        
+        else:
+
+            return False
+        
+    @Mounted.setter
+    def Mounted(self,
+        mounted: bool
+    ) -> None:
+        
+        if self.Mounted != mounted:
+
+            if mounted:
+                cmd = 'Connect'
+            else:
+                cmd = 'Disconnect'
+
+            RunHidden(
+                f"{cmd}-VirtualDisk -UniqueId '{self.UniqueID}'",
+                terminal = 'ps'
+            )
+
+    #================
 
 # ===============================================================================================================
 

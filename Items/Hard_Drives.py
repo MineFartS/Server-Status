@@ -38,6 +38,14 @@ class HardDrive:
         self.SerialNumber = sn
         self.Name = f'{str(id).zfill(2)}-{tower} [{type}]'
 
+    def clear_cache(self) -> None:
+
+        del self._physical_disk
+
+        del self.Connected
+
+        physical_disks.cache_clear()
+
     @cached_property
     def _physical_disk(self) -> None | dict:
 
@@ -89,31 +97,33 @@ class HardDrive:
     def FriendlyName(self) -> None | str:
         
         if self._physical_disk:
-            
-            fname: str = self._physical_disk['FriendlyName']
 
-            if len(fname) > 0:
+            FriendlyName: str = self._physical_disk['FriendlyName']
+
+            if len(FriendlyName) > 0:
                 
-                return fname
+                return FriendlyName
 
     @FriendlyName.setter
     def FriendlyName(self,
         name: str
     ) -> None:
         
-        RunHidden(
-            f"Set-PhysicalDisk -UniqueId '{self.UniqueID}' -NewFriendlyName '{name}'",
-            terminal = 'ps'
-        )
-
-        # If disk has a registry path 
-        if self.RegPath:
-
-            # Update the Friendly Name in the windows registry
+        if name != self.FriendlyName:
+        
             RunHidden(
-                f"Set-ItemProperty '{self.RegPath}' FriendlyName '{self.Name}'",
+                f"Set-PhysicalDisk -UniqueId '{self.UniqueID}' -NewFriendlyName '{name}'",
                 terminal = 'ps'
             )
+
+            # If disk has a registry path 
+            if self.RegPath:
+
+                # Update the Friendly Name in the windows registry
+                RunHidden(
+                    f"Set-ItemProperty '{self.RegPath}' FriendlyName '{self.Name}'",
+                    terminal = 'ps'
+                )
 
     #================
     # Usage
