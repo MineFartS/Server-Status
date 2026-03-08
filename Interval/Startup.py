@@ -14,6 +14,10 @@ from ..Items.Hard_Drives import HardDrives
 from ..Items.Services import Services
 from ..Items.Modules import Modules
 
+# TODO Add --quick/-q flag to skip the hard drives and virtual drives
+
+# TODO Change the error checking to an explicit check for the M.2 Card
+
 # ===============================================================================================================
 # Unretire and Fix Names for Physical Disks 
 
