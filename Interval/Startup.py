@@ -1,61 +1,62 @@
+from ..Items import VirtualDisks, HardDrives, Services, Modules, PCIeCards
 from philh_myftp_biz.modules import ServiceDisabledError
 from philh_myftp_biz.process import RunHidden, SysTask
-from philh_myftp_biz.terminal import Log, ParsedArgs
-from .. import options, alert, this
-from philh_myftp_biz.pc import Path
+from philh_myftp_biz.terminal import Log
 from philh_myftp_biz import VERBOSE
-
-#=================
-
-from ..Items.Virtual_Disks import VirtualDisks
-from ..Items.Hard_Drives import HardDrives
-from ..Items.Services import Services
-from ..Items.Modules import Modules
-
-#=================
-
-args = ParsedArgs()
-
-args.Flag(
-    name = 'quick',
-    letter = 'q'
-)
+from .. import alert
 
 # ===============================================================================================================
-# Unretire and Fix Names for Physical Disks 
 
-if not args['quick']:
+Log.INFO('Checking for issues with PCIe Cards')
 
-    Log.INFO('Processing Hard Drives')
+if not all(c.Connected for c in PCIeCards):
+    
+    # Send alert
+    alert('Restarting due to PCIe card error')
 
-    # Iter through Hard Drives
-    for hdd in HardDrives:
+    # Show Prompt to abort shutdown
+    Modules[0].start('vbs/abort')
 
-        Log.VERB(
-            f'Processing Hard Drive:\n'+ \
-            f"name='{hdd.Name}'\n"+ \
-            f"connected={hdd.Connected}"
-        )
+    # Restart with the configured delay
+    RunHidden([
+        'shutdown',
+        '/r',
+        '/t', 30
+    ])
 
-        # Check if disk is connected
-        if hdd.Connected:
-        
-            # If disk's FriendlyName differs from it's intended name
-            if hdd.FriendlyName != hdd.Name:
-
-                Log.VERB(f'Renaming HDD: "{hdd.FriendlyName}" to "{hdd.Name}"')
-                
-                hdd.FriendlyName = hdd.Name
-
-            # Check if disk is retired 
-            if hdd.Usage == 'Retired':
-
-                Log.VERB(f'Reactivating HDD: {hdd.Name}')
-
-                hdd.Usage = 'Auto-Select'
+    exit()
 
 # ===============================================================================================================
-# Repair and Mount Virtual Disks
+
+Log.INFO('Processing Hard Drives')
+
+# Iter through Hard Drives
+for hdd in HardDrives:
+
+    Log.VERB(
+        f'Processing Hard Drive:\n'+ \
+        f"name='{hdd.Name}'\n"+ \
+        f"connected={hdd.Connected}"
+    )
+
+    # Check if disk is connected
+    if hdd.Connected:
+    
+        # If disk's FriendlyName differs from it's intended name
+        if hdd.FriendlyName != hdd.Name:
+
+            Log.VERB(f'Renaming HDD: "{hdd.FriendlyName}" to "{hdd.Name}"')
+            
+            hdd.FriendlyName = hdd.Name
+
+        # Check if disk is retired 
+        if hdd.Usage == 'Retired':
+
+            Log.VERB(f'Reactivating HDD: {hdd.Name}')
+
+            hdd.Usage = 'Auto-Select'
+
+# ===============================================================================================================
 
 Log.INFO('Processing Virtual Disks')
 
@@ -82,62 +83,38 @@ for vdisk in VirtualDisks:
         vdisk.Mounted = True
 
 # ===============================================================================================================
-# Send Notification with Startup Status
 
-if Path('E:/').exists:
-# If mount succeeds
+Log.INFO('Installing Modules')
 
-    Log.INFO('Installing Modules')
+# Iter through all main modules
+for mod in Modules:
 
-    # Iter through all main modules
-    for mod in Modules:
+    Log.VERB(f'Installing Module: {mod}')
 
-        Log.VERB(f'Installing Module: {mod}')
+    # Install/Update all dependencies
+    mod.install(
+        show = VERBOSE
+    )
 
-        # Install/Update all dependencies
-        mod.install(
-            show = VERBOSE
-        )
+# ===============================================================================================================
 
-    Log.INFO('Starting Services')
+Log.INFO('Starting Services')
 
-    # Start All Services
-    for service in Services:
+# Start All Services
+for service in Services:
 
-        Log.VERB(f'Starting Service: {service}')
+    try:
+        service.start()
 
-        try:
-            service.start()
+    except ServiceDisabledError as e:
+        Log.FAIL(exc_info=True)
 
-        except ServiceDisabledError as e:
-            Log.FAIL('', exc_info=True)
+# ===============================================================================================================
 
-    # Remove the 'Nvidia Display Manager' Popup
-    SysTask("*NVDisplay*").stop()
+# Send alert
+alert('Startup Complete')
 
-    # Send alert
-    alert('Startup Complete')
-
-elif options['restart']['enabled']:
-# If mount fails and restart is enabled
-
-    # Send alert
-    alert('Startup Failed - Restarting ...')
-
-    # Show Prompt to abort shutdown
-    this.start('exec/abort')
-
-    # Restart with the configured delay
-    RunHidden([
-        'shutdown',
-        '/r',
-        '/t', options['restart']['delay']
-    ])
-
-else:
-# If mount fails and restart is disabled
-
-    # Send alert
-    alert('Startup Failed')
+# Remove the 'Nvidia Display Manager' Popup
+SysTask("*NVDisplay*").stop()
 
 # ===============================================================================================================
