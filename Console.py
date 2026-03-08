@@ -9,16 +9,16 @@ run(
 
 #=================================================================================
 
+from philh_myftp_biz.text import split, to_slice
+from philh_myftp_biz.terminal import cls, warn
 from philh_myftp_biz.modules import Service
-from philh_myftp_biz.terminal import cls
-from philh_myftp_biz.text import split
 from .Items.Services import Services
 from . import this
 
-from philh_myftp_biz.process import SysTask
-
 # Session Memory
-mem = {}
+mem = {
+    'service': Services.copy()
+}
 
 #===========================================================================
 
@@ -76,11 +76,11 @@ LIST    | List items
 SELECT  | Select an item
 START   | Start an item
 STOP    | Stop an item
-STATUS  | Get the status of an item
+CHECK   | Get the status of an item
 ENABLE  | Enable an item
 DISABLE | Disable an item
 RUN     | Run a script
-ARGS    | Set arguements
+ARGS    | Set arguements for an item
 
 Run 'help *cmd*' for more details about a specific command
 
@@ -93,7 +93,6 @@ Run 'help *cmd*' for more details about a specific command
 
                 print("""
 LIST SERVICE      | Get a list of services
-LIST SERVICE FULL | Get a detailed list of services
 """)
 
             #===========================================
@@ -101,7 +100,7 @@ LIST SERVICE FULL | Get a detailed list of services
             # HELP SELECT
 
                 print("""
-SELECT SERVICE # | Select a service by number 
+SELECT SERVICE [#|slice|*] | Select services 
 """)
 
             #===========================================
@@ -109,7 +108,7 @@ SELECT SERVICE # | Select a service by number
             # HELP START
 
                 print("""
-START SERVICE | Start the selected service
+START SERVICE | Start the selected services
 """)
 
             #===========================================
@@ -117,15 +116,15 @@ START SERVICE | Start the selected service
             # HELP STOP
 
                 print("""
-STOP SERVICE | Stop the selected service
+STOP SERVICE | Stop the selected services
 """)
 
             #===========================================
-            elif args[1] == 'status':
+            elif args[1] == 'check':
             # HELP STATUS
 
                 print("""
-STATUS SERVICE | Get the status of the selected service 
+CHECK SERVICE | Get the status of the selected services
 """)
 
             #===========================================
@@ -133,7 +132,7 @@ STATUS SERVICE | Get the status of the selected service
             # HELP ENABLE
 
                 print("""
-ENABLE SERVICE | Enable the selected service
+ENABLE SERVICE | Enable the selected services
 """)
 
             #===========================================
@@ -141,7 +140,7 @@ ENABLE SERVICE | Enable the selected service
             # HELP DISABLE
 
                 print("""
-DISABLE SERVICE | Disable the selected service 
+DISABLE SERVICE | Disable the selected services
 """)
 
             #===========================================
@@ -158,7 +157,7 @@ RUN *SCRIPT* -v | Run a script in a new tab with the verbose flag (Ex: run Inter
             # HELP ARGS
 
                 print("""
-ARGS SERVICE = *arg1* *arg2* ...   | Set the args for the selected service
+ARGS SERVICE # = *arg1* *arg2* ...   | Set the args for a specific service
 """)
 
         #===========================================
@@ -167,22 +166,11 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for the selected service
 
             #===========================================
             if args[1] == 'service':
-                if len(args) == 2:
             # LIST SERVICE
                     
-                    for x, serv in enumerate(Services):
-                        print(f'{x}: {serv.path} ')
-
-                #===========================================
-                elif args[2] == 'full':
-                # LIST SERVICE FULL
-
-                    for x, serv in enumerate(Services):
-
-                        RUNNING = ('Running' if serv.running else 'Stopped')
-                        ENABLED = (' Enabled' if serv.enabled else 'Disabled')
-
-                        print(f'{x}: [{RUNNING}, {ENABLED}] {serv.path} ')
+                for serv in mem['service']:
+                    
+                    print(f'{Services.index(serv)}: {serv.path} {serv.args}')
 
             #===========================================
 
@@ -194,11 +182,20 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for the selected service
             if args[1] == 'service':
             # SELECT SERVICE
 
-                serv = Services[int(args[2])]
+                mem['service'] = []
 
-                print('Selected Service:', serv.path)
+                for s in to_slice(args[2]):
 
-                mem['service'] = serv
+                    serv = Services[s]
+
+                    if not isinstance(serv, list):
+                        serv = [serv]
+
+                    mem['service'] += serv
+
+                for serv in mem['service']:
+
+                    print(f'{Services.index(serv)}: {serv.path}')
 
             #===========================================
 
@@ -210,12 +207,13 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for the selected service
             if args[1] == 'service':
             # START SERVICE
 
-                serv: Service = mem['service']
+                services: list[Service] = mem['service']
 
-                print(f'Running Script: {serv.file('Start')}')
-                print(f'Arguements: {serv.args}')
+                for serv in services:
 
-                serv.start(force=True)
+                    print(f'Running: {serv.file('Start')} ({serv.args})')
+
+                    serv.start(force=True)
 
             #===========================================
 
@@ -227,32 +225,13 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for the selected service
             if args[1] == 'service':
             # STOP SERVICE
 
-                serv: Service = mem['service']
+                services: list[Service] = mem['service']
 
-                print(f'Running Script: {serv.file('Stop')}')
+                for serv in services:
 
-                serv.stop()
+                    print(f'Running: {serv.file('Stop')}')
 
-            #===========================================
-
-        #===========================================
-        case 'status':
-        # STATUS
-                
-            #===========================================
-            if args[1] == 'service':
-            # STATUS SERVICE
-
-                serv: Service = mem['service']
-
-                RUNNING = str(serv.running)
-
-                ENABLED = str(serv.enabled)
-
-                print(f"""
-Running: {RUNNING}
-Enabled: {ENABLED}
-""")
+                    serv.stop()
 
             #===========================================
 
@@ -264,11 +243,13 @@ Enabled: {ENABLED}
             if args[1] == 'service':
             # ENABLE SERVICE
 
-                serv: Service = mem['service']
-                
-                print('Enabling Service ...')
+                print('Enabling Selected Services ...')
 
-                serv.enable()
+                services: list[Service] = mem['service']
+
+                for serv in services:
+
+                    serv.enable()
 
             #===========================================
 
@@ -280,11 +261,13 @@ Enabled: {ENABLED}
             if args[1] == 'service':
             # DISABLE SERVICE
 
-                serv: Service = mem['service']
+                print('Disabling Selected Services ...')
 
-                print('Disabling Service ...')
+                services: list[Service] = mem['service']
 
-                serv.disable()
+                for serv in services:
+
+                    serv.disable()
 
             #===========================================
 
@@ -292,8 +275,7 @@ Enabled: {ENABLED}
         case 'run':
         # RUN
 
-            print(f'Running Script: C:/Scripts/{args[1].replace('.', '/')}.py')
-            print(f'Arguements: {args[2:]}')
+            print(f'Running: C:/Scripts/{args[1].replace('.', '/')}.py {args[2:]}')
             
             this.run(
                 'run', args[1].title(), 
@@ -309,27 +291,28 @@ Enabled: {ENABLED}
 
             #===========================================
             if args[1] == 'service':
-            # ARGS SERVICE
+            # ARGS SERVICE #
 
-                mem['service'].args = args[3:]
+                Services[int(args[2])].args = args[4:]
 
                 print('Updated Arguements ...')
 
         #===========================================
-        case 'terminate':
-        # TERMINATE
+        case 'check':
+        # CHECK
+            
+            #===========================================
+            if args[1] == 'service':
+            # CHECK SERVICE
 
-            PIDs = []
+                for serv in mem['service']:
 
-            PIDs += SysTask('python.exe').PIDs
+                    RUNNING: str = ('Running'  if serv.running else 'Stopped')
+                    ENABLED: str = (' Enabled' if serv.enabled else 'Disabled')
 
-            PIDs += SysTask('geckodriver.exe').PIDs
+                    print(f'{Services.index(serv)}: [{RUNNING}, {ENABLED}] {serv.path}')
 
-            PIDs += SysTask('firefox.exe').PIDs
-
-            print(PIDs)
-
-            # TODO
+            #===========================================
 
         #===========================================
         case _:
@@ -356,5 +339,9 @@ while True:
     except KeyboardInterrupt:
         
         print('\n<KeyboardInterrupt>')
+
+    except Exception as e:
+
+        warn(e)
 
 #===========================================================================
