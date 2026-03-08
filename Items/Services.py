@@ -8,19 +8,19 @@ Log.VERB('Collecting Services')
 
 Services = [
 
-    Service('E:/AI/Ollama'),
+    Service('E:/AI/Ollama/'),
 
-    Service('E:/Website/API'),
+    Service('E:/Website/API/'),
 
-    Service('E:/Website/Indexer'),
+    Service('E:/Website/Indexer/'),
 
     Service('E:/Plex/'),
 
-    Service('E:/Plex/Torrenting'),
+    Service('E:/Plex/Torrenting/'),
 
-    #Service('E:/Plex/Optimization')
+    #Service('E:/Plex/Optimization/')
 
-    Service('E:/Minecraft')
+    Service('E:/Minecraft/')
 
 ]
 
