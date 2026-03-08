@@ -1,3 +1,14 @@
+#=================================================================================
+from sys import executable
+from subprocess import run
+
+run(
+    args = [executable, '-m', 'pip', 'install', '.'],
+    cwd = 'C:/Users/Administrator/Documents/GitHub/philh_myftp_biz/'
+)
+
+#=================================================================================
+
 from philh_myftp_biz.modules import Service
 from philh_myftp_biz.terminal import cls
 from philh_myftp_biz.text import split
