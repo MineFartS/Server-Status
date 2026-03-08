@@ -13,11 +13,15 @@ from philh_myftp_biz.text import split, to_slice
 from philh_myftp_biz.terminal import cls, warn
 from philh_myftp_biz.modules import Service
 from .Items.Services import Services
+from .Items.Modules import Modules
 from . import this
+
+from philh_myftp_biz.process import Run
 
 # Session Memory
 mem = {
-    'service': Services.copy()
+    'service': Services.copy(),
+    'module': Modules.copy()
 }
 
 #===========================================================================
@@ -93,6 +97,7 @@ Run 'help *cmd*' for more details about a specific command
 
                 print("""
 LIST SERVICE      | Get a list of services
+LIST MODULE       | Get a list of modules
 """)
 
             #===========================================
@@ -101,6 +106,7 @@ LIST SERVICE      | Get a list of services
 
                 print("""
 SELECT SERVICE [#|#..|..#|#..#|#,#] | Select services (Ex: select service 1,3)
+SELECT MODULE  [#|#..|..#|#..#|#,#] | Select modules (Ex: select module ..5)
 """)
 
             #===========================================
@@ -173,6 +179,14 @@ ARGS SERVICE # = *arg1* *arg2* ...   | Set the args for a specific service
                     print(f'{Services.index(serv)}: {serv.path} {serv.args}')
 
             #===========================================
+            elif args[1] == 'module':
+            # LIST MODULE
+                    
+                for mod in mem['module']:
+                    
+                    print(f'{Modules.index(mod)}: {mod.path}')
+
+            #===========================================
 
         #===========================================
         case 'select':
@@ -196,6 +210,25 @@ ARGS SERVICE # = *arg1* *arg2* ...   | Set the args for a specific service
                 for serv in mem['service']:
 
                     print(f'{Services.index(serv)}: {serv.path}')
+
+            #===========================================            
+            if args[1] == 'module':
+            # SELECT MODULE
+
+                mem['module'] = []
+
+                for s in to_slice(args[2]):
+
+                    mod = Modules[s]
+
+                    if not isinstance(mod, list):
+                        mod = [mod]
+
+                    mem['module'] += mod
+
+                for mod in mem['module']:
+
+                    print(f'{Modules.index(mod)}: {mod.path}')
 
             #===========================================
 
@@ -276,6 +309,10 @@ ARGS SERVICE # = *arg1* *arg2* ...   | Set the args for a specific service
         # RUN
 
             print(f'Running: C:/Scripts/{args[1].replace('.', '/')}.py {args[2:]}')
+
+   #         Run(
+    #            args = args[2:]
+     #       )
             
             this.run(
                 'run', args[1].title(), 
@@ -284,6 +321,10 @@ ARGS SERVICE # = *arg1* *arg2* ...   | Set the args for a specific service
             )
 
             #===========================================
+
+        #===========================================
+        case 'start':
+            pass
 
         #===========================================
         case 'args':

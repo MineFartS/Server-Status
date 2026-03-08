@@ -8,6 +8,8 @@ Log.VERB('Collecting Modules')
 
 Modules = [
 
+    Module('C:/Scripts/'),
+
     Module('E:/AI/'),
 
     Module('E:/Minecraft/'),
