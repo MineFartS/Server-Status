@@ -1,17 +1,11 @@
-
+from .Items import VirtualDisks, HardDrives, PCIeCards, Services, Towers
 from philh_myftp_biz.terminal import cls, print
 from philh_myftp_biz.time import sleep
-
-from .Items.Virtual_Disks import VirtualDisks
-from .Items.Hard_Drives import HardDrives
-from .Items.PCIe_Cards import PCIeCards
-from .Items.Services import Services
-from .Items.Towers import Towers
 
 def LogStatus(
     name: str,
     connected: bool
-):
+) -> None:
 
     fname = name.ljust(35, '.')
 

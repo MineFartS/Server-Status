@@ -1,22 +1,10 @@
-#=================================================================================
-from sys import executable
-from subprocess import run
-
-run(
-    args = [executable, '-m', 'pip', 'install', '.'],
-    cwd = 'C:/Users/Administrator/Documents/GitHub/philh_myftp_biz/'
-)
-
-#=================================================================================
-
 from philh_myftp_biz.text import split, to_slice
 from philh_myftp_biz.terminal import cls, warn
 from philh_myftp_biz.modules import Service
-from .Items.Services import Services
-from .Items.Modules import Modules
+from .Items import Services, Modules
 from . import this
 
-from philh_myftp_biz.process import Run
+#=============
 
 # Session Memory
 mem = {
@@ -309,22 +297,12 @@ ARGS SERVICE # = *arg1* *arg2* ...   | Set the args for a specific service
         # RUN
 
             print(f'Running: C:/Scripts/{args[1].replace('.', '/')}.py {args[2:]}')
-
-   #         Run(
-    #            args = args[2:]
-     #       )
             
             this.run(
                 'run', args[1].title(), 
                 'True', # VISIBLE
                 ('-v' in args) # VERBOSE
             )
-
-            #===========================================
-
-        #===========================================
-        case 'start':
-            pass
 
         #===========================================
         case 'args':
