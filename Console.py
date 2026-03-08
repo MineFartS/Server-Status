@@ -347,8 +347,14 @@ run('cls')
 
 while True:
 
-    rawinput = input('\n\\> ').lower()
+    try:
 
-    run(*split(rawinput))
+        rawinput = input('\n\\> ').lower()
+
+        run(*split(rawinput))
+
+    except KeyboardInterrupt:
+        
+        print('\n<KeyboardInterrupt>')
 
 #===========================================================================
