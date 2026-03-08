@@ -113,7 +113,7 @@ if Path('E:/').exists:
             Log.FAIL('', exc_info=True)
 
     # Remove the 'Nvidia Display Manager' Popup
-    SysTask("NVDisplay.Container.exe").stop()
+    SysTask("*NVDisplay*").stop()
 
     # Send alert
     alert('Startup Complete')
