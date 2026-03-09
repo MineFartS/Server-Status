@@ -1,14 +1,9 @@
-from subprocess import run
-from sys import executable
-from .Items import Modules
+from ..Items import Modules
 
 #=================================================================================
 # PHILH_MYFTP_BIZ PKG
 
-run(
-    args = [executable, '-m', 'pip', 'install', '.'],
-    cwd = 'C:/Users/Administrator/Documents/GitHub/philh_myftp_biz/'
-)
+from . import Update # pyright: ignore[reportUnusedImport]
 
 #=================================================================================
 # INSTALL MODULES

@@ -1,7 +1,7 @@
 from philh_myftp_biz.text import split, to_slice
 from philh_myftp_biz.terminal import cls, warn
 from philh_myftp_biz.modules import Service
-from .Items import Services, Modules
+from ..Items import Services, Modules
 
 #=============
 
@@ -15,16 +15,6 @@ mem = {
 
 def run(*args:str) -> None:
 
-    if len(args) == 0:
-        
-        print("""
-NO COMMAND GIVEN
-
-Type 'help' for a list of commands
-""")
-        
-        return
-    
     match args[0]:
 
         #===========================================
@@ -58,20 +48,21 @@ Type 'help' for a list of commands
                 print("""
 ----------------------------------------
 
-CLS  | Clear the Terminal
-EXIT | Exit the terminal
+CLS     | Clear the terminal
+EXIT    | Exit the terminal
 
-----------------------------------------
+RUN     | Run a script
 
 LIST    | List items
-SELECT  | Select an item
-START   | Start an item
-STOP    | Stop an item
-CHECK   | Get the status of an item
-ENABLE  | Enable an item
-DISABLE | Disable an item
-RUN     | Run a script
-ARGS    | Set arguements for an item
+SELECT  | Select items
+START   | Start items
+STOP    | Stop items
+CHECK   | Get items' status
+ENABLE  | Enable items
+DISABLE | Disable items
+ARGS    | Set items' arguements
+
+----------------------------------------
 
 Run 'help *cmd*' for more details about a specific command
 
@@ -83,8 +74,8 @@ Run 'help *cmd*' for more details about a specific command
             # HELP LIST
 
                 print("""
-LIST SERVICE      | Get a list of services
-LIST MODULE       | Get a list of modules
+LIST SERVICE      | Get a list of selected services
+LIST MODULE       | Get a list of selected modules
 """)
 
             #===========================================
@@ -142,7 +133,17 @@ DISABLE SERVICE | Disable the selected services
 
                 print("""
 RUN *SCRIPT*    | Run a script in a new tab (Ex: run Interval.Startup)
-RUN *SCRIPT* -v | Run a script in a new tab with the verbose flag (Ex: run Interval.Startup -v)
+RUN *SCRIPT* -v | Run a script in a new tab [VERBOSE] (Ex: run Interval.Startup -v)
+
+SCRIPTS:
+    - Utils.Setup
+    - Utils.Update
+    - Utils.Status
+    - Utils.Console
+    - Interval.Day
+    - Interval.Hour
+    - Interval.Week
+    - Interval.Startup
 """)
                 
             #===========================================
@@ -150,7 +151,7 @@ RUN *SCRIPT* -v | Run a script in a new tab with the verbose flag (Ex: run Inter
             # HELP ARGS
 
                 print("""
-ARGS SERVICE # = *arg1* *arg2* ...   | Set the args for a specific service
+ARGS SERVICE = *arg1* *arg2* ...   | Set the args for selected services
 """)
 
         #===========================================
@@ -309,11 +310,15 @@ ARGS SERVICE # = *arg1* *arg2* ...   | Set the args for a specific service
 
             #===========================================
             if args[1] == 'service':
-            # ARGS SERVICE #
+            # ARGS SERVICE
 
-                Services[int(args[2])].args = args[4:]
+                print('Updating Arguements for Selected Services ...')
 
-                print('Updated Arguements ...')
+                services: list[Service] = mem['service']
+
+                for serv in services:
+
+                    serv.args = args[4:]
 
         #===========================================
         case 'check':
