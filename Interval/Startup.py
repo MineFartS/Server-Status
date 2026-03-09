@@ -1,9 +1,10 @@
-from ..Items import VirtualDisks, HardDrives, Services, Modules, PCIeCards
+from ..Items import VirtualDisks, HardDrives, Services, Modules, PCIeCards, Mounts
 from philh_myftp_biz.modules import ServiceDisabledError
-from philh_myftp_biz.process import RunHidden, SysTask
+from philh_myftp_biz.process import SysTask
 from philh_myftp_biz.terminal import Log
 from philh_myftp_biz import VERBOSE
 from .. import alert
+from . import restart
 
 # ===============================================================================================================
 
@@ -14,17 +15,7 @@ if not all(c.Connected for c in PCIeCards):
     # Send alert
     alert('Restarting due to PCIe card error')
 
-    # Show Prompt to abort shutdown
-    Modules[0].start('vbs/abort')
-
-    # Restart with the configured delay
-    RunHidden([
-        'shutdown',
-        '/r',
-        '/t', 30
-    ])
-
-    exit()
+    restart()
 
 # ===============================================================================================================
 
@@ -95,6 +86,23 @@ for mod in Modules:
     mod.install(
         show = VERBOSE
     )
+
+# ===============================================================================================================
+
+Log.INFO('Checking for issues with Mounts')
+
+if not Mounts[1].exists:
+
+    _failed = filter(
+        lambda d: not d.Connected,
+        HardDrives
+    )
+
+    failed = [f'{d.ID:02d}-{d.Tower}' for d in _failed]
+
+    alert(f'Restarting due to Hard Drive Failure: {failed}')
+
+    restart()
 
 # ===============================================================================================================
 
