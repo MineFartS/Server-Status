@@ -9,12 +9,10 @@ while True:
 
     try:
 
-        args = split(input('\n\\> ').lower())
+        args: list[str] = split(input('\n\\> ').lower())
 
-        Tree(*args)
-
-    except ValueError:
-        pass
+        if len(args) > 0:
+            Tree(*args)
 
     except KeyboardInterrupt:
         Printer.Error('KeyboardInterrupt')

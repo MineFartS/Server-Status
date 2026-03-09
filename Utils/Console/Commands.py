@@ -49,39 +49,48 @@ Run 'help *cmd*' for more details about a specific command
 ----------------------------------------
 """)
 
-        list = lambda _: print("""
+        def __getattribute__(self, name:str):
+        
+            value = super().__getattribute__(name)
+
+            if isinstance(value, str):
+                return lambda: print(value)
+            else:
+                return value
+
+        list = """
 LIST SERVICE      | Get a list of selected services
 LIST MODULE       | Get a list of selected modules
-""")
+"""
             
-        select = lambda _: print("""
+        select = """
 SELECT SERVICE [...] | Select services (Ex: select service 1,3)
 SELECT MODULE  [...] | Select modules (Ex: select module ..5)
 
 [...] -> ['#', '#..', '..#', '#..#', '#,#']
-""")
+"""
             
-        start = lambda _: print("""
+        start = """
 START SERVICE | Start the selected services
-""")
+"""
     
-        stop = lambda _: print("""
+        stop = """
 STOP SERVICE | Stop the selected services
-""")
+"""
 
-        check = lambda _: print("""
+        check = """
 CHECK SERVICE | Get the status of the selected services
-""")
+"""
             
-        enable = lambda _: print("""
+        enable = """
 ENABLE SERVICE | Enable the selected services
-""")
+"""
             
-        disable = lambda _: print("""
+        disable = """
 DISABLE SERVICE | Disable the selected services
-""")
+"""
             
-        run = lambda _: print("""
+        run = """
 RUN *SCRIPT*    | Run a script in a new tab (Ex: run Interval.Startup)
 RUN *SCRIPT* -v | Run a script in a new tab [VERBOSE] (Ex: run Interval.Startup -v)
 
@@ -94,11 +103,11 @@ SCRIPTS:
     - Interval.Hour
     - Interval.Week
     - Interval.Startup
-""")
+"""
             
-        args = lambda _: print("""
+        args = """
 ARGS SERVICE = *arg1* *arg2* ...   | Set the args for selected services
-""")
+"""
 
     @staticmethod
     def run( 
