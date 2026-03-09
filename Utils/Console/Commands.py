@@ -1,38 +1,19 @@
-from philh_myftp_biz.text import split, to_slice
-from philh_myftp_biz.terminal import cls, warn
-from philh_myftp_biz.modules import Service
-from ..Items import Services, Modules
+from .Types import NestedCommand
 
-#=============
+class CommandTree(NestedCommand):
 
-# Session Memory
-mem = {
-    'service': Services.copy(),
-    'module': Modules.copy()
-}
+    from builtins import exit
 
-#===========================================================================
-
-def run(*args:str) -> None:
-
-    match args[0]:
-
-        #===========================================
-        case 'exit':
-        # EXIT
+    @staticmethod
+    def cls() -> None:
+        from philh_myftp_biz.terminal import cls
         
-            exit() 
+        cls()
 
-        #===========================================
-        case 'cls':
-        # CLS
-
-            cls()
-
-            print(f"""
+        print(f"""
 |---------------------------|
-        Phil's Server
-    [philh.myftp.biz]
+       Phil's Server
+     [philh.myftp.biz]
 
     MANAGEMENT  CONSOLE
 |---------------------------|
@@ -40,12 +21,11 @@ def run(*args:str) -> None:
 Type 'help' for a list of commands
 """)
 
-        #===========================================
-        case 'help':
-            if len(args) == 1:
-        # HELP
-            
-                print("""
+    class help(NestedCommand):
+
+        def _NI(self, *_) -> None:
+
+            print("""
 ----------------------------------------
 
 CLS     | Clear the terminal
@@ -69,69 +49,37 @@ Run 'help *cmd*' for more details about a specific command
 ----------------------------------------
 """)
 
-            #===========================================
-            elif args[1] == 'list':
-            # HELP LIST
-
-                print("""
+        list = lambda _: print("""
 LIST SERVICE      | Get a list of selected services
 LIST MODULE       | Get a list of selected modules
 """)
-
-            #===========================================
-            elif args[1] == 'select':
-            # HELP SELECT
-
-                print("""
+            
+        select = lambda _: print("""
 SELECT SERVICE [#|#..|..#|#..#|#,#] | Select services (Ex: select service 1,3)
 SELECT MODULE  [#|#..|..#|#..#|#,#] | Select modules (Ex: select module ..5)
 """)
-
-            #===========================================
-            elif args[1] == 'start':
-            # HELP START
-
-                print("""
+            
+        start = lambda _: print("""
 START SERVICE | Start the selected services
 """)
-
-            #===========================================
-            elif args[1] == 'stop':
-            # HELP STOP
-
-                print("""
+    
+        stop = lambda _: print("""
 STOP SERVICE | Stop the selected services
 """)
 
-            #===========================================
-            elif args[1] == 'check':
-            # HELP STATUS
-
-                print("""
+        check = lambda _: print("""
 CHECK SERVICE | Get the status of the selected services
 """)
-
-            #===========================================
-            elif args[1] == 'enable':
-            # HELP ENABLE
-
-                print("""
+            
+        enable = lambda _: print("""
 ENABLE SERVICE | Enable the selected services
 """)
-
-            #===========================================
-            elif args[1] == 'disable':
-            # HELP DISABLE
-
-                print("""
+            
+        disable = lambda _: print("""
 DISABLE SERVICE | Disable the selected services
 """)
-
-            #===========================================
-            elif args[1] == 'run':
-            # HELP RUN
-
-                print("""
+            
+        run = lambda _: print("""
 RUN *SCRIPT*    | Run a script in a new tab (Ex: run Interval.Startup)
 RUN *SCRIPT* -v | Run a script in a new tab [VERBOSE] (Ex: run Interval.Startup -v)
 
@@ -145,15 +93,31 @@ SCRIPTS:
     - Interval.Week
     - Interval.Startup
 """)
-                
-            #===========================================
-            elif args[1] == 'args':
-            # HELP ARGS
-
-                print("""
+            
+        args = lambda _: print("""
 ARGS SERVICE = *arg1* *arg2* ...   | Set the args for selected services
 """)
 
+    def run(self, 
+        script: str,
+        *args: str
+    ) -> None:
+        from ...Items import Modules
+
+        print(f'Running: C:/Scripts/{script.replace('.', '/')}.py {args}')
+        
+        Modules[0].run(
+            'run', script.title(), 
+            'True', # VISIBLE
+            ('-v' in args) # VERBOSE
+        )
+
+#===========================================================================
+'''
+def run(*args:str) -> None:
+
+    match args[0]:
+   
         #===========================================
         case 'list':
         # LIST
@@ -293,18 +257,6 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for selected services
             #===========================================
 
         #===========================================
-        case 'run':
-        # RUN
-
-            print(f'Running: C:/Scripts/{args[1].replace('.', '/')}.py {args[2:]}')
-            
-            Modules[0].run(
-                'run', args[1].title(), 
-                'True', # VISIBLE
-                ('-v' in args) # VERBOSE
-            )
-
-        #===========================================
         case 'args':
         # ARGS
 
@@ -349,22 +301,4 @@ Type 'help' for a list of commands
 
 #===========================================================================
 
-run('cls')
-
-while True:
-
-    try:
-
-        rawinput = input('\n\\> ').lower()
-
-        run(*split(rawinput))
-
-    except KeyboardInterrupt:
-        
-        print('\n<KeyboardInterrupt>')
-
-    except Exception as e:
-
-        warn(e)
-
-#===========================================================================
+'''
