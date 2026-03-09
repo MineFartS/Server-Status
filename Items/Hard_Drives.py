@@ -36,7 +36,7 @@ class HardDrive:
         self.Type = type
         self.ID = id
         self.SerialNumber = sn
-        self.Name = f'{str(id).zfill(2)}-{tower} [{type}]'
+        self.Name = f'{id:02d}-{tower} [{type}]'
 
     def clear_cache(self) -> None:
 
