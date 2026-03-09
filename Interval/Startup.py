@@ -107,7 +107,7 @@ for service in Services:
         service.start()
 
     except ServiceDisabledError as e:
-        Log.FAIL(exc_info=True)
+        Log.FAIL('', exc_info=True)
 
 # ===============================================================================================================
 
