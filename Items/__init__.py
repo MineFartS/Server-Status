@@ -11,4 +11,4 @@ from .Towers import Towers # pyright: ignore[reportUnusedImport]
 
 from .Virtual_Disks import VirtualDisks # pyright: ignore[reportUnusedImport]
 
-from .Mounts import Mounts # pyright: ignore[reportUnusedImport]
+from .Mounts import Mounts, all_paths # pyright: ignore[reportUnusedImport]

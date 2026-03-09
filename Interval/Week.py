@@ -1,17 +1,13 @@
 from philh_myftp_biz.modules import Service
 from philh_myftp_biz.terminal import Log
 from philh_myftp_biz.pc import Path
-from typing import Generator
+from ..Items import all_paths
 
 # =================================================================================
 # HIDE ITEMS
 
-def paths() -> Generator[Path]:
-    yield from Path('C:/').descendants
-    yield from Path('E:/').descendants
-
 # Iter through all files on the 'C' and 'E' volumes
-for p in paths():
+for p in all_paths():
 
     SEG  = p.seg().lower()
     PATH = str(p).lower()
