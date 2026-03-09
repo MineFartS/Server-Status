@@ -1,8 +1,9 @@
 from philh_myftp_biz.terminal import warn
 from philh_myftp_biz.text import split
-from .Commands import CommandTree
+from .Commands import Tree
+from .Types import Printer
 
-CommandTree.cls()
+Tree.cls()
 
 while True:
 
@@ -10,12 +11,13 @@ while True:
 
         args = split(input('\n\\> ').lower())
 
-        CommandTree(*args)
+        Tree(*args)
+
+    except ValueError:
+        pass
 
     except KeyboardInterrupt:
-        
-        print('\n<KeyboardInterrupt>')
+        Printer.Error('KeyboardInterrupt')
 
     except Exception as e:
-
         warn(e)

@@ -1,6 +1,6 @@
-from .Types import NestedCommand
+from .Types import Branch, Memory, Printer
 
-class CommandTree(NestedCommand):
+class Tree(Branch):
 
     from builtins import exit
 
@@ -21,10 +21,10 @@ class CommandTree(NestedCommand):
 Type 'help' for a list of commands
 """)
 
-    class help(NestedCommand):
+    class help(Branch):
 
-        def _NI(self, *_) -> None:
-
+        @staticmethod
+        def _NoArgs() -> None:
             print("""
 ----------------------------------------
 
@@ -55,8 +55,10 @@ LIST MODULE       | Get a list of selected modules
 """)
             
         select = lambda _: print("""
-SELECT SERVICE [#|#..|..#|#..#|#,#] | Select services (Ex: select service 1,3)
-SELECT MODULE  [#|#..|..#|#..#|#,#] | Select modules (Ex: select module ..5)
+SELECT SERVICE [...] | Select services (Ex: select service 1,3)
+SELECT MODULE  [...] | Select modules (Ex: select module ..5)
+
+[...] -> ['#', '#..', '..#', '#..#', '#,#']
 """)
             
         start = lambda _: print("""
@@ -98,13 +100,17 @@ SCRIPTS:
 ARGS SERVICE = *arg1* *arg2* ...   | Set the args for selected services
 """)
 
-    def run(self, 
+    @staticmethod
+    def run( 
         script: str,
         *args: str
     ) -> None:
         from ...Items import Modules
 
-        print(f'Running: C:/Scripts/{script.replace('.', '/')}.py {args}')
+        Printer.RunFile(
+            path = f"C:/Scripts/{script.replace('.', '/')}.py",
+            args = args
+        )
         
         Modules[0].run(
             'run', script.title(), 
@@ -112,193 +118,143 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for selected services
             ('-v' in args) # VERBOSE
         )
 
-#===========================================================================
-'''
-def run(*args:str) -> None:
+    class list(Branch):
 
-    match args[0]:
-   
-        #===========================================
-        case 'list':
-        # LIST
+        @staticmethod
+        def service() -> None:
+            from ...Items import Services
 
-            #===========================================
-            if args[1] == 'service':
-            # LIST SERVICE
+            for serv in Memory.services:
                     
-                for serv in mem['service']:
+                print(f'{Services.index(serv)}: {serv.path} {serv.args}')
+
+        @staticmethod
+        def module() -> None:
+            from ...Items import Modules
+
+            for mod in Memory.modules:
                     
-                    print(f'{Services.index(serv)}: {serv.path} {serv.args}')
+                print(f'{Modules.index(mod)}: {mod.path}')
 
-            #===========================================
-            elif args[1] == 'module':
-            # LIST MODULE
-                    
-                for mod in mem['module']:
-                    
-                    print(f'{Modules.index(mod)}: {mod.path}')
+    class select(Branch):
 
-            #===========================================
+        @staticmethod
+        def service(rslice:str) -> None:
+            from philh_myftp_biz.text import to_slice
+            from ...Items import Services
 
-        #===========================================
-        case 'select':
-        # SELECT
+            Memory.services = []
 
-            #===========================================            
-            if args[1] == 'service':
-            # SELECT SERVICE
+            for slice in to_slice(rslice):
 
-                mem['service'] = []
+                _serv = Services[slice]
 
-                for s in to_slice(args[2]):
+                if isinstance(_serv, list):
+                    Memory.services += _serv
+                else:
+                    Memory.services += [_serv]
+                 
+            Tree.list.service()
 
-                    serv = Services[s]
+        @staticmethod
+        def module(rslice:str) -> None:
+            from philh_myftp_biz.text import to_slice
+            from ...Items import Modules
 
-                    if not isinstance(serv, list):
-                        serv = [serv]
+            Memory.modules = []
 
-                    mem['service'] += serv
+            for slice in to_slice(rslice):
 
-                for serv in mem['service']:
+                _mod = Modules[slice]
 
-                    print(f'{Services.index(serv)}: {serv.path}')
+                if isinstance(_mod, list):
+                    Memory.modules += _mod
+                else:
+                    Memory.modules += [_mod]
+                 
+            Tree.list.module()
 
-            #===========================================            
-            if args[1] == 'module':
-            # SELECT MODULE
+    class start(Branch):
 
-                mem['module'] = []
+        @staticmethod
+        def service() -> None:
+            
+            for serv in Memory.services:
 
-                for s in to_slice(args[2]):
+                if serv.exists:
 
-                    mod = Modules[s]
-
-                    if not isinstance(mod, list):
-                        mod = [mod]
-
-                    mem['module'] += mod
-
-                for mod in mem['module']:
-
-                    print(f'{Modules.index(mod)}: {mod.path}')
-
-            #===========================================
-
-        #===========================================
-        case 'start':
-        # START
-                
-            #===========================================
-            if args[1] == 'service':
-            # START SERVICE
-
-                services: list[Service] = mem['service']
-
-                for serv in services:
-
-                    print(f'Running: {serv.file('Start')} {serv.args}')
+                    Printer.RunFile(
+                        path = serv.file('Start'),
+                        args = serv.args
+                    )
 
                     serv.start(force=True)
 
-            #===========================================
+                else:
+                    Printer.Error('ServiceMissing', serv)
 
-        #===========================================
-        case 'stop':
-        # STOP
-                
-            #===========================================            
-            if args[1] == 'service':
-            # STOP SERVICE
+    class check(Branch):
 
-                services: list[Service] = mem['service']
+        @staticmethod
+        def service() -> None:
+            from ...Items import Services
 
-                for serv in services:
+            for serv in Memory.services:
 
-                    print(f'Running: {serv.file('Stop')}')
+                RUNNING: str = ('Running'  if serv.running else 'Stopped')
+                ENABLED: str = (' Enabled' if serv.enabled else 'Disabled')
+
+                print(f'{Services.index(serv)}: [{RUNNING}, {ENABLED}] {serv.path}')
+
+    class stop(Branch):
+
+        @staticmethod
+        def service() -> None:
+
+            for serv in Memory.services:
+
+                if serv.exists:
+
+                    Printer.RunFile(
+                        path = serv.file('Stop')
+                    )
 
                     serv.stop()
 
-            #===========================================
+                else:
+                    Printer.Error('ServiceMissing', serv)
 
-        #===========================================
-        case 'enable':
-        # ENABLE
-                
-            #===========================================
-            if args[1] == 'service':
-            # ENABLE SERVICE
+    class enable(Branch):
 
-                print('Enabling Selected Services ...')
+        @staticmethod
+        def service() -> None:
 
-                services: list[Service] = mem['service']
+            for serv in Memory.services:
 
-                for serv in services:
+                serv.enable()
 
-                    serv.enable()
+            Tree.check.service()
 
-            #===========================================
+    class disable(Branch):
 
-        #===========================================
-        case 'disable':
-        # DISABLE
-                
-            #===========================================
-            if args[1] == 'service':
-            # DISABLE SERVICE
+        @staticmethod
+        def service() -> None:
 
-                print('Disabling Selected Services ...')
+            for serv in Memory.services:
 
-                services: list[Service] = mem['service']
+                serv.disable()
 
-                for serv in services:
+            Tree.check.service()
 
-                    serv.disable()
+    class args(Branch):
 
-            #===========================================
+        @staticmethod
+        def service(_, *args:str) -> None:
 
-        #===========================================
-        case 'args':
-        # ARGS
+            for serv in Memory.services:
 
-            #===========================================
-            if args[1] == 'service':
-            # ARGS SERVICE
+                serv.args = args
 
-                print('Updating Arguements for Selected Services ...')
-
-                services: list[Service] = mem['service']
-
-                for serv in services:
-
-                    serv.args = args[4:]
-
-        #===========================================
-        case 'check':
-        # CHECK
-            
-            #===========================================
-            if args[1] == 'service':
-            # CHECK SERVICE
-
-                for serv in mem['service']:
-
-                    RUNNING: str = ('Running'  if serv.running else 'Stopped')
-                    ENABLED: str = (' Enabled' if serv.enabled else 'Disabled')
-
-                    print(f'{Services.index(serv)}: [{RUNNING}, {ENABLED}] {serv.path}')
-
-            #===========================================
-
-        #===========================================
-        case _:
-        # *UNKNOWN*
-
-            print(f"""
-"{args[0]}" NOT IMPLEMENTED
-
-Type 'help' for a list of commands
-    """)
+            Tree.list.service()
 
 #===========================================================================
-
-'''
