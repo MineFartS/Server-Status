@@ -1,26 +1,17 @@
-from philh_myftp_biz.terminal import Log
 from philh_myftp_biz.pc import Path
 from typing import Generator
+from .Types import Mount
 
-Log.VERB('Collecting Mounts')
+Mounts: list[Mount] = [
 
-# ===============================================================================================================
-# CONFIGURATION
+    Mount('C:/'),
 
-Mounts: list[Path] = [
-
-    Path('C:/'),
-
-    Path('E:/')
+    Mount('E:/')
 
 ]
-
-# ===============================================================================================================
 
 def all_paths() -> Generator[Path]:
 
     for mnt in Mounts:
 
         yield from mnt.descendants
-
-# ===============================================================================================================

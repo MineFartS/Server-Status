@@ -3,27 +3,26 @@ from philh_myftp_biz.terminal import cls, print
 from philh_myftp_biz.time import sleep
 
 def LogStatus(
-    name: str,
-    connected: bool
+    items: list
 ) -> None:
+    
+    for item in items:
 
-    fname = name.ljust(35, '.')
-
-    print(
-        f'   {fname}: ',
-        end = ''
-    )
-
-    if connected:
         print(
-            'Active',
-            color = 'GREEN'
+            f'   {item.Name.ljust(35, '.')}: ',
+            end = ''
         )
-    else:
-        print(
-            'Inactive',
-            color = 'RED'
-        )
+
+        if item.Connected:
+            print(
+                'Active',
+                color = 'GREEN'
+            )
+        else:
+            print(
+                'Inactive',
+                color = 'RED'
+            )
 
 while True:
 
@@ -32,48 +31,23 @@ while True:
     print("\n|-----------------------------------| Server Status |-----------------------------------|\n")    
 
     print('\nHard Drives:')
-    for device in HardDrives:
-        LogStatus(
-            name = device.Name,
-            connected = device.Connected
-        )
+    LogStatus(HardDrives)
 
     print('\nPCIe Cards:')
-    for device in PCIeCards:
-        LogStatus(
-            name = device.Name,
-            connected = device.Connected
-        )
+    LogStatus(PCIeCards)
 
     print('\nVirtual Disks:')
-    for device in VirtualDisks:
-        LogStatus(
-            name = device.Name,
-            connected = device.Connected
-        )
+    LogStatus(VirtualDisks)
 
     print('\nMounts:')
-    for mount in Mounts:
-        LogStatus(
-            name = mount.path,
-            connected = mount.exists
-        )
+    LogStatus(Mounts)
 
     print('\nTowers:')
-    for device in Towers:
-        LogStatus(
-            name = device.Name,
-            connected = device.Connected
-        )
+    LogStatus(Towers)
 
     print('\nServices:')
-    for s in Services:
-
-        LogStatus(
-            name = str(s.path),
-            connected = s.running
-        )
+    LogStatus(Services)
 
     print("\n|---------------------------------------------------------------------------------------|\n")
 
-    sleep(15, True)
+    sleep(15, show=True)

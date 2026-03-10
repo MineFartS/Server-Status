@@ -1,290 +1,139 @@
-from philh_myftp_biz.process import RunHidden
-from functools import cache, cached_property
-from philh_myftp_biz.terminal import Log
-from typing import Literal
-
-Log.VERB('Collecting Hard Drives')
-
-# ===============================================================================================================
-# PARSER
-
-@cache
-def physical_disks() -> list[dict]:
-    return RunHidden(
-        "Get-PhysicalDisk | ConvertTo-Json",
-        terminal = 'ps'
-    ).output(format='json') # pyright: ignore[reportReturnType]
-
-@cache
-def wmi_objects() -> list[dict]:
-    return RunHidden(
-        "Get-WmiObject Win32_DiskDrive | ConvertTo-Json",
-        terminal = 'ps'
-    ).output(format='json') # pyright: ignore[reportReturnType]
-
-#==================================
-
-class HardDrive:
-
-    def __init__(self,
-        tower: str,
-        type: Literal['SATA', 'USB'],
-        id: int,
-        sn: str
-    ) -> None:
-        self.Tower = tower
-        self.Type = type
-        self.ID = id
-        self.SerialNumber = sn
-        self.Name = f'{id:02d}-{tower} [{type}]'
-
-    def clear_cache(self) -> None:
-
-        del self._physical_disk
-
-        del self.Connected
-
-        physical_disks.cache_clear()
-
-    @cached_property
-    def _physical_disk(self) -> None | dict:
-
-        for device in physical_disks():
-            
-            if device['SerialNumber'] == self.SerialNumber:
-
-                return device
-            
-    @cached_property
-    def _wmi_object(self) -> None | dict:
-
-        for device in wmi_objects():
-            
-            if device['SerialNumber'] == self.SerialNumber:
-
-                return device
-
-    @cached_property
-    def UniqueID(self) -> None | str:
-        if self._physical_disk:
-            return self._physical_disk['UniqueId']
-        
-    @cached_property
-    def Connected(self) -> bool:
-
-        if self.FriendlyName:
-            
-            OpStatus: str = self._physical_disk['OperationalStatus']
-
-            return (OpStatus != 'Lost Communication')
-        
-        else:
-            return False
-        
-    @cached_property
-    def RegPath(self) -> str | None:
-
-        if self._wmi_object:
-
-            pnpID: str = self._wmi_object['PNPDeviceID']
-
-            return f"HKLM:SYSTEM\\ControlSet001\\Enum\\{pnpID}"
-
-    #================
-    # FriendlyName
-
-    @property
-    def FriendlyName(self) -> None | str:
-        
-        if self._physical_disk:
-
-            FriendlyName: str = self._physical_disk['FriendlyName']
-
-            if len(FriendlyName) > 0:
-                
-                return FriendlyName
-
-    @FriendlyName.setter
-    def FriendlyName(self,
-        name: str
-    ) -> None:
-        
-        if name != self.FriendlyName:
-        
-            RunHidden(
-                f"Set-PhysicalDisk -UniqueId '{self.UniqueID}' -NewFriendlyName '{name}'",
-                terminal = 'ps'
-            )
-
-            # If disk has a registry path 
-            if self.RegPath:
-
-                # Update the Friendly Name in the windows registry
-                RunHidden(
-                    f"Set-ItemProperty '{self.RegPath}' FriendlyName '{self.Name}'",
-                    terminal = 'ps'
-                )
-
-    #================
-    # Usage
-
-    @property
-    def Usage(self) -> None | Literal['Auto-Select', 'Retired']:
-        
-        if self._physical_disk:
-            
-            return self._physical_disk['Usage']
-        
-    @Usage.setter
-    def Usage(self,
-        usage: Literal['Auto-Select', 'Retired']
-    ) -> None:
-        
-        RunHidden(
-            f"Set-PhysicalDisk -UniqueId '{self.UniqueID}' -Usage {usage}",
-            terminal = 'ps'
-        )
-
-    #================
-
-# ===============================================================================================================
-# CONFIGURATION
+from .Types import HardDrive
 
 HardDrives: list[HardDrive] = [
 
     HardDrive(
-        tower = 'A',
-        type = 'SATA',
-        id = 1,
-        sn = 'PBEHHBB250616011613'
+        Tower = 'A',
+        Conn = 'SATA',
+        ID = 1,
+        SN = 'PBEHHBB250616011613'
     ),
 
     HardDrive(
-        tower = 'A',
-        type = 'SATA',
-        id = 2,
-        sn = '0000DHM1'
+        Tower = 'A',
+        Conn = 'SATA',
+        ID = 2,
+        SN = '0000DHM1'
     ),
 
     HardDrive(
-        tower = 'A',
-        type = 'SATA',
-        id = 3,
-        sn = None
+        Tower = 'A',
+        Conn = 'SATA',
+        ID = 3,
+        SN = None
     ),
 
     HardDrive(
-        tower = 'C',
-        type = 'SATA',
-        id = 4,
-        sn = 'YHHPB2LA'
+        Tower = 'C',
+        Conn = 'SATA',
+        ID = 4,
+        SN = 'YHHPB2LA'
     ),
 
     HardDrive(
-        tower = 'C',
-        type = 'SATA',
-        id = 5,
-        sn = 'YHKK76GG'
+        Tower = 'C',
+        Conn = 'SATA',
+        ID = 5,
+        SN = 'YHKK76GG'
     ),
 
     HardDrive(
-        tower = 'C',
-        type = 'SATA',
-        id = 6,
-        sn = 'YHKPSRSA'
+        Tower = 'C',
+        Conn = 'SATA',
+        ID = 6,
+        SN = 'YHKPSRSA'
     ),
 
     HardDrive(
-        tower = 'A',
-        type = 'SATA',
-        id = 7,
-        sn = '134605400828'
+        Tower = 'A',
+        Conn = 'SATA',
+        ID = 7,
+        SN = '134605400828'
     ),
 
     HardDrive(
-        tower = 'A',
-        type = 'SATA',
-        id = 8,
-        sn = 'YXGLGSXG'
+        Tower = 'A',
+        Conn = 'SATA',
+        ID = 8,
+        SN = 'YXGLGSXG'
     ),
 
     HardDrive(
-        tower = 'A',
-        type = 'SATA',
-        id = 9,
-        sn = 'S3TCNC0M500604'
+        Tower = 'A',
+        Conn = 'SATA',
+        ID = 9,
+        SN = 'S3TCNC0M500604'
     ),
 
     HardDrive(
-        tower = 'A',
-        type = 'SATA',
-        id = 10,
-        sn = 'QNVZGLRX'
+        Tower = 'A',
+        Conn = 'SATA',
+        ID = 10,
+        SN = 'QNVZGLRX'
     ),
 
     HardDrive(
-        tower = 'B',
-        type = 'SATA',
-        id = 11,
-        sn = '01CB9083B07Z'
+        Tower = 'B',
+        Conn = 'SATA',
+        ID = 11,
+        SN = '01CB9083B07Z'
     ),
 
     HardDrive(
-        tower = 'C',
-        type = 'SATA',
-        id = 12,
-        sn = 'Z992XWLF'
+        Tower = 'C',
+        Conn = 'SATA',
+        ID = 12,
+        SN = 'Z992XWLF'
     ),
 
     HardDrive(
-        tower = 'C',
-        type = 'SATA',
-        id = 13,
-        sn = 'V8H6T9ZR'
+        Tower = 'C',
+        Conn = 'SATA',
+        ID = 13,
+        SN = 'V8H6T9ZR'
     ),
 
     HardDrive(
-        tower = 'C',
-        type = 'SATA',
-        id = 14,
-        sn = 'YVJ42ZAA'
+        Tower = 'C',
+        Conn = 'SATA',
+        ID = 14,
+        SN = 'YVJ42ZAA'
     ),
 
     HardDrive(
-        tower = 'A',
-        type = 'SATA',
-        id = 15,
-        sn = 'UGXVK01J7BANIX'
+        Tower = 'A',
+        Conn = 'SATA',
+        ID = 15,
+        SN = 'UGXVK01J7BANIX'
     ),
 
     HardDrive(
-        tower = 'B',
-        type = 'SATA',
-        id = 16,
-        sn = 'ZR11FS39'
+        Tower = 'B',
+        Conn = 'SATA',
+        ID = 16,
+        SN = 'ZR11FS39'
     ),
 
     HardDrive(
-        tower = 'B',
-        type = 'SATA',
-        id = 17,
-        sn = 'ZGY43H7A'
+        Tower = 'B',
+        Conn = 'SATA',
+        ID = 17,
+        SN = 'ZGY43H7A'
     ),
 
     HardDrive(
-        tower = 'B',
-        type = 'SATA',
-        id = 18,
-        sn = 'Z5M3K0R6FUUB'
+        Tower = 'B',
+        Conn = 'SATA',
+        ID = 18,
+        SN = 'Z5M3K0R6FUUB'
     ),
 
     HardDrive(
-        tower = 'B',
-        type = 'SATA',
-        id = 19,
-        sn = 'Z5H1K13BFUUB'
+        Tower = 'B',
+        Conn = 'SATA',
+        ID = 19,
+        SN = 'Z5H1K13BFUUB'
     )
 
 ]
 
-# ===============================================================================================================

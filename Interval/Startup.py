@@ -3,8 +3,7 @@ from philh_myftp_biz.modules import ServiceDisabledError
 from philh_myftp_biz.process import SysTask
 from philh_myftp_biz.terminal import Log
 from philh_myftp_biz import VERBOSE
-from .. import alert
-from . import restart
+from . import alert, restart
 
 # ===============================================================================================================
 
