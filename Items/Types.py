@@ -3,9 +3,9 @@ from philh_myftp_biz.classtools import clear_cache
 from philh_myftp_biz.process import RunHidden
 from json.decoder import JSONDecodeError
 from functools import cached_property
-from typing import Literal, Generator
 from philh_myftp_biz.pc import Path
 from dataclasses import dataclass
+from typing import Literal
 
 class Service(__Service):
 
@@ -286,18 +286,17 @@ class Tower:
         return f'Tower {self.ID}'
 
     @cached_property
-    def HardDrives(self) -> Generator[HardDrive]:
+    def Connected(self) -> bool:
         from . import HardDrives
 
-        for hdd in HardDrives:
-        
-            if hdd.Tower == self.ID:
+        _HardDrives = filter(
+            lambda hdd: (hdd.Tower == self.ID),
+            HardDrives
+        )
 
-                yield hdd
+        _HardDrives = filter(
+            lambda hdd: hdd.Connected,
+            _HardDrives
+        )
 
-    @property
-    def Connected(self) -> bool:
-
-        clear_cache(self)
-
-        return any(hdd.Connected for hdd in self.HardDrives)
+        return next(_HardDrives, None) != None
