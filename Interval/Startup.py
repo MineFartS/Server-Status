@@ -1,4 +1,4 @@
-from ..Items import VirtualDisks, HardDrives, Services, Modules, PCIeCards, Mounts
+from ..Items import VirtualDisks, HardDrives, Services, Modules, PCIeCards
 from philh_myftp_biz.modules import ServiceDisabledError
 from philh_myftp_biz.process import SysTask
 from philh_myftp_biz.terminal import Log
@@ -74,15 +74,13 @@ for vdisk in VirtualDisks:
 
 # ===============================================================================================================
 
-# ===============================================================================================================
-
 # Remove the 'Nvidia Display Manager' Popup
 SysTask("*NVDisplay*").stop()
 
-# If any mounts are missing
-if any(not m.exists for m in Mounts):
+# If any virtual disks are missing
+if any(not d.Connected for d in VirtualDisks):
 
-    alert('Startup Failed')
+    alert('Startup Failed: Virtual Disk Failure')
 
 # If all mounts exist
 else:
