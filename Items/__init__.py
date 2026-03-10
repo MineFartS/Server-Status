@@ -4,16 +4,21 @@ from philh_myftp_biz.terminal import Log
 from philh_myftp_biz.pc import NAME
 from importlib import import_module
 
-def getItems(file:str):    
+def getItems(file:str) -> list:    
 
     Log.VERB(f'Collecting Items: {file}')
 
     dirname = NAME().replace('-', '')
 
-    return import_module(
-        name = f'.{dirname}.{file}', 
-        package = __name__
-    ).Items
+    try:
+    
+        return import_module(
+            name = f'.{dirname}.{file}', 
+            package = __name__
+        ).Items
+    
+    except ModuleNotFoundError:
+        return []
 
 HardDrives: list[HardDrive] = getItems('HardDrives')
 

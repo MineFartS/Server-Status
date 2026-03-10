@@ -3,26 +3,31 @@ from philh_myftp_biz.terminal import cls, print
 from philh_myftp_biz.time import sleep
 
 def LogStatus(
+    title: str,
     items: list
 ) -> None:
     
-    for item in items:
+    if len(items) > 0:
 
-        print(
-            f'   {item.Name.ljust(35, '.')}: ',
-            end = ''
-        )
+        print(f'\n{title}:')
+    
+        for item in items:
 
-        if item.Connected:
             print(
-                'Active',
-                color = 'GREEN'
+                f'   {item.Name.ljust(35, '.')}: ',
+                end = ''
             )
-        else:
-            print(
-                'Inactive',
-                color = 'RED'
-            )
+
+            if item.Connected:
+                print(
+                    'Active',
+                    color = 'GREEN'
+                )
+            else:
+                print(
+                    'Inactive',
+                    color = 'RED'
+                )
 
 while True:
 
@@ -30,23 +35,17 @@ while True:
 
     print("\n|-----------------------------------| Server Status |-----------------------------------|\n")    
 
-    print('\nHard Drives:')
-    LogStatus(HardDrives)
+    LogStatus('Hard Drives', HardDrives)
 
-    print('\nPCIe Cards:')
-    LogStatus(PCIeCards)
+    LogStatus('PCIe Cards', PCIeCards)
 
-    print('\nVirtual Disks:')
-    LogStatus(VirtualDisks)
+    LogStatus('Virtual Disks', VirtualDisks)
 
-    print('\nMounts:')
-    LogStatus(Mounts)
+    LogStatus('Mounts', Mounts)
 
-    print('\nTowers:')
-    LogStatus(Towers)
+    LogStatus('Towers', Towers)
 
-    print('\nServices:')
-    LogStatus(Services)
+    LogStatus('Services', Services)
 
     print("\n|---------------------------------------------------------------------------------------|\n")
 
