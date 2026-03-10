@@ -39,8 +39,10 @@ class VirtualDisk:
             
             return self._virtual_disk['UniqueId']
 
-    @cached_property
+    @property
     def Connected(self) -> bool:
+
+        clear_cache(self)
 
         if self._virtual_disk:
 
@@ -288,6 +290,8 @@ class Tower:
     @cached_property
     def Connected(self) -> bool:
         from . import HardDrives
+
+        clear_cache(self)
 
         _HardDrives = filter(
             lambda hdd: (hdd.Tower == self.ID),
