@@ -1,6 +1,6 @@
-from .Types import Service
+from ..Types import Service
 
-Services = [
+Items = [
 
     Service('E:/AI/Ollama/'),
 

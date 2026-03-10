@@ -1,6 +1,6 @@
 from philh_myftp_biz.modules import Module
 
-Modules = [
+Items = [
 
     Module('C:/Scripts/'), # 0
 

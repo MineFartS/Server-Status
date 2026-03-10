@@ -1,6 +1,6 @@
-from .Types import PCIeCard
+from ..Types import PCIeCard
 
-PCIeCards = [
+Items = [
 
     PCIeCard(
         Slot = 1,

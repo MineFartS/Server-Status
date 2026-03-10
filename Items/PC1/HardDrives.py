@@ -1,6 +1,6 @@
-from .Types import HardDrive
+from ..Types import HardDrive
 
-HardDrives: list[HardDrive] = [
+Items: list[HardDrive] = [
 
     HardDrive(
         Tower = 'A',

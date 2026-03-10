@@ -1,22 +1,30 @@
+from .Types import HardDrive, PCIeCard, Service, Tower, VirtualDisk, Mount
+from philh_myftp_biz.modules import Module
 from philh_myftp_biz.terminal import Log
+from philh_myftp_biz.pc import NAME
+from importlib import import_module
 
-Log.VERB('Collecting Hard Drives')
-from .Hard_Drives import HardDrives # pyright: ignore[reportUnusedImport]
+def getItems(file:str):    
 
-Log.VERB('Collecting Modules')
-from .Modules import Modules # pyright: ignore[reportUnusedImport]
+    Log.VERB(f'Collecting Items: {file}')
 
-Log.VERB('Collecting PCIe Cards')
-from .PCIe_Cards import PCIeCards # pyright: ignore[reportUnusedImport]
+    dirname = NAME().replace('-', '')
 
-Log.VERB('Collecting Services')
-from .Services import Services # pyright: ignore[reportUnusedImport]
+    return import_module(
+        name = f'.{dirname}.{file}', 
+        package = __name__
+    ).Items
 
-Log.VERB('Collecting Towers')
-from .Towers import Towers # pyright: ignore[reportUnusedImport]
+HardDrives: list[HardDrive] = getItems('HardDrives')
 
-Log.VERB('Collecting Virtual Disks')
-from .Virtual_Disks import VirtualDisks # pyright: ignore[reportUnusedImport]
+Modules: list[Module] = getItems('Modules')
 
-Log.VERB('Collecting Mounts')
-from .Mounts import Mounts, all_paths # pyright: ignore[reportUnusedImport]
+PCIeCards: list[PCIeCard] = getItems('PCIeCards')
+
+Services: list[Service] = getItems('Services')
+
+Towers: list[Tower] = getItems('Towers')
+
+VirtualDisks: list[VirtualDisk] = getItems('VirtualDisks')
+
+Mounts: list[Mount] = getItems('Mounts')

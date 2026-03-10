@@ -1,6 +1,6 @@
-from .Types import Tower
+from ..Types import Tower
 
-Towers: list[Tower] = [
+Items: list[Tower] = [
 
     Tower('A'),
 
