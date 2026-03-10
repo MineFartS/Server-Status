@@ -4,6 +4,8 @@ Items = [
 
     Service('E:/AI/Ollama/'),
 
+    Service('E:/Website/'),
+
     Service('E:/Website/API/'),
 
     Service('E:/Website/Indexer/'),
@@ -12,8 +14,8 @@ Items = [
 
     Service('E:/Plex/Torrenting/'),
 
-    #Service('E:/Plex/Optimization/')
+    Service('E:/Minecraft/'),
 
-    Service('E:/Minecraft/')
+    Service('E:/Users/FTP/')
 
 ]
