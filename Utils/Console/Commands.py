@@ -28,6 +28,7 @@ Type 'help' for a list of commands
             print("""
 ----------------------------------------
 
+HELP    | Show help message
 CLS     | Clear the terminal
 EXIT    | Exit the terminal
 
@@ -61,11 +62,17 @@ Run 'help *cmd*' for more details about a specific command
         list = """
 LIST SERVICE      | Get a list of selected services
 LIST MODULE       | Get a list of selected modules
+LIST DISK         | Get a list of selected hard drives
+LIST VDISK        | Get a list of selected virtual disks
+LIST PCIE         | Get a list of selected pcie cards
 """
             
         select = """
 SELECT SERVICE [...] | Select services (Ex: select service 1,3)
 SELECT MODULE  [...] | Select modules (Ex: select module ..5)
+SELECT DISK    [...] | Select hard drives
+SELECT VDISK   [...] | Select virtual disks
+SELECT PCIE    [...] | Select pcie cards
 
 [...] -> ['#', '#..', '..#', '#..#', '#,#']
 """
@@ -80,6 +87,10 @@ STOP SERVICE | Stop the selected services
 
         check = """
 CHECK SERVICE | Get the status of the selected services
+CHECK MODULE  | Get the status of the selected modules
+CHECK DISK    | Get the status of the selected hard drives
+CHECK VDISK   | Get the status of the selected virtual disks
+CHECK PCIE    | Get the status of the selected pcie cards
 """
             
         enable = """
@@ -130,10 +141,18 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for selected services
     class list(Branch):
 
         @staticmethod
+        def _hardware(
+            src: list,
+            mem: list
+        ) -> None:
+            for dev in mem:  
+                print(f'{src.index(dev)}: {dev.Name}')
+
+        @staticmethod
         def service() -> None:
             from ...Items import Services
 
-            for serv in Memory.services:
+            for serv in Memory.Services:
                     
                 print(f'{Services.index(serv)}: {serv.path} {serv.args}')
 
@@ -141,54 +160,124 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for selected services
         def module() -> None:
             from ...Items import Modules
 
-            for mod in Memory.modules:
+            for mod in Memory.Modules:
                     
                 print(f'{Modules.index(mod)}: {mod.path}')
+
+        @staticmethod
+        def disk() -> None:
+            from ...Items import HardDrives
+
+            Tree.list._hardware(
+                src = HardDrives,
+                mem = Memory.Disks
+            )
+
+        @staticmethod
+        def pcie() -> None:
+            from ...Items import PCIeCards
+
+            Tree.list._hardware(
+                src = PCIeCards,
+                mem = Memory.PCIeCards
+            )
+
+        @staticmethod
+        def vdisk() -> None:
+            from ...Items import VirtualDisks
+
+            Tree.list._hardware(
+                src = VirtualDisks,
+                mem = Memory.VDisks
+            )
 
     class select(Branch):
 
         @staticmethod
-        def service(rslice:str) -> None:
+        def _all(
+            rslice: str, 
+            src: list, 
+            dst: list
+        ) -> None:
             from philh_myftp_biz.text import to_slice
-            from ...Items import Services
 
-            Memory.services = []
+            dst.clear()
 
             for slice in to_slice(rslice):
 
-                _serv = Services[slice]
+                _mod = src[slice]
 
-                if isinstance(_serv, list):
-                    Memory.services += _serv
+                if isinstance(_mod, list):
+                    dst += _mod
                 else:
-                    Memory.services += [_serv]
+                    dst += [_mod]
+
+        @staticmethod
+        def service(rslice:str) -> None:
+            from ...Items import Services
+
+            Tree.select._all(
+                rslice = rslice,
+                src = Services,
+                dst = Memory.Services
+            )
                  
             Tree.list.service()
 
         @staticmethod
         def module(rslice:str) -> None:
-            from philh_myftp_biz.text import to_slice
             from ...Items import Modules
 
-            Memory.modules = []
-
-            for slice in to_slice(rslice):
-
-                _mod = Modules[slice]
-
-                if isinstance(_mod, list):
-                    Memory.modules += _mod
-                else:
-                    Memory.modules += [_mod]
+            Tree.select._all(
+                rslice = rslice,
+                src = Modules,
+                dst = Memory.Modules
+            )
                  
             Tree.list.module()
+
+        @staticmethod
+        def disk(rslice:str) -> None:
+            from ...Items import HardDrives
+
+            Tree.select._all(
+                rslice = rslice,
+                src = HardDrives,
+                dst = Memory.Disks
+            )
+                 
+            Tree.list.disk()
+
+        @staticmethod
+        def pcie(rslice:str) -> None:
+            from ...Items import PCIeCards
+
+            Tree.select._all(
+                rslice = rslice,
+                src = PCIeCards,
+                dst = Memory.PCIeCards
+            )
+                 
+            Tree.list.pcie()
+
+        @staticmethod
+        def vdisk(rslice:str) -> None:
+            from ...Items import VirtualDisks
+
+            Tree.select._all(
+                rslice = rslice,
+                src = VirtualDisks,
+                dst = Memory.VDisks
+            )
+                 
+            Tree.list.vdisk()
 
     class start(Branch):
 
         @staticmethod
         def service() -> None:
             
-            for serv in Memory.services:
+            for serv in Memory.Services:
 
                 if serv.exists:
 
@@ -205,22 +294,62 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for selected services
     class check(Branch):
 
         @staticmethod
+        def _hardware(
+            src: list,
+            mem: list
+        ) -> None:
+
+            for dev in mem:
+
+                ACTIVE: str = (' Active ' if dev.Connected else 'Inactive')
+
+                print(f'{src.index(dev)}: [{ACTIVE}] {dev.Name}')
+
+        @staticmethod
         def service() -> None:
             from ...Items import Services
 
-            for serv in Memory.services:
+            for serv in Memory.Services:
 
                 RUNNING: str = ('Running'  if serv.running else 'Stopped')
                 ENABLED: str = (' Enabled' if serv.enabled else 'Disabled')
 
                 print(f'{Services.index(serv)}: [{RUNNING}, {ENABLED}] {serv.path}')
 
+        @staticmethod
+        def module() -> None:
+            from ...Items import Modules
+
+            for mod in Memory.Modules:
+
+                EXISTS: str = (' Exists' if mod.exists else 'Missing')
+
+                print(f'{Modules.index(mod)}: [{EXISTS}] {mod.path}')
+
+        @staticmethod
+        def disk() -> None:
+            from ...Items import HardDrives
+
+            Tree.check._hardware(
+                src = HardDrives,
+                mem = Memory.Disks
+            )
+
+        @staticmethod
+        def pcie() -> None:
+            from ...Items import PCIeCards
+
+            Tree.check._hardware(
+                src = PCIeCards,
+                mem = Memory.PCIeCards
+            )
+
     class stop(Branch):
 
         @staticmethod
         def service() -> None:
 
-            for serv in Memory.services:
+            for serv in Memory.Services:
 
                 if serv.exists:
 
@@ -238,7 +367,7 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for selected services
         @staticmethod
         def service() -> None:
 
-            for serv in Memory.services:
+            for serv in Memory.Services:
 
                 serv.enable()
 
@@ -249,7 +378,7 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for selected services
         @staticmethod
         def service() -> None:
 
-            for serv in Memory.services:
+            for serv in Memory.Services:
 
                 serv.disable()
 
@@ -260,7 +389,7 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for selected services
         @staticmethod
         def service(_, *args:str) -> None:
 
-            for serv in Memory.services:
+            for serv in Memory.Services:
 
                 serv.args = args
 

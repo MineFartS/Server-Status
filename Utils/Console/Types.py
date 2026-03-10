@@ -1,5 +1,4 @@
-from philh_myftp_biz.modules import Module, Service
-from ...Items import Services, Modules
+from ...Items import Services, Modules, HardDrives, PCIeCards, VirtualDisks
 
 class Branch:
 
@@ -29,9 +28,15 @@ class Branch:
 
 class Memory:
 
-    services: list[Service] = Services.copy()
+    Services= Services.copy()
 
-    modules: list[Module] = Modules.copy()
+    Modules= Modules.copy()
+
+    Disks = HardDrives.copy()
+
+    PCIeCards = PCIeCards.copy()
+
+    VDisks = VirtualDisks.copy()
 
 class Printer:
 
