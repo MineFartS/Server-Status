@@ -1,5 +1,7 @@
 from .Types import Branch, Memory, Printer
 
+# TODO Add leading 0 to list, check, etc.
+
 class Tree(Branch):
 
     from builtins import exit
