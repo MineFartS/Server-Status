@@ -99,9 +99,8 @@ if not Mounts[1].exists:
 
     failed = [f'{d.ID:02d}-{d.Tower}' for d in _failed]
 
-    alert(f'Restarting due to Hard Drive Failure: {failed}')
-
-    restart()
+    # alert(f'Failing Hard Drives: {failed}')
+    # TODO Add option to alert() to not send sms alert
 
 # ===============================================================================================================
 
