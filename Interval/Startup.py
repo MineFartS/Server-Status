@@ -74,53 +74,48 @@ for vdisk in VirtualDisks:
 
 # ===============================================================================================================
 
-Log.INFO('Installing Modules')
-
-# Iter through all main modules
-for mod in Modules:
-
-    Log.VERB(f'Installing Module: {mod}')
-
-    # Install/Update all dependencies
-    mod.install(
-        show = VERBOSE
-    )
-
 # ===============================================================================================================
-
-Log.INFO('Checking for issues with Mounts')
-
-if not Mounts[1].exists:
-
-    _failed = filter(
-        lambda d: not d.Connected,
-        HardDrives
-    )
-
-    failed = [f'{d.ID:02d}-{d.Tower}' for d in _failed]
-
-    # alert(f'Failing Hard Drives: {failed}')
-    # TODO Add option to alert() to not send sms alert
-
-# ===============================================================================================================
-
-Log.INFO('Starting Services')
-
-# Start All Services
-for service in Services:
-
-    try:
-        service.start()
-
-    except ServiceDisabledError as e:
-        Log.FAIL('', exc_info=True)
-
-# ===============================================================================================================
-
-# Send alert
-alert('Startup Complete')
 
 # Remove the 'Nvidia Display Manager' Popup
 SysTask("*NVDisplay*").stop()
+
+# If any mounts are missing
+if any(not m.exists for m in Mounts):
+
+    alert('Startup Failed')
+
+# If all mounts exist
+else:
+
+    alert('Startup Complete')
+
+    #==============
+    # Modules
+
+    Log.INFO('Installing Modules')
+
+    # Iter through all main modules
+    for mod in Modules:
+
+        Log.VERB(f'Installing Module: {mod}')
+
+        # Install/Update all dependencies
+        mod.install(
+            show = VERBOSE
+        )
+
+    #==============
+    # Services
+    
+    Log.INFO('Starting Services')
+
+    # Start All Services
+    for service in Services:
+
+        try:
+            service.start()
+
+        except ServiceDisabledError as e:
+            Log.FAIL('', exc_info=True)
 
 # ===============================================================================================================
