@@ -3,7 +3,7 @@ from philh_myftp_biz.modules import ServiceDisabledError
 from philh_myftp_biz.process import SysTask
 from philh_myftp_biz.terminal import Log
 from philh_myftp_biz import VERBOSE
-from . import alert, restart
+from . import restart
 
 # ===============================================================================================================
 
@@ -12,7 +12,7 @@ Log.INFO('Checking for issues with PCIe Cards')
 if not all(c.Connected for c in PCIeCards):
     
     # Send alert
-    alert('Restarting due to PCIe card error')
+    Log.CRIT('Restarting due to PCIe card error')
 
     restart()
 
@@ -99,8 +99,7 @@ if not Mounts[1].exists:
 
     failed = [f'{d.ID:02d}-{d.Tower}' for d in _failed]
 
-    # alert(f'Failing Hard Drives: {failed}')
-    # TODO Add option to alert() to not send sms alert
+    Log.GOOG(f'Failing Hard Drives: {failed}')
 
 # ===============================================================================================================
 
@@ -118,7 +117,7 @@ for service in Services:
 # ===============================================================================================================
 
 # Send alert
-alert('Startup Complete')
+Log.TEXT('Startup Complete')
 
 # Remove the 'Nvidia Display Manager' Popup
 SysTask("*NVDisplay*").stop()
