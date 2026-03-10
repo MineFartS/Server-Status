@@ -23,9 +23,16 @@ Type 'help' for a list of commands
 
     class help(Branch):
 
-        @staticmethod
-        def _NoArgs() -> None:
-            print("""
+        def __getattribute__(self, name:str):
+        
+            value = super().__getattribute__(name)
+
+            if isinstance(value, str):
+                return lambda: print(value)
+            else:
+                return value
+
+        _NoArgs = """
 ----------------------------------------
 
 HELP    | Show help message
@@ -33,6 +40,9 @@ CLS     | Clear the terminal
 EXIT    | Exit the terminal
 
 RUN     | Run a script
+
+NAME    | Get Computer Name
+IP      | Get IP Address
 
 LIST    | List items
 SELECT  | Select items
@@ -48,16 +58,7 @@ ARGS    | Set items' arguements
 Run 'help *cmd*' for more details about a specific command
 
 ----------------------------------------
-""")
-
-        def __getattribute__(self, name:str):
-        
-            value = super().__getattribute__(name)
-
-            if isinstance(value, str):
-                return lambda: print(value)
-            else:
-                return value
+"""
 
         list = """
 LIST SERVICE      | Get a list of selected services
@@ -65,6 +66,7 @@ LIST MODULE       | Get a list of selected modules
 LIST DISK         | Get a list of selected hard drives
 LIST VDISK        | Get a list of selected virtual disks
 LIST PCIE         | Get a list of selected pcie cards
+LIST TOWER        | Get a list of selected towers
 """
             
         select = """
@@ -73,6 +75,7 @@ SELECT MODULE  [...] | Select modules (Ex: select module ..5)
 SELECT DISK    [...] | Select hard drives
 SELECT VDISK   [...] | Select virtual disks
 SELECT PCIE    [...] | Select pcie cards
+SELECT TOWER   [...] | Select towers
 
 [...] -> ['#', '#..', '..#', '#..#', '#,#']
 """
@@ -91,6 +94,7 @@ CHECK MODULE  | Get the status of the selected modules
 CHECK DISK    | Get the status of the selected hard drives
 CHECK VDISK   | Get the status of the selected virtual disks
 CHECK PCIE    | Get the status of the selected pcie cards
+CHECK TOWER   | Get the status of the selected towers
 """
             
         enable = """
@@ -118,6 +122,15 @@ SCRIPTS:
             
         args = """
 ARGS SERVICE = *arg1* *arg2* ...   | Set the args for selected services
+"""
+
+        name = """
+NAME   | Get the name of the current computer
+"""
+
+        ip = """
+SYS IP LAN | Get the current local ip
+SYS IP WAN | Get the current public ip
 """
 
     @staticmethod
@@ -189,6 +202,15 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for selected services
             Tree.list._hardware(
                 src = VirtualDisks,
                 mem = Memory.VDisks
+            )
+
+        @staticmethod
+        def tower() -> None:
+            from ...Items import Towers
+
+            Tree.list._hardware(
+                src = Towers,
+                mem = Memory.Towers
             )
 
     class select(Branch):
@@ -272,6 +294,18 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for selected services
                  
             Tree.list.vdisk()
 
+        @staticmethod
+        def tower(rslice:str) -> None:
+            from ...Items import Towers
+
+            Tree.select._all(
+                rslice = rslice,
+                src = Towers,
+                dst = Memory.Towers
+            )
+                 
+            Tree.list.tower()
+
     class start(Branch):
 
         @staticmethod
@@ -344,6 +378,15 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for selected services
                 mem = Memory.PCIeCards
             )
 
+        @staticmethod
+        def tower() -> None:
+            from ...Items import Towers
+
+            Tree.check._hardware(
+                src = Towers,
+                mem = Memory.Towers
+            )
+
     class stop(Branch):
 
         @staticmethod
@@ -394,5 +437,25 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for selected services
                 serv.args = args
 
             Tree.list.service()
+
+    @staticmethod
+    def name() -> None:
+        from philh_myftp_biz.pc import NAME
+
+        print(f'\nPC Name: {NAME()}')
+
+    class ip(Branch):
+
+        @staticmethod
+        def lan() -> None:
+            from philh_myftp_biz.web import IP
+
+            print(f'\nLocal IP: {IP.LAN()}')
+
+        @staticmethod
+        def wan() -> None:
+            from philh_myftp_biz.web import IP
+
+            print(f'\nPublic IP: {IP.WAN()}')
 
 #===========================================================================

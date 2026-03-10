@@ -1,4 +1,4 @@
-from ...Items import Services, Modules, HardDrives, PCIeCards, VirtualDisks
+from ...Items import Services, Modules, HardDrives, PCIeCards, VirtualDisks, Towers
 
 class Branch:
 
@@ -37,6 +37,8 @@ class Memory:
     PCIeCards = PCIeCards.copy()
 
     VDisks = VirtualDisks.copy()
+
+    Towers = Towers.copy()
 
 class Printer:
 
