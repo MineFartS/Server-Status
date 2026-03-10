@@ -16,12 +16,12 @@ Items: list[HardDrive] = [
         SN = '0000DHM1'
     ),
 
-    HardDrive(
-        Tower = 'A',
-        Conn = 'SATA',
-        ID = 3,
-        SN = None
-    ),
+#    HardDrive(
+#        Tower = 'A',
+#        Conn = 'SATA',
+#        ID = 3,
+#        SN = None
+#    ),
 
     HardDrive(
         Tower = 'C',
