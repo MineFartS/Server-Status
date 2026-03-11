@@ -101,6 +101,7 @@ CHECK TOWER   | Get the status of the selected towers
             
         enable = """
 ENABLE SERVICE | Enable the selected services
+ENABLE MODULE  | Setup dependencies for the selected modules
 """
             
         disable = """
@@ -116,7 +117,6 @@ SCRIPTS:
     - Utils.Update
     - Utils.Status
     - Utils.Console
-    - Interval.Day
     - Interval.Hour
     - Interval.Week
     - Interval.Startup
@@ -417,6 +417,15 @@ SYS IP WAN | Get the current public ip
                 serv.enable()
 
             Tree.check.service()
+
+        @staticmethod
+        def module() -> None:
+
+            for mod in Memory.Modules:
+
+                print(f'Enabling: {mod}')
+                
+                mod.install(False)
 
     class disable(Branch):
 
