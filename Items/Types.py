@@ -1,6 +1,7 @@
 from philh_myftp_biz.modules import Service as __Service
+from philh_myftp_biz.modules import Module as __Module
 from philh_myftp_biz.classtools import clear_cache
-from philh_myftp_biz.process import RunHidden
+from philh_myftp_biz.process import RunHidden, Run
 from json.decoder import JSONDecodeError
 from functools import cached_property
 from philh_myftp_biz.pc import Path
@@ -17,12 +18,12 @@ class Service(__Service):
     def Connected(self) -> bool:
         return self.running
 
-class Mount(Path):
+class Module(__Module):
 
     @cached_property
     def Name(self) -> str:
         return self.path
-
+    
     @property
     def Connected(self) -> bool:
         return self.exists
@@ -31,80 +32,33 @@ class Mount(Path):
 class VirtualDisk:
 
     Name: str
-
-    @cached_property
-    def UniqueID(self) -> None | str:
-
-        if self._virtual_disk:
-            
-            return self._virtual_disk['UniqueId']
+    Mount: Path
 
     @property
     def Connected(self) -> bool:
+        return self.Mount.exists
 
-        clear_cache(self)
-
-        if self._virtual_disk:
-
-            healthStatus: str = self._virtual_disk['HealthStatus']
-
-            return (healthStatus != 'Unhealthy')
-        
-        else:
-            return False
-
-    @cached_property
-    def _virtual_disk(self) -> None | dict:
-        try:
-        
-            return RunHidden(
-                f"Get-VirtualDisk -FriendlyName {self.Name} | ConvertTo-Json",
-                terminal = 'ps'
-            ).output(format='json') # pyright: ignore[reportReturnType]
-        
-        except JSONDecodeError:
-            pass
-
-    def repair(self) -> None:
-        RunHidden(
-            f"Repair-VirtualDisk -UniqueId '{self.UniqueID}'",
+    def _ps(self, cmd:str):        
+        Run(
+            f"{cmd}-VirtualDisk -FriendlyName '{self.Name}'",
             terminal = 'ps'
         )
 
-    #================
-    # Usage
-
-    @property
-    def Mounted(self) -> bool:
+    @Connected.setter
+    def Connected(self, connect:bool) -> None:
         
-        if self._virtual_disk:
+        if connect:
 
-            DetachedReason: str = self._virtual_disk['DetachedReason']
-            
-            return (DetachedReason == 'None')
-        
+            # Connect-VirtualDisk
+            self._ps('Connect')
+
+            # Repair-VirtualDisk
+            self._ps('Repair')
+
         else:
 
-            return False
-        
-    @Mounted.setter
-    def Mounted(self,
-        mounted: bool
-    ) -> None:
-        
-        if self.Mounted != mounted:
-
-            if mounted:
-                cmd = 'Connect'
-            else:
-                cmd = 'Disconnect'
-
-            RunHidden(
-                f"{cmd}-VirtualDisk -UniqueId '{self.UniqueID}'",
-                terminal = 'ps'
-            )
-
-    #================
+            # Disconnect-VirtualDisk
+            self._ps('Disconnect')
 
 @dataclass
 class HardDrive:

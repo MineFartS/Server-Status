@@ -1,4 +1,4 @@
-from .Types import HardDrive, PCIeCard, Service, Tower, VirtualDisk, Mount
+from .Types import HardDrive, PCIeCard, Service, Tower, VirtualDisk
 from philh_myftp_biz.modules import Module
 from philh_myftp_biz.terminal import Log
 from philh_myftp_biz.pc import NAME
@@ -31,5 +31,3 @@ Services: list[Service] = getItems('Services')
 Towers: list[Tower] = getItems('Towers')
 
 VirtualDisks: list[VirtualDisk] = getItems('VirtualDisks')
-
-Mounts: list[Mount] = getItems('Mounts')

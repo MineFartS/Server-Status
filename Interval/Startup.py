@@ -59,18 +59,9 @@ for vdisk in VirtualDisks:
         f"connected={vdisk.Connected}"
     )
 
-    # Check if vdisk is Unhealthy 
-    if not vdisk.Connected:
+    Log.VERB(f'Connecting Virtual Disk: {vdisk.Name}')
 
-        Log.VERB(f'Repairing VDisk: {vdisk.Name}')
-
-        vdisk.repair()
-
-    if not vdisk.Mounted:
-
-        Log.VERB(f'Mounting VDisk: {vdisk.Name}')
-
-        vdisk.Mounted = True
+    vdisk.Connected = True
 
 # ===============================================================================================================
 
