@@ -15,6 +15,8 @@ if not all(c.Connected for c in PCIeCards):
     alert('Restarting due to PCIe card error')
 
     restart()
+    
+    exit()
 
 # ===============================================================================================================
 

@@ -2,9 +2,8 @@ from philh_myftp_biz.process import RunHidden
 from philh_myftp_biz.terminal import Log
 from philh_myftp_biz.web import get
 from ..Items import Modules
-from typing import NoReturn
 
-def restart() -> NoReturn:
+def restart() -> None:
 
     # Show Prompt to abort shutdown
     Modules[0].start('vbs/abort')
@@ -15,8 +14,6 @@ def restart() -> NoReturn:
         '/r',
         '/t', 30
     ])
-
-    exit()
 
 def alert(msg:str) -> None:
 
