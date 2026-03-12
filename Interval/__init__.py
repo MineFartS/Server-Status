@@ -21,7 +21,7 @@ def alert(msg:str) -> None:
 
     # Send SMS Alert
     get(
-        url = 'https://script.google.com/macros/s/AKfycbyKYV2-Q1JUtMr1FdKR5eP-Bxy5m1EOd8EOFH9ghueqN-zZqQpPa9PEi8ZFz5T5uQc1Xg/exec',
+        url = 'https://script.google.com/macros/s/AKfycby9Xe6d1WYiMMxyHJhK7KADTucfScyvDJa5SLBGuR9QqCwrx52dRhizI2d0UjiJY_NfAg/exec',
         params = {'message': msg}
     )
 
