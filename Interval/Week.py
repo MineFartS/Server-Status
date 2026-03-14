@@ -1,13 +1,17 @@
 from philh_myftp_biz.modules import Service
 from philh_myftp_biz.terminal import Log
 from philh_myftp_biz.pc import Path
-from ..Items import all_paths
+from . import IS_SERVER
 
 # =================================================================================
 # HIDE ITEMS
 
+def paths():
+    yield from Path('C:/').descendants
+    yield from Path('E:/').descendants
+
 # Iter through all files on the 'C' and 'E' volumes
-for p in all_paths():
+for p in paths():
 
     SEG  = p.seg().lower()
     PATH = str(p).lower()
@@ -58,17 +62,19 @@ for p in all_paths():
 # =================================================================================
 # RESTART MINECRAFT
 
-# Iter through minecraft world dirs
-for p in Path('E:/Minecraft/Worlds').children:
+if IS_SERVER:
 
-    world = Service(
-        'E:/Minecraft/', 
-        '--World', p.name
-    )
+    # Iter through minecraft world dirs
+    for p in Path('E:/Minecraft/Worlds').children:
 
-    if world.running and world.enabled:
+        world = Service(
+            'E:/Minecraft/', 
+            '--World', p.name
+        )
 
-        world.stop()
-        world.start()
+        if world.running and world.enabled:
+
+            world.stop()
+            world.start()
 
 # =================================================================================
