@@ -2,6 +2,7 @@ from philh_myftp_biz.terminal import Log
 from ..Items import Services, Modules
 from philh_myftp_biz.time import now
 from philh_myftp_biz.pc import Path
+from . import IS_SERVER
 
 # ==================================================
 # SERVICES
@@ -16,8 +17,10 @@ for service in Services:
 # ==================================================
 # MINECRAFT
 
-# Backup Minecraft Worlds
-Modules[2].run('Backup')
+if IS_SERVER:
+
+    # Backup Minecraft Worlds
+    Modules[2].run('Backup')
 
 # ==================================================
 # CLEAN TEMP

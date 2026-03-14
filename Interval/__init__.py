@@ -2,6 +2,9 @@ from philh_myftp_biz.process import RunHidden
 from philh_myftp_biz.terminal import Log
 from philh_myftp_biz.web import get
 from ..Items import Modules
+from philh_myftp_biz.pc import NAME
+
+IS_SERVER: bool = (NAME() == 'PC-1')
 
 def restart() -> None:
 
@@ -19,11 +22,12 @@ def alert(msg:str) -> None:
 
     Log.MAIN(msg)
 
-    # Send SMS Alert
-    get(
-        url = 'https://script.google.com/macros/s/AKfycby9Xe6d1WYiMMxyHJhK7KADTucfScyvDJa5SLBGuR9QqCwrx52dRhizI2d0UjiJY_NfAg/exec',
-        params = {'message': msg}
-    )
-
     # Show Alert Box
     Modules[0].start('vbs/alert', msg)
+
+    if IS_SERVER:
+        # Send SMS Alert
+        get(
+            url = 'https://script.google.com/macros/s/AKfycby9Xe6d1WYiMMxyHJhK7KADTucfScyvDJa5SLBGuR9QqCwrx52dRhizI2d0UjiJY_NfAg/exec',
+            params = {'message': msg}
+        )
