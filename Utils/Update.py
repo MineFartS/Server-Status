@@ -1,7 +1,7 @@
 from subprocess import run
 from sys import executable
 
-run(
-    args = [executable, '-m', 'pip', 'install', '.'],
-    cwd = 'C:/Users/Administrator/Documents/GitHub/philh_myftp_biz/'
-)
+run([
+    executable, '-m', 'pip', 
+    'install', 'git+https://github.com/MineFartS/Server-PythonPackage.git'
+])
