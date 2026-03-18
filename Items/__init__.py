@@ -4,6 +4,8 @@ from philh_myftp_biz.terminal import Log
 from philh_myftp_biz.pc import NAME
 from importlib import import_module
 
+print(f'{NAME().replace('-', '')=}')
+
 def getItems(file:str) -> list:    
 
     Log.VERB(f'Collecting Items: {file}')

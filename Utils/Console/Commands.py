@@ -113,7 +113,6 @@ RUN *SCRIPT*    | Run a script in a new tab (Ex: run Interval.Startup)
 RUN *SCRIPT* -v | Run a script in a new tab [VERBOSE] (Ex: run Interval.Startup -v)
 
 SCRIPTS:
-    - Utils.Setup
     - Utils.Update
     - Utils.Status
     - Utils.Console
