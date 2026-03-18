@@ -64,7 +64,7 @@ class VirtualDisk:
 class HardDrive:
 
     Tower: str
-    Conn: Literal['SATA', 'USB']
+    Conn: Literal['SATA', 'USB', 'PROPRIETARY']
     ID: int
     SN: str
 
