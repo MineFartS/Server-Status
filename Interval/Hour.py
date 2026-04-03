@@ -1,8 +1,16 @@
+from philh_myftp_biz.web import FirewallException
 from philh_myftp_biz.terminal import Log
 from ..Items import Services, Modules
 from philh_myftp_biz.time import now
 from philh_myftp_biz.pc import Path
 from . import IS_SERVER
+
+# ==================================================
+# FIREWALL
+
+FirewallException('RDP').set(3389)
+FirewallException('FTP').set(21)
+FirewallException('SSH').set(22)
 
 # ==================================================
 # SERVICES
