@@ -9,7 +9,6 @@ from . import IS_SERVER
 # FIREWALL
 
 FirewallException('RDP').set(3389)
-FirewallException('FTP').set(21)
 FirewallException('SSH').set(22)
 
 # ==================================================
