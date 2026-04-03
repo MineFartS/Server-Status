@@ -1,4 +1,3 @@
-from philh_myftp_biz.web import FirewallException as __FirewallException
 from philh_myftp_biz.modules import Service as __Service
 from philh_myftp_biz.modules import Module as __Module
 from philh_myftp_biz.classtools import clear_cache
@@ -259,23 +258,3 @@ class Tower:
         )
 
         return next(_HardDrives, None) != None
-
-class FWPort(__FirewallException):
-
-    def __init__(self,
-        name: str,
-        port: int
-    ) -> None:
-
-        super().__init__(name)
-
-        self.Name = name
-
-        self._port = port
-
-    def set(self):
-        super().set(self._port)
-
-    @property
-    def Connected(self):
-        return self.exists
