@@ -102,11 +102,7 @@ else:
 
     # Start All Services
     for service in Services:
-
-        try:
+        if service.enabled:
             service.start()
-
-        except ServiceDisabledError as e:
-            Log.FAIL('', exc_info=True)
 
 # ===============================================================================================================
