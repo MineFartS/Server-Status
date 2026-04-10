@@ -1,4 +1,5 @@
-from philh_myftp_biz.web import FirewallException
+from philh_myftp_biz.web import FirewallException, URL
+from philh_myftp_biz.web.driver import Driver
 from philh_myftp_biz.terminal import Log
 from ..Items import Services, Modules
 from philh_myftp_biz.time import now
@@ -59,3 +60,17 @@ for p in temp.descendants:
             p.delete()
 
 # ==================================================
+
+api = URL('https://script.google.com/macros/s/AKfycbx7DM4-zefGFauBcK5kFMz92oLz1vFvKTG89CC6bpmE85WKzGuEtJoSwghe5d188EaN/exec')
+
+confirm_url: str|None = api.json
+
+if confirm_url:
+
+    d = Driver(
+        headless = False,
+        daemon = False
+    )
+
+    d.open(confirm_url)
+
