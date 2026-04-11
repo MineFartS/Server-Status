@@ -460,12 +460,12 @@ SYS IP WAN | Get the current public ip
         def lan() -> None:
             from philh_myftp_biz.web import IP
 
-            print(f'\nLocal IP: {IP.LAN()}')
+            print(f'\nLocal IP: {IP.LAN}')
 
         @staticmethod
         def wan() -> None:
             from philh_myftp_biz.web import IP
 
-            print(f'\nPublic IP: {IP.WAN()}')
+            print(f'\nPublic IP: {IP.WAN}')
 
 #===========================================================================
