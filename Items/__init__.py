@@ -8,7 +8,7 @@ def getItems(file:str) -> list:
 
     Log.VERB(f'Collecting Items: {file}')
 
-    dirname = NAME().replace('-', '')
+    dirname = NAME.replace('-', '')
 
     try:
     

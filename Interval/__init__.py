@@ -4,7 +4,7 @@ from philh_myftp_biz.web import URL
 from philh_myftp_biz.pc import NAME
 from ..Items import Modules
 
-IS_SERVER: bool = (NAME() == 'PC-1')
+IS_SERVER: bool = (NAME == 'PC-1')
 
 def restart() -> None:
 
