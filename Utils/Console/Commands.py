@@ -452,7 +452,7 @@ SYS IP WAN | Get the current public ip
     def name() -> None:
         from philh_myftp_biz.pc import NAME
 
-        print(f'\nPC Name: {NAME()}')
+        print(f'\nPC Name: {NAME}')
 
     class ip(Branch):
 
