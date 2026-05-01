@@ -130,8 +130,8 @@ NAME   | Get the name of the current computer
 """
 
         ip = """
-SYS IP LAN | Get the current local ip
-SYS IP WAN | Get the current public ip
+IP LAN | Get the current local ip
+IP WAN | Get the current public ip
 """
 
     @staticmethod
