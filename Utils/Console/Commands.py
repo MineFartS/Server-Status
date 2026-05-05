@@ -117,6 +117,7 @@ SCRIPTS:
     - Utils.Status
     - Utils.Console
     - Interval.Hour
+    - Interval.Day
     - Interval.Week
     - Interval.Startup
 """
