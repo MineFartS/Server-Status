@@ -76,10 +76,15 @@ class HardDrive:
     def _physical_disk(self) -> None | dict:
         try:
 
-            return RunHidden(
+            data: dict|list = RunHidden(
                 f"Get-PhysicalDisk -SerialNumber {self.SN} | ConvertTo-Json",
                 terminal = 'ps'
-            ).output(format='json') # pyright: ignore[reportReturnType]
+            ).output(format='json')
+
+            if isinstance(data, list):
+                return data[0]
+            else:
+                return data
         
         except JSONDecodeError:
             pass
