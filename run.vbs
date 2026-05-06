@@ -8,8 +8,33 @@
 
 '=======================================================
 
+' Create a new Shell Object
+Set Shell = CreateObject("WScript.Shell")
+
+'=======================================================
+
 ' Get Method Name from first arguement
-CMD = "python.exe -m Scripts." & WScript.Arguments(0)
+' If the exe doesn't exist, try to build it (requires MSVC + CMake on PATH)
+If fso.FileExists("C:\\Scripts_CPP\\ScriptsCPP.exe") = False Then
+    Shell.CurrentDirectory = "C:\\Scripts_CPP\\"
+' Build via cmake (Visual Studio generator)
+    cmdPow = "powershell -NoProfile -Command \"& { if (Get-Command cmake -ErrorAction SilentlyContinue) {\n" & _
+              "  cmake -S . -B build -G 'Visual Studio 17 2022' -A x64;\n" & _
+              "  cmake --build build --config Release\n" & _
+              "} else {\n" & _
+              "    $cmakeExe = 'C:\\ProgramData\\chocolatey\\bin\\cmake.exe';\n" & _
+              "    if (Test-Path $cmakeExe) {\n" & _
+              "      & $cmakeExe -S . -B build -G 'Visual Studio 17 2022' -A x64;\n" & _
+              "      & $cmakeExe --build build --config Release;\n" & _
+              "    } else {\n" & _
+              "      Write-Host 'cmake not found on PATH and no cmake.exe found; cannot build.';\n" & _
+              "    }\n" & _
+              "  }\n" & _
+              "}\""
+    Shell.Run cmdPow, 0, True
+End If
+
+CMD = "ScriptsCPP.exe " & WScript.Arguments(0)
 
 '=======================================================
 ' VISIBLE [POSITIONAL ARG]
@@ -35,11 +60,8 @@ end if
 
 '=======================================================
 
-' Create a new Shell Object
-Set Shell = CreateObject("WScript.Shell")
-
 '
-Shell.CurrentDirectory = "C:\"
+Shell.CurrentDirectory = "C:\Scripts_CPP\"
 
 '
 Shell.Run CMD, Visible, 0
