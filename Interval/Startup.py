@@ -3,7 +3,7 @@ from philh_myftp_biz.modules import ServiceDisabledError
 from philh_myftp_biz.process import SysTask
 from philh_myftp_biz.terminal import Log
 from philh_myftp_biz import VERBOSE
-from . import alert, restart
+from . import alert, shutdown
 
 # ===============================================================================================================
 
@@ -14,7 +14,7 @@ if not all(c.Connected for c in PCIeCards):
     # Send alert
     alert('Restarting due to PCIe card error')
 
-    restart()
+    shutdown('r')
     
     exit()
 

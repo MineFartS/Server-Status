@@ -4,8 +4,8 @@ Set Shell = WScript.CreateObject("WScript.Shell")
 
 ' Display a message box
 response = MsgBox ( _
-    "The server will soon restart because of an error." & vbNewLine & _
-    "Would you like to abort the restart?", _
+    "The server is shutting down" & vbNewLine & _
+    "Would you like to abort?", _
     vbOKOnly, _
     "Server Alert" _
 )

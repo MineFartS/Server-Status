@@ -3,10 +3,14 @@ from philh_myftp_biz.terminal import Log
 from philh_myftp_biz.web import URL
 from philh_myftp_biz.pc import NAME
 from ..Items import Modules
+from typing import Literal
 
 IS_SERVER: bool = (NAME == 'PC-1')
 
-def restart() -> None:
+def shutdown(
+    mode: Literal['s', 'r'],
+    t: int = 30
+) -> None:
 
     # Show Prompt to abort shutdown
     Modules[0].start('vbs/abort')
@@ -14,8 +18,8 @@ def restart() -> None:
     # Restart the Server
     RunHidden([
         'shutdown',
-        '/r',
-        '/t', 30
+        f'/{mode}',
+        '/t', t
     ])
 
 def alert(msg:str) -> None:

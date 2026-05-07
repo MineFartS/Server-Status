@@ -45,6 +45,7 @@ RUN     | Run a script
 
 NAME    | Get Computer Name
 IP      | Get IP Address
+POWER   | Shutdown/Restart System
 
 LIST    | List items
 SELECT  | Select items
@@ -133,6 +134,11 @@ NAME   | Get the name of the current computer
         ip = """
 IP LAN | Get the current local ip
 IP WAN | Get the current public ip
+"""
+
+        power = """
+POWER SHUTDOWN | Shutdown system
+POWER RESTART  | Restart system
 """
 
     @staticmethod
@@ -468,5 +474,11 @@ IP WAN | Get the current public ip
             from philh_myftp_biz.web import IP
 
             print(f'\nPublic IP: {IP.WAN}')
+
+    class power(Branch):
+
+        def __getattribute__(self, name:str):
+            from ...Interval import shutdown
+            return lambda: shutdown(name[0])
 
 #===========================================================================
