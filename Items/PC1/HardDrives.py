@@ -76,7 +76,7 @@ Items: list[HardDrive] = [
         Tower = 'B',
         Conn = 'SATA',
         ID = 11,
-        SN = '01CB9083B07Z'
+        SN = 'V8J0E15R'
     ),
 
     HardDrive(

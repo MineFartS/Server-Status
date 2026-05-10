@@ -21,6 +21,12 @@ Items = [
     ),
 
     PCIeCard(
+        Slot = 4,
+        Lanes = 4,
+        DeviceID = "PCI\\VEN_1B21&DEV_1166&SUBSYS_21162116&REV_02\\4&1E804E93&0&00D8"
+    ),
+
+    PCIeCard(
         Slot = 'M.2',
         Lanes = 4,
         DeviceID = "PCI\\VEN_1B21&DEV_1166&SUBSYS_21162116&REV_02\\4&1E804E93&0&00D8"
