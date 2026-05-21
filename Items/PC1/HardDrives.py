@@ -48,7 +48,7 @@ Items: list[HardDrive] = [
         Tower = 'A',
         Conn = 'SATA',
         ID = 7,
-        SN = '134605400828'
+        SN = '2023E2A90F50'
     ),
 
     HardDrive(
@@ -62,7 +62,7 @@ Items: list[HardDrive] = [
         Tower = 'A',
         Conn = 'SATA',
         ID = 9,
-        SN = '2023E2A90F50'
+        SN = '134605400828'
     ),
 
     HardDrive(
