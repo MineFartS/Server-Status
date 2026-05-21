@@ -48,6 +48,12 @@ for hdd in HardDrives:
 
             hdd.Usage = 'Auto-Select'
 
+    else:
+
+        Log.VERB(f'Retiring Missing HDD: {hdd.Name}')
+
+        hdd.Usage = 'Retired'
+
 # ===============================================================================================================
 
 Log.INFO('Processing Virtual Disks')
