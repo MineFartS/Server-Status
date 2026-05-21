@@ -16,6 +16,8 @@ Items = [
 
     Service('E:/Minecraft/'),
 
-    Service('E:/Users/FTP/')
+    Service('E:/Users/FTP/'),
+
+    Service('E:/Users/PhotoPrism/')
 
 ]
