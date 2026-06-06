@@ -62,7 +62,7 @@ Items: list[HardDrive] = [
         Tower = 'A',
         Conn = 'SATA',
         ID = 9,
-        SN = '134605400828'
+        SN = 'S3TCNC0M500604'
     ),
 
     HardDrive(
@@ -133,6 +133,20 @@ Items: list[HardDrive] = [
         Conn = 'SATA',
         ID = 19,
         SN = 'WCAPZ1465935'
+    ),
+
+    HardDrive(
+        Tower = 'EXT',
+        Conn = 'USB',
+        ID = 1,
+        SN = 'WXK2E20DRV19'
+    ),
+
+    HardDrive(
+        Tower = 'EXT',
+        Conn = 'USB',
+        ID = 2,
+        SN = '2100120608000000'
     )
 
 ]
