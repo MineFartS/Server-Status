@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <types.h>
 
 static void print_usage() {
     std::cerr << "Usage: ScriptsCPP <Module> [visible] [verbose]\n"
