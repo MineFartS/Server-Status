@@ -8,6 +8,11 @@
 #include <nlohmann/json.hpp>
 #include <windows.h>
 #include <winioctl.h>
+#include <comdef.h>
+#include <WbemIdl.h>
+
+#pragma comment(lib, "wbemuuid.lib")
+#pragma comment(lib, "ole32.lib")
 
 // Mocking external dependencies based on Python imports
 // In a real scenario, these would be provided by the philh_myftp_biz C++ port
@@ -140,11 +145,8 @@ struct HardDrive {
     std::string sn;
 
     // Cached properties
+    mutable std::optional<std::string> _cached_drive_path;
     mutable std::optional<std::string> _cached_name;
-    mutable std::optional<json> _cached_physical_disk;
-    mutable std::optional<json> _cached_wmi_object;
-    mutable std::optional<std::string> _cached_unique_id;
-    mutable std::optional<std::string> _cached_reg_path;
 
     std::string name() const {
         if (!_cached_name) {
@@ -155,26 +157,6 @@ struct HardDrive {
         return *_cached_name;
     }
 
-    std::optional<json> physicalDisk() const {
-        if (!_cached_physical_disk) {
-            try {
-                json data = RunHidden(
-                    "Get-PhysicalDisk -SerialNumber " + sn + " | ConvertTo-Json",
-                    "ps"
-                ).output("json");
-
-                if (data.is_array() && !data.empty()) {
-                    _cached_physical_disk = data[0];
-                } else {
-                    _cached_physical_disk = data;
-                }
-            } catch (const std::runtime_error&) {
-                _cached_physical_disk = std::nullopt;
-            }
-        }
-        return _cached_physical_disk;
-    }
-
     // Helper function to trim whitespaces from serial numbers
     std::string trim(const std::string& str) {
         size_t first = str.find_first_not_of(" \t\r\n");
@@ -183,7 +165,8 @@ struct HardDrive {
         return str.substr(first, (last - first + 1));
     }
 
-    std::string drivePath() {
+    std::string _drivePath() {
+
         // Standardize target string for comparison
         std::string target = trim(sn);
         
@@ -248,119 +231,28 @@ struct HardDrive {
         return ""; // No matching serial number found
     }
 
-    std::optional<json> wmiObject() const {
-        if (!_cached_wmi_object) {
-            try {
-                std::vector<std::string> cmd = {
-                    "Get-WmiObject", "-Query",
-                    "SELECT * FROM Win32_DiskDrive WHERE SerialNumber = '" + sn + "'",
-                    "| ConvertTo-Json"
-                };
-                _cached_wmi_object = RunHidden(cmd, "ps").output("json");
-            } catch (const std::runtime_error&) {
-                _cached_wmi_object = std::nullopt;
-            }
-        }
-        return _cached_wmi_object;
-    }
-
-    std::optional<std::string> uniqueId() const {
-        if (!_cached_unique_id) {
-            auto pd = physicalDisk();
-            if (pd && pd->contains("UniqueId")) {
-                _cached_unique_id = (*pd)["UniqueId"].get<std::string>();
-            }
-        }
-        return _cached_unique_id;
+    std::string drivePath() {
+        if (!_cached_drive_path)
+            _cached_drive_path = _drivePath();
+        
+        return *_cached_drive_path;
     }
 
     bool connected() {
-        clear_cache(this);
-        _cached_physical_disk.reset(); // Manual clear for this implementation
-
-        auto fn = friendlyName();
-        if (fn) {
-            auto pd = physicalDisk();
-            if (pd && pd->contains("OperationalStatus")) {
-                std::string opStatus = (*pd)["OperationalStatus"].get<std::string>();
-                return (opStatus != "Lost Communication");
-            }
-        }
-        return false;
+        return drivePath() != "";
     }
 
-    std::optional<std::string> regPath() const {
-        if (!_cached_reg_path) {
-            auto wmi = wmiObject();
-            if (wmi && wmi->contains("PNPDeviceID")) {
-                std::string pnpId = (*wmi)["PNPDeviceID"].get<std::string>();
-                _cached_reg_path = "HKLM:SYSTEM\\ControlSet001\\Enum\\" + pnpId;
-            }
-        }
-        return _cached_reg_path;
+    // Extracts the integer index "0" from "\\\\.\\PhysicalDrive0"
+    int diskNum() {
+        if (!connected()) return -1;
+
+        std::string dp = drivePath();
+
+        std::string strnum = dp.substr(dp.find_last_of("PhysicalDrive") + 1);
+
+        return stoi(strnum);
     }
 
-    // FriendlyName
-    std::optional<std::string> friendlyName() const {
-        auto pd = physicalDisk();
-        if (pd && pd->contains("FriendlyName")) {
-            std::string fn = (*pd)["FriendlyName"].get<std::string>();
-            if (!fn.empty()) {
-                return fn;
-            }
-        }
-        return std::nullopt;
-    }
-
-    void setFriendlyName(std::string name_val) {
-        if (name_val != friendlyName().value_or("")) {
-            auto uid = uniqueId();
-            if (uid) {
-                RunHidden(
-                    "Set-PhysicalDisk -UniqueId '" + *uid + "' -NewFriendlyName '" + name_val + "'",
-                    "ps"
-                );
-            }
-
-            auto rp = regPath();
-            if (rp) {
-                RunHidden(
-                    "Set-ItemProperty '" + *rp + "' FriendlyName '" + name() + "'",
-                    "ps"
-                );
-            }
-
-            clear_cache(this);
-            _cached_physical_disk.reset();
-            _cached_name.reset();
-            _cached_unique_id.reset();
-            _cached_reg_path.reset();
-        }
-    }
-
-    // Usage
-    std::optional<std::string> usage() const {
-        auto pd = physicalDisk();
-        if (pd && pd->contains("Usage")) {
-            return (*pd)["Usage"].get<std::string>();
-        }
-        return std::nullopt;
-    }
-
-    void setUsage(std::string usage_val) {
-        if (usage_val != usage().value_or("")) {
-            auto uid = uniqueId();
-            if (uid) {
-                RunHidden(
-                    "Set-PhysicalDisk -UniqueId '" + *uid + "' -Usage " + usage_val,
-                    "ps"
-                );
-            }
-
-            clear_cache(this);
-            _cached_physical_disk.reset();
-        }
-    }
 };
 
 struct PCIeCard {

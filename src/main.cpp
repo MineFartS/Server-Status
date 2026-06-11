@@ -7,6 +7,18 @@ static void print_usage() {
               << "Modules: Interval.Startup | Interval.Hour | Interval.Week | Interval.Day\n";
 }
 
+static void print_hdd(HardDrive hdd) {
+    std::cout << "\n"
+        << "\nhdd.tower = " << hdd.tower
+        << "\nhdd.conn = " << hdd.conn
+        << "\nhdd.id = " << hdd.id
+        << "\nhdd.sn = " << hdd.sn
+        << "\nhdd.name() = " << hdd.name()
+        << "\nhdd.drivePath() = " << hdd.drivePath()
+        << "\nhdd.diskNum() = " << hdd.diskNum()
+        << "\nhdd.connected() = " << hdd.connected();
+}
+
 int main(int argc, char** argv) {
     // Contract compatible with the existing run.vbs:
     // argv[0] = program
@@ -14,18 +26,22 @@ int main(int argc, char** argv) {
     // argv[2] = visible (bool)
     // argv[3] = verbose (bool)
 
-    HardDrive hdd = HardDrive(
+    HardDrive hdd1 = HardDrive(
         /* Tower */ "A",
         /* Conn */ "SATA",
         /* ID */ 1,
         /* SN */ "UGXVK01J7BAF9W"
     );
 
-    std::cout << "hdd.tower = " << hdd.tower
-              << "\nhdd.conn = " << hdd.conn
-              << "\nhdd.id = " << hdd.id
-              << "\nhdd.sn = " << hdd.sn
-              << "\nhdd.drivePath() = " << hdd.drivePath();
+    HardDrive hdd2 = HardDrive(
+        /* Tower */ "A",
+        /* Conn */ "SATA",
+        /* ID */ 1,
+        /* SN */ "NA"
+    );
+
+    print_hdd(hdd1);
+    print_hdd(hdd2);
 
     return 0;
 
