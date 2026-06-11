@@ -14,6 +14,21 @@ int main(int argc, char** argv) {
     // argv[2] = visible (bool)
     // argv[3] = verbose (bool)
 
+    HardDrive hdd = HardDrive(
+        /* Tower */ "A",
+        /* Conn */ "SATA",
+        /* ID */ 1,
+        /* SN */ "UGXVK01J7BAF9W"
+    );
+
+    std::cout << "hdd.tower = " << hdd.tower
+              << "\nhdd.conn = " << hdd.conn
+              << "\nhdd.id = " << hdd.id
+              << "\nhdd.sn = " << hdd.sn
+              << "\nhdd.drivePath() = " << hdd.drivePath();
+
+    return 0;
+
     if (argc < 2) {
         print_usage();
         return 2;

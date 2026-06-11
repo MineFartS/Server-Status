@@ -5,7 +5,9 @@
 #include <iostream>
 #include <algorithm>
 #include <iterator>
-#include <nlohmann/json.hpp> // Assuming nlohmann/json for JSON handling
+#include <nlohmann/json.hpp>
+#include <windows.h>
+#include <winioctl.h>
 
 // Mocking external dependencies based on Python imports
 // In a real scenario, these would be provided by the philh_myftp_biz C++ port
@@ -171,6 +173,79 @@ struct HardDrive {
             }
         }
         return _cached_physical_disk;
+    }
+
+    // Helper function to trim whitespaces from serial numbers
+    std::string trim(const std::string& str) {
+        size_t first = str.find_first_not_of(" \t\r\n");
+        if (first == std::string::npos) return "";
+        size_t last = str.find_last_not_of(" \t\r\n");
+        return str.substr(first, (last - first + 1));
+    }
+
+    std::string drivePath() {
+        // Standardize target string for comparison
+        std::string target = trim(sn);
+        
+        // Windows supports up to 16 or more drives normally; loop through a reasonable index range
+        for (UINT driveIndex = 0; driveIndex < 16; ++driveIndex) {
+            std::string drivePath = "\\\\.\\PhysicalDrive" + std::to_string(driveIndex);
+            
+            // Open handle to the physical drive
+            HANDLE hDevice = CreateFileA(
+                drivePath.c_str(),
+                0, // No access rights required to read attributes
+                FILE_SHARE_READ | FILE_SHARE_WRITE,
+                NULL,
+                OPEN_EXISTING,
+                0,
+                NULL
+            );
+
+            if (hDevice == INVALID_HANDLE_VALUE) {
+                continue; // Drive index doesn't exist, move to next
+            }
+
+            // Configure the query to fetch device properties
+            STORAGE_PROPERTY_QUERY propertyQuery = {};
+            propertyQuery.PropertyId = StorageDeviceProperty;
+            propertyQuery.QueryType = PropertyStandardQuery;
+
+            // Allocate a buffer to hold the output descriptor block
+            BYTE outputBuffer[1024] = {};
+            DWORD bytesReturned = 0;
+
+            // Send the IOCTL command to the physical disk
+            BOOL result = DeviceIoControl(
+                hDevice,
+                IOCTL_STORAGE_QUERY_PROPERTY,
+                &propertyQuery,
+                sizeof(propertyQuery),
+                outputBuffer,
+                sizeof(outputBuffer),
+                &bytesReturned,
+                NULL
+            );
+
+            CloseHandle(hDevice);
+
+            if (result) {
+                STORAGE_DEVICE_DESCRIPTOR* deviceDescriptor = reinterpret_cast<STORAGE_DEVICE_DESCRIPTOR*>(outputBuffer);
+                
+                // Check if a valid serial number offset exists
+                if (deviceDescriptor->SerialNumberOffset != 0 && deviceDescriptor->SerialNumberOffset < bytesReturned) {
+                    // Extract the null-terminated ASCII serial number string
+                    const char* rawSerial = reinterpret_cast<const char*>(outputBuffer + deviceDescriptor->SerialNumberOffset);
+                    std::string currentSerial = trim(rawSerial);
+
+                    // Check for a match (case-insensitive or exact depending on preference)
+                    if (currentSerial == target) {
+                        return drivePath; // Found a match!
+                    }
+                }
+            }
+        }
+        return ""; // No matching serial number found
     }
 
     std::optional<json> wmiObject() const {
