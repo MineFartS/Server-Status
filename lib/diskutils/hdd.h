@@ -182,6 +182,10 @@ struct HardDrive {
 
     void setFriendlyName(std::string name) {
 
+        std::string ps_cmd = "powershell.exe -Command \"Get-PhysicalDisk | Where-Object SerialNumber -eq '"+sn+"' | Set-PhysicalDisk -NewFriendlyName '"+name+"'\"";
+
+        std::system(ps_cmd.c_str());
+
         if (DrivePath().empty()) return;
 
         std::string diskNumber = DiskNumber();
