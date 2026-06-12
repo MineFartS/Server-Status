@@ -22,14 +22,6 @@
 struct HardDrive {
     std::string sn;
 
-    HardDrive(const char* serialnum) {
-        if (serialnum == nullptr) {
-            sn = "";
-        } else {
-            sn = trim_serial_number(std::string(serialnum));
-        }
-    }
-
     //===============================================================================
     // Helper functions to trim whitespaces
     
