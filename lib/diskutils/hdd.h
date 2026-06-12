@@ -14,10 +14,12 @@
 #include <cfgmgr32.h>
 #include <devguid.h>
 #include <devpkey.h>
+#include <setupapi.h>
 
 #pragma comment(lib, "wbemuuid.lib")
 #pragma comment(lib, "ole32.lib")
 #pragma comment(lib, "cfgmgr32.lib")
+#pragma comment(lib, "setupapi.lib")
 
 struct HardDrive {
     std::string sn;
@@ -115,15 +117,122 @@ struct HardDrive {
     }
 
     //===============================================================================
+    // DiskNumber
+
+    std::string DiskNumber() {
+    
+        const std::string prefix = "\\.\\PhysicalDrive";
+    
+        if (DrivePath().rfind(prefix, 0) == 0) {
+            return DrivePath().substr(prefix.size());
+        }
+
+        return "";
+    }
+
+    //===============================================================================
     // FriendlyName
 
-    // Retrieves the actual Windows Registry FriendlyName for a specific \\.\PhysicalDriveX path
     std::string FriendlyName() {
-        return ""; // TODO
+        if (DrivePath().empty()) return "";
+
+        std::string diskNumber = DiskNumber();
+
+        static const GUID GUID_DEVCLASS_DISKDRIVE = { 0x4D36E967, 0xE325, 0x11CE, { 0xBF, 0xC1, 0x08, 0x00, 0x2B, 0xE1, 0x03, 0x18 } };
+
+        HDEVINFO hDevInfo = SetupDiGetClassDevs(&GUID_DEVCLASS_DISKDRIVE, NULL, NULL, DIGCF_PRESENT);
+        if (hDevInfo == INVALID_HANDLE_VALUE) return "";
+
+        std::string result;
+        SP_DEVINFO_DATA devInfoData;
+        devInfoData.cbSize = sizeof(SP_DEVINFO_DATA);
+
+        for (DWORD i = 0;; ++i) {
+            if (!SetupDiEnumDeviceInfo(hDevInfo, i, &devInfoData)) break;
+
+            char instanceId[512] = { 0 };
+            if (!SetupDiGetDeviceInstanceIdA(hDevInfo, &devInfoData, instanceId, (DWORD)sizeof(instanceId), NULL)) {
+                continue;
+            }
+
+            if (!diskNumber.empty()) {
+                std::string inst(instanceId);
+                if (inst.find("PhysicalDrive") == std::string::npos || inst.find(diskNumber) == std::string::npos) {
+                    continue;
+                }
+            }
+
+            WCHAR wideName[512] = { 0 };
+            DWORD propType = 0;
+            ULONG outLen = (ULONG)sizeof(wideName);
+            if (CM_Get_DevNode_Registry_PropertyW(devInfoData.DevInst, CM_DRP_FRIENDLYNAME, &propType, (PVOID)wideName, &outLen, 0) == CR_SUCCESS) {
+                int len = WideCharToMultiByte(CP_UTF8, 0, wideName, -1, NULL, 0, NULL, NULL);
+                if (len > 0) {
+                    std::string utf8((size_t)len - 1, '\0');
+                    WideCharToMultiByte(CP_UTF8, 0, wideName, -1, utf8.data(), len, NULL, NULL);
+                    result = utf8;
+                    break;
+                }
+            }
+        }
+
+        SetupDiDestroyDeviceInfoList(hDevInfo);
+        return result;
     }
 
     void setFriendlyName(std::string name) {
-        // TODO
+
+        if (DrivePath().empty()) return;
+
+        std::string diskNumber = DiskNumber();
+
+        static const GUID GUID_DEVCLASS_DISKDRIVE = { 0x4D36E967, 0xE325, 0x11CE, { 0xBF, 0xC1, 0x08, 0x00, 0x2B, 0xE1, 0x03, 0x18 } };
+
+        HDEVINFO hDevInfo = SetupDiGetClassDevs(&GUID_DEVCLASS_DISKDRIVE, NULL, NULL, DIGCF_PRESENT);
+        if (hDevInfo == INVALID_HANDLE_VALUE) return;
+
+        // Convert UTF-8 input to UTF-16 for the CM_* calls.
+        int wideLen = MultiByteToWideChar(CP_UTF8, 0, name.c_str(), -1, NULL, 0);
+        if (wideLen <= 0) {
+            SetupDiDestroyDeviceInfoList(hDevInfo);
+            return;
+        }
+        std::vector<WCHAR> wideName((size_t)wideLen);
+        MultiByteToWideChar(CP_UTF8, 0, name.c_str(), -1, wideName.data(), wideLen);
+
+        SP_DEVINFO_DATA devInfoData;
+        devInfoData.cbSize = sizeof(SP_DEVINFO_DATA);
+
+        for (DWORD i = 0;; ++i) {
+            if (!SetupDiEnumDeviceInfo(hDevInfo, i, &devInfoData)) break;
+
+            char instanceId[512] = { 0 };
+            if (!SetupDiGetDeviceInstanceIdA(hDevInfo, &devInfoData, instanceId, (DWORD)sizeof(instanceId), NULL)) {
+                continue;
+            }
+
+            if (!diskNumber.empty()) {
+                std::string inst(instanceId);
+                if (inst.find("PhysicalDrive") == std::string::npos || inst.find(diskNumber) == std::string::npos) {
+                    continue;
+                }
+            }
+
+            // Apply the FriendlyName registry property for this device.
+            // Data buffer must include the terminating null.
+            ULONG dataSize = (ULONG)(wideName.size() * sizeof(WCHAR));
+            // Property length is in bytes for the CM_* function.
+            // Using 0 for flags (default).
+            (void)CM_Set_DevNode_Registry_PropertyW(
+                devInfoData.DevInst,
+                CM_DRP_FRIENDLYNAME,
+                wideName.data(),
+                dataSize,
+                0);
+            break;
+        }
+
+        SetupDiDestroyDeviceInfoList(hDevInfo);
     }
 
     //===============================================================================

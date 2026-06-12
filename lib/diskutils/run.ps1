@@ -16,8 +16,11 @@ if (-not (Test-Path "main.exe")) {
     .\g++.exe `
         "$PSScriptRoot/main.cpp" `
         '-o' "main.exe" `
-        '-I' $PSScriptRoot
+        '-I' $PSScriptRoot `
+        '-lsetupapi' `
+        '-lcfgmgr32'
 }
+
 
 .\main.exe @args
 
