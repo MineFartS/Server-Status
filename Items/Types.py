@@ -6,7 +6,7 @@ from json.decoder import JSONDecodeError
 from functools import cached_property
 from philh_myftp_biz.pc import Path
 from dataclasses import dataclass
-from typing import Literal
+from typing import Literal, Any
 
 class Service(__Service):
 
@@ -68,133 +68,50 @@ class HardDrive:
     ID: int
     SN: str
 
-    @cached_property
+    def _cpp(self, *args:str) -> dict[str, Any]:
+        from . import Modules
+        
+        return Modules[0].runH(
+            'lib/diskutils/run', self.SN, *args
+        ).output('json')['result'] # pyright: ignore[reportReturnType]
+
+    #================
+    # Name
+
+    @property
     def Name(self) -> str:
         return f'{self.ID:02d}-{self.Tower} [{self.Conn}]'
 
-    @cached_property
-    def _physical_disk(self) -> None | dict:
-        try:
+    #================
+    # Connected
 
-            data: dict|list = RunHidden(
-                f"Get-PhysicalDisk -SerialNumber {self.SN} | ConvertTo-Json",
-                terminal = 'ps'
-            ).output(format='json')
-
-            if isinstance(data, list):
-                return data[0]
-            else:
-                return data
-        
-        except JSONDecodeError:
-            pass
-            
-    @cached_property
-    def _wmi_object(self) -> None | dict:
-        try:
-
-            return RunHidden(
-                [
-                    'Get-WmiObject', '-Query', 
-                    f"SELECT * FROM Win32_DiskDrive WHERE SerialNumber = '{self.SN}'",
-                    '| ConvertTo-Json'
-                ],
-                terminal = 'ps'
-            ).output(format='json') # pyright: ignore[reportReturnType]
-        
-        except JSONDecodeError:
-            pass
-
-    @cached_property
-    def UniqueID(self) -> None | str:
-
-        if self._physical_disk:
-        
-            return self._physical_disk['UniqueId']
-        
     @property
     def Connected(self) -> bool:
-
-        clear_cache(self)
-
-        if self.FriendlyName:
-            
-            OpStatus: str = self._physical_disk['OperationalStatus']
-
-            return (OpStatus != 'Lost Communication')
-        
-        else:
-            return False
-        
-    @cached_property
-    def RegPath(self) -> str | None:
-
-        if self._wmi_object:
-
-            pnpID: str = self._wmi_object['PNPDeviceID']
-
-            return f"HKLM:SYSTEM\\ControlSet001\\Enum\\{pnpID}"
+        return self._cpp('Connected') # pyright: ignore[reportReturnType]
 
     #================
     # FriendlyName
 
     @property
     def FriendlyName(self) -> None | str:
-        
-        if self._physical_disk:
-
-            FriendlyName: str = self._physical_disk['FriendlyName']
-
-            if len(FriendlyName) > 0:
-                
-                return FriendlyName
+        return self._cpp('FriendlyName') # pyright: ignore[reportReturnType]
 
     @FriendlyName.setter
-    def FriendlyName(self,
-        name: str
-    ) -> None:
-        
-        if name != self.FriendlyName:
-        
-            RunHidden(
-                f"Set-PhysicalDisk -UniqueId '{self.UniqueID}' -NewFriendlyName '{name}'",
-                terminal = 'ps'
-            )
-
-            # If disk has a registry path 
-            if self.RegPath:
-
-                # Update the Friendly Name in the windows registry
-                RunHidden(
-                    f"Set-ItemProperty '{self.RegPath}' FriendlyName '{self.Name}'",
-                    terminal = 'ps'
-                )
-
-            clear_cache(self)
+    def FriendlyName(self, name:str) -> None:
+        self._cpp('FriendlyName', name)
 
     #================
     # Usage
 
     @property
     def Usage(self) -> None | Literal['Auto-Select', 'Retired']:
-        
-        if self._physical_disk:
-            
-            return self._physical_disk['Usage']
+        return self._cpp('Usage') # pyright: ignore[reportReturnType]
         
     @Usage.setter
     def Usage(self,
         usage: Literal['Auto-Select', 'Retired']
     ) -> None:
-        
-        if usage != self.Usage:
-
-            RunHidden(
-                f"Set-PhysicalDisk -UniqueId '{self.UniqueID}' -Usage {usage}",
-                terminal = 'ps'
-            )
-
-            clear_cache(self)
+        self._cpp('Usage', usage)
 
     #================
 
