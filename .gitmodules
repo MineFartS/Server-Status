@@ -2,3 +2,8 @@
 	path = lib/msys2
 	url = https://github.com/MineFartS/MSYS2
     ignore = all
+
+[submodule "lib/diskutils/nlohmann"]
+	path = lib/diskutils/nlohmann
+	url = https://github.com/MineFartS/CPP-JSON
+    ignore = all
