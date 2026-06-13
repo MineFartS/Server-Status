@@ -26,6 +26,23 @@ namespace std {
         
     }
 
+    std::string to_string(const std::wstring& wstr) {
+        if (wstr.empty()) return "";
+
+        // 1. Determine the required size for the destination buffer
+        size_t size_needed = std::wcstombs(nullptr, wstr.c_str(), 0);
+        
+        if (size_needed == static_cast<size_t>(-1)) {
+            throw std::runtime_error("Conversion failed: invalid wide character sequence.");
+        }
+
+        // 2. Allocate space and convert
+        std::string str(size_needed, '\0');
+        std::wcstombs(&str[0], wstr.c_str(), size_needed);
+
+        return str;
+    }
+
 }
 
 #endif // TO_WSTRING_EXT_H

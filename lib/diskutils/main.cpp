@@ -44,6 +44,8 @@ int main(int argc, char** argv) {
 
     }
 
+    SetupDiDestroyDeviceInfoList(hdd.hDevInfo);
+
     if (outp["result"] == "") {
         outp["result"] = nullptr;
     }
