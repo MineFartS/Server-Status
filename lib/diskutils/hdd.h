@@ -44,12 +44,16 @@ struct HardDrive {
     //===============================================================================
     // DrivePath
 
-    mutable std::optional<std::string> _cached_drive_path;
+    mutable std::string _cached_drive_path = "";
 
-    std::string _drivePath() {
-        
+    std::string DrivePath() {
+ 
+        if (!_cached_drive_path.empty())
+            return _cached_drive_path;
+
         // Windows supports up to 16 or more drives normally; loop through a reasonable index range
         for (UINT driveIndex = 0; driveIndex < 50; ++driveIndex) {
+
             std::string drivePath = "\\\\.\\PhysicalDrive" + std::to_string(driveIndex);
             
             // Open handle to the physical drive
@@ -101,19 +105,14 @@ struct HardDrive {
 
                     // Check for a match (case-insensitive or exact depending on preference)
                     if (currentSerial == sn) {
-                        return drivePath; // Found a match!
+                        _cached_drive_path = drivePath;
+                        return _cached_drive_path;
                     }
                 }
             }
         }
-        return ""; // No matching serial number found
-    }
-
-    std::string DrivePath() {
-        if (!_cached_drive_path)
-            _cached_drive_path = _drivePath();
         
-        return *_cached_drive_path;
+        return _cached_drive_path; // No matching serial number found
     }
 
     //===============================================================================
