@@ -1,3 +1,4 @@
+from json.decoder import JSONDecodeError
 from dataclasses import dataclass
 from typing import Literal, Any
 
@@ -28,7 +29,10 @@ class HardDrive:
 
     @property
     def Connected(self) -> bool:
-        return self._cpp('Connected') # pyright: ignore[reportReturnType]
+        try:
+            return self._cpp('Connected') # pyright: ignore[reportReturnType]
+        except JSONDecodeError:
+            return False
 
     #================
     # FriendlyName
