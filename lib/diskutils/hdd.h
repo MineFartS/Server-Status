@@ -22,39 +22,28 @@
 #pragma comment(lib, "setupapi.lib")
 
 struct HardDrive {
-    std::string sn;
 
     //===============================================================================
-    // Helper functions to trim whitespaces
-    
-    std::string trim_serial_number(const std::string& str) {
-        size_t first = str.find_first_not_of(" \t\r\n");
-        if (first == std::string::npos) return "";
-        size_t last = str.find_last_not_of(" \t\r\n");
-        return str.substr(first, (last - first + 1));
-    }
+    // Init
 
-    std::string trim_hardware_descriptor(const char* cstr) {
-        if (!cstr) return "";
-        std::string str(cstr);
-        size_t end = str.find_last_not_of(" \t\r\n");
-        return (end == std::string::npos) ? "" : str.substr(0, end + 1);
-    }
+    std::string serial_number;
+    std::string disk_path = "";
+    std::string disk_num = "";
+    bool Connected;
 
-    //===============================================================================
-    // DrivePath
+    HardDrive(std::string sn) {
 
-    mutable std::string _cached_drive_path = "";
+        //==================================
+        // Store the Serial Number (serial_number)
 
-    std::string DrivePath() {
- 
-        if (!_cached_drive_path.empty())
-            return _cached_drive_path;
+        serial_number = sn;
 
-        // Windows supports up to 16 or more drives normally; loop through a reasonable index range
-        for (UINT driveIndex = 0; driveIndex < 50; ++driveIndex) {
+        //==================================
+        // Get the Drive Path (disk_path, disk_num, Connected)
 
-            std::string drivePath = "\\\\.\\PhysicalDrive" + std::to_string(driveIndex);
+        for (UINT x = 0; x < 50; ++x) {
+
+            std::string drivePath = "\\\\.\\PhysicalDrive" + std::to_string(x);
             
             // Open handle to the physical drive
             HANDLE hDevice = CreateFileA(
@@ -67,9 +56,7 @@ struct HardDrive {
                 NULL
             );
 
-            if (hDevice == INVALID_HANDLE_VALUE) {
-                continue; // Drive index doesn't exist, move to next
-            }
+            if (hDevice == INVALID_HANDLE_VALUE) continue; // Drive index doesn't exist, move to next
 
             // Configure the query to fetch device properties
             STORAGE_PROPERTY_QUERY propertyQuery = {};
@@ -95,47 +82,48 @@ struct HardDrive {
             CloseHandle(hDevice);
 
             if (result) {
+
                 STORAGE_DEVICE_DESCRIPTOR* deviceDescriptor = reinterpret_cast<STORAGE_DEVICE_DESCRIPTOR*>(outputBuffer);
                 
                 // Check if a valid serial number offset exists
                 if (deviceDescriptor->SerialNumberOffset != 0 && deviceDescriptor->SerialNumberOffset < bytesReturned) {
+                    
                     // Extract the null-terminated ASCII serial number string
                     const char* rawSerial = reinterpret_cast<const char*>(outputBuffer + deviceDescriptor->SerialNumberOffset);
-                    std::string currentSerial = trim_serial_number(rawSerial);
 
                     // Check for a match (case-insensitive or exact depending on preference)
-                    if (currentSerial == sn) {
-                        _cached_drive_path = drivePath;
-                        return _cached_drive_path;
+                    if (trim_serial_number(rawSerial) == serial_number) {
+                        disk_num = std::to_string(x);
+                        disk_path = drivePath;
+                        break;
                     }
                 }
+
             }
+
         }
-        
-        return _cached_drive_path; // No matching serial number found
+
+        Connected = !disk_path.empty();
+
+        //==================================
+
     }
 
     //===============================================================================
-    // DiskNumber
-
-    std::string DiskNumber() {
+    // Helper functions to trim whitespaces
     
-        const std::string prefix = "\\.\\PhysicalDrive";
-    
-        if (DrivePath().rfind(prefix, 0) == 0) {
-            return DrivePath().substr(prefix.size());
-        }
-
-        return "";
+    std::string trim_serial_number(const std::string& str) {
+        size_t first = str.find_first_not_of(" \t\r\n");
+        if (first == std::string::npos) return "";
+        size_t last = str.find_last_not_of(" \t\r\n");
+        return str.substr(first, (last - first + 1));
     }
 
     //===============================================================================
     // FriendlyName
 
     std::string FriendlyName() {
-        if (DrivePath().empty()) return "";
-
-        std::string diskNumber = DiskNumber();
+        if (disk_path.empty()) return "";
 
         static const GUID GUID_DEVCLASS_DISKDRIVE = { 0x4D36E967, 0xE325, 0x11CE, { 0xBF, 0xC1, 0x08, 0x00, 0x2B, 0xE1, 0x03, 0x18 } };
 
@@ -150,16 +138,11 @@ struct HardDrive {
             if (!SetupDiEnumDeviceInfo(hDevInfo, i, &devInfoData)) break;
 
             char instanceId[512] = { 0 };
-            if (!SetupDiGetDeviceInstanceIdA(hDevInfo, &devInfoData, instanceId, (DWORD)sizeof(instanceId), NULL)) {
+            if (!SetupDiGetDeviceInstanceIdA(hDevInfo, &devInfoData, instanceId, (DWORD)sizeof(instanceId), NULL))
                 continue;
-            }
 
-            if (!diskNumber.empty()) {
-                std::string inst(instanceId);
-                if (inst.find("PhysicalDrive") == std::string::npos || inst.find(diskNumber) == std::string::npos) {
-                    continue;
-                }
-            }
+            if (std::string(instanceId).find(disk_num) == std::string::npos) 
+                continue;
 
             WCHAR wideName[512] = { 0 };
             DWORD propType = 0;
@@ -181,13 +164,10 @@ struct HardDrive {
 
     void setFriendlyName(std::string name) {
 
-        std::string ps_cmd = "powershell.exe -Command \"Get-PhysicalDisk | Where-Object SerialNumber -eq '"+sn+"' | Set-PhysicalDisk -NewFriendlyName '"+name+"'\"";
-
+        std::string ps_cmd = "powershell.exe -Command \"Get-PhysicalDisk | Where-Object SerialNumber -eq '"+serial_number+"' | Set-PhysicalDisk -NewFriendlyName '"+name+"'\"";
         std::system(ps_cmd.c_str());
 
-        if (DrivePath().empty()) return;
-
-        std::string diskNumber = DiskNumber();
+        if (disk_path.empty()) return;
 
         static const GUID GUID_DEVCLASS_DISKDRIVE = { 0x4D36E967, 0xE325, 0x11CE, { 0xBF, 0xC1, 0x08, 0x00, 0x2B, 0xE1, 0x03, 0x18 } };
 
@@ -210,20 +190,17 @@ struct HardDrive {
             if (!SetupDiEnumDeviceInfo(hDevInfo, i, &devInfoData)) break;
 
             char instanceId[512] = { 0 };
-            if (!SetupDiGetDeviceInstanceIdA(hDevInfo, &devInfoData, instanceId, (DWORD)sizeof(instanceId), NULL)) {
+            if (!SetupDiGetDeviceInstanceIdA(hDevInfo, &devInfoData, instanceId, (DWORD)sizeof(instanceId), NULL))
                 continue;
-            }
 
-            if (!diskNumber.empty()) {
-                std::string inst(instanceId);
-                if (inst.find("PhysicalDrive") == std::string::npos || inst.find(diskNumber) == std::string::npos) {
-                    continue;
-                }
-            }
+            std::string inst(instanceId);
+            if (inst.find("PhysicalDrive") == std::string::npos || inst.find(disk_num) == std::string::npos)
+                continue;
 
             // Apply the FriendlyName registry property for this device.
             // Data buffer must include the terminating null.
             ULONG dataSize = (ULONG)(wideName.size() * sizeof(WCHAR));
+
             // Property length is in bytes for the CM_* function.
             // Using 0 for flags (default).
             (void)CM_Set_DevNode_Registry_PropertyW(
@@ -231,18 +208,13 @@ struct HardDrive {
                 CM_DRP_FRIENDLYNAME,
                 wideName.data(),
                 dataSize,
-                0);
+                0
+            );
+
             break;
         }
 
         SetupDiDestroyDeviceInfoList(hDevInfo);
-    }
-
-    //===============================================================================
-    // Connected
-    
-    bool Connected() {
-        return DrivePath() != "";
     }
 
     //===============================================================================

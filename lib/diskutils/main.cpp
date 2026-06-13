@@ -18,7 +18,13 @@ int main(int argc, char** argv) {
             outp["result"] = hdd.FriendlyName();
         
         } else if (property == "Connected") {
-            outp["result"] = hdd.Connected();
+            outp["result"] = hdd.Connected;
+
+        } else if (property == "disk_path") {
+            outp["result"] = hdd.disk_path;
+
+        } else if (property == "disk_num") {
+            outp["result"] = hdd.disk_num;        
         
         } else if (property == "Usage") {
             outp["result"] = hdd.Usage();
