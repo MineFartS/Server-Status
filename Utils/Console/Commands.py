@@ -1,6 +1,7 @@
 from .Types import Branch, Memory, Printer
 
-# TODO Add leading 0 to list, check, etc.
+def printx(x:int, val:str) -> None:
+    print(f'{x:>2d}:', val)
 
 class Tree(Branch):
 
@@ -167,7 +168,7 @@ POWER RESTART  | Restart system
             mem: list
         ) -> None:
             for dev in mem:  
-                print(f'{src.index(dev)}: {dev.Name}')
+                printx(src.index(dev), dev.Name)
 
         @staticmethod
         def service() -> None:
@@ -175,15 +176,14 @@ POWER RESTART  | Restart system
 
             for serv in Memory.Services:
                     
-                print(f'{Services.index(serv)}: {serv.path} {serv.args}')
+                printx(Services.index(serv), f'{serv.path} {serv.args}')
 
         @staticmethod
         def module() -> None:
             from ...Items import Modules
 
             for mod in Memory.Modules:
-                    
-                print(f'{Modules.index(mod)}: {mod.path}')
+                printx(Modules.index(mod), mod)
 
         @staticmethod
         def disk() -> None:
@@ -345,7 +345,7 @@ POWER RESTART  | Restart system
 
                 ACTIVE: str = (' Active ' if dev.Connected else 'Inactive')
 
-                print(f'{src.index(dev)}: [{ACTIVE}] {dev.Name}')
+                printx(src.index(dev), f'[{ACTIVE}] {dev.Name}')
 
         @staticmethod
         def service() -> None:
@@ -356,7 +356,7 @@ POWER RESTART  | Restart system
                 RUNNING: str = ('Running'  if serv.running else 'Stopped')
                 ENABLED: str = (' Enabled' if serv.enabled else 'Disabled')
 
-                print(f'{Services.index(serv)}: [{RUNNING}, {ENABLED}] {serv.path}')
+                printx(Services.index(serv), f'[{RUNNING}, {ENABLED}] {serv.path}')
 
         @staticmethod
         def module() -> None:
@@ -366,7 +366,7 @@ POWER RESTART  | Restart system
 
                 EXISTS: str = (' Exists' if mod.exists else 'Missing')
 
-                print(f'{Modules.index(mod)}: [{EXISTS}] {mod.path}')
+                printx(Modules.index(mod), f'[{EXISTS}] {mod.path}')
 
         @staticmethod
         def disk() -> None:
