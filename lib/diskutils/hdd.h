@@ -16,11 +16,14 @@
 #include <devpkey.h>
 #include <setupapi.h>
 #include <std.h>
+#include <nlohmann/json.hpp>
 
 #pragma comment(lib, "wbemuuid.lib")
 #pragma comment(lib, "ole32.lib")
 #pragma comment(lib, "cfgmgr32.lib")
 #pragma comment(lib, "setupapi.lib")
+
+using json = nlohmann::json;
 
 struct HardDrive {
 
@@ -147,6 +150,24 @@ struct HardDrive {
         return str.substr(first, (last - first + 1));
     }
 
+    std::string powershell(std::string cmd) {
+
+        std::string command = "powershell.exe -Command \"Get-PhysicalDisk | Where-Object SerialNumber -eq '"+serial_number+"' | "+cmd+"\"";
+        std::string result = "";
+        
+        // Open the pipe and run the command (Windows-specific)
+        FILE* pipe = _popen(command.c_str(), "r");
+        
+        // Read the output line by line
+        std::array<char, 128> buffer;
+        while (fgets(buffer.data(), buffer.size(), pipe) != nullptr) {
+            result += buffer.data();
+        }
+        
+        _pclose(pipe);
+        return result;
+    }
+
     //===============================================================================
     // FriendlyName
 
@@ -163,8 +184,7 @@ struct HardDrive {
 
     void setFriendlyName(std::string name) {
 
-        std::string ps_cmd = "powershell.exe -Command \"Get-PhysicalDisk | Where-Object SerialNumber -eq '"+serial_number+"' | Set-PhysicalDisk -NewFriendlyName '"+name+"'\"";
-        std::system(ps_cmd.c_str());
+        powershell("Set-PhysicalDisk -NewFriendlyName '"+name+"'");
 
         if (disk_path.empty()) return;
 
@@ -184,11 +204,16 @@ struct HardDrive {
     // Usage
 
     std::string Usage() {
-        return ""; // TODO
+
+        std::string jsonRaw = powershell("ConvertTo-Json");
+
+        json diskData = json::parse(jsonRaw);
+
+        return diskData["Usage"].get<std::string>();
     }
 
     void setUsage(std::string usage) {
-        // TODO
+        powershell("Set-PhysicalDisk -Usage '"+usage+"'");
     }
 
     //===============================================================================
