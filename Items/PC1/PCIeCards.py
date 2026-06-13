@@ -1,4 +1,4 @@
-from ..Types import PCIeCard
+from ..PCIeCard import PCIeCard
 
 Items = [
 

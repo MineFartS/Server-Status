@@ -1,5 +1,5 @@
 from philh_myftp_biz.pc import Path
-from ..Types import VirtualDisk
+from ..VirtualDisk import VirtualDisk
 
 Items: list[VirtualDisk] = [
 

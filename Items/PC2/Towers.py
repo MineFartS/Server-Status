@@ -1,4 +1,4 @@
-from ..Types import Tower
+from ..Tower import Tower
 
 Items: list[Tower] = [
 

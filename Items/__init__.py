@@ -1,8 +1,14 @@
-from .Types import HardDrive, PCIeCard, Service, Tower, VirtualDisk
+
 from philh_myftp_biz.modules import Module
 from philh_myftp_biz.terminal import Log
 from philh_myftp_biz.pc import NAME
 from importlib import import_module
+
+from .VirtualDisk import VirtualDisk
+from .HardDrive import HardDrive
+from .Service import Service
+from .Tower import Tower
+from .PCIeCard import PCIeCard
 
 def getItems(file:str) -> list:    
 

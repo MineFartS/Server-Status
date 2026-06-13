@@ -1,4 +1,4 @@
-from ..Types import Module
+from ..Module import Module
 
 Items = [
 
