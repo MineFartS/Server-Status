@@ -1,4 +1,5 @@
 from philh_myftp_biz.process import RunHidden
+from philh_myftp_biz.modules import Repo
 from philh_myftp_biz.terminal import Log
 from philh_myftp_biz.web import URL
 from philh_myftp_biz.pc import NAME
@@ -6,6 +7,8 @@ from ..Items import Modules
 from typing import Literal
 
 IS_SERVER: bool = (NAME == 'PC-1')
+
+main_repo = Repo('E:/')
 
 def shutdown(
     mode: Literal['s', 'r'],
