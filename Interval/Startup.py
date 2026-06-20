@@ -1,9 +1,8 @@
 from ..Items import VirtualDisks, HardDrives, Services, Modules, PCIeCards
-from philh_myftp_biz.modules import ServiceDisabledError
 from philh_myftp_biz.process import SysTask
+from . import alert, shutdown, main_repo
 from philh_myftp_biz.terminal import Log
 from philh_myftp_biz import VERBOSE
-from . import alert, shutdown
 
 # ===============================================================================================================
 
@@ -110,5 +109,9 @@ else:
     for service in Services:
         if service.enabled:
             service.start()
+
+    #==============
+    main_repo.update_submodules()
+    #==============
 
 # ===============================================================================================================
