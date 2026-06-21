@@ -8,7 +8,10 @@ from typing import Literal
 
 IS_SERVER: bool = (NAME == 'PC-1')
 
-main_repo = Repo('E:/')
+try:
+    main_repo = Repo('E:/')
+except FileNotFoundError:
+    main_repo = None
 
 def shutdown(
     mode: Literal['s', 'r'],
