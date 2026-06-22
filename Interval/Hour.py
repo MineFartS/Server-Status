@@ -1,16 +1,9 @@
-from philh_myftp_biz.web import FirewallException, URL
 from philh_myftp_biz.web.driver import Driver
 from philh_myftp_biz.terminal import Log
-from ..Items import Services, Modules
 from philh_myftp_biz.time import now
 from philh_myftp_biz.pc import Path
-from . import IS_SERVER, main_repo
-
-# ==================================================
-# FIREWALL
-
-FirewallException('RDP').set(3389)
-FirewallException('SSH').set(22)
+from philh_myftp_biz.web import URL
+from ..Items import Services
 
 # ==================================================
 # SERVICES

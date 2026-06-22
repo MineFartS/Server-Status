@@ -1,4 +1,5 @@
 from ..Items import VirtualDisks, HardDrives, Services, Modules, PCIeCards
+from philh_myftp_biz.web import FirewallException
 from philh_myftp_biz.process import SysTask
 from . import alert, shutdown, main_repo
 from philh_myftp_biz.terminal import Log
@@ -69,6 +70,12 @@ for vdisk in VirtualDisks:
     Log.VERB(f'Connecting Virtual Disk: {vdisk.Name}')
 
     vdisk.Connected = True
+
+# ==================================================
+# FIREWALL
+
+FirewallException('RDP').set(3389)
+FirewallException('SSH').set(22)
 
 # ===============================================================================================================
 
