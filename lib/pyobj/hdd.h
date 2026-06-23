@@ -18,7 +18,6 @@
 #include <setupapi.h>
 #include <std.h>
 #include <nlohmann/json.hpp>
-#include <item.h>
 
 #pragma comment(lib, "wbemuuid.lib")
 #pragma comment(lib, "ole32.lib")
@@ -27,31 +26,19 @@
 
 using json = nlohmann::json;
 
-struct HardDrive : HardwareItem {
+//constexpr GUID GUID_DEVCLASS_DISKDRIVE = { 0x4D36E967, 0xE325, 0x11CE, { 0xBF, 0xC1, 0x08, 0x00, 0x2B, 0xE1, 0x03, 0x18 } };
+
+struct HardDrive {
 
     //===============================================================================
     // Init
 
-    static constexpr GUID GUID_DEVCLASS_DISKDRIVE = { 0x4D36E967, 0xE325, 0x11CE, { 0xBF, 0xC1, 0x08, 0x00, 0x2B, 0xE1, 0x03, 0x18 } };
-
     std::string serial_number;
-    std::string _disk_path = "";
-    std::string _disk_num = "";
-    bool _Connected;
+    std::string disk_path = "";
+    std::string disk_num = "";
+    bool Connected;
     HDEVINFO hDevInfo;
     DEVINST DevInst;
-
-    bool Connected() override {
-        return this->_Connected;
-    }
-
-    std::string disk_path() override {
-        return this->_disk_path;
-    }
-
-    std::string disk_num() override {
-        return this->_disk_num;
-    }
 
     HardDrive(std::string sn) {
 
@@ -115,8 +102,8 @@ struct HardDrive : HardwareItem {
 
                     // Check for a match (case-insensitive or exact depending on preference)
                     if (trim_serial_number(rawSerial) == serial_number) {
-                        _disk_num = std::to_string(x);
-                        _disk_path = drivePath;
+                        disk_num = std::to_string(x);
+                        disk_path = drivePath;
                         break;
                     }
                 }
@@ -128,7 +115,7 @@ struct HardDrive : HardwareItem {
         //==================================
         // Get the Connected Status (Connected)
 
-        _Connected = !_disk_path.empty();
+        Connected = !disk_path.empty();
 
         //==================================
 
@@ -144,7 +131,7 @@ struct HardDrive : HardwareItem {
             if (!SetupDiGetDeviceInstanceIdA(hDevInfo, &devInfoData, instanceId, (DWORD)sizeof(instanceId), NULL))
                 continue;
 
-            if (std::string(instanceId).find(_disk_num) == std::string::npos) 
+            if (std::string(instanceId).find(disk_num) == std::string::npos) 
                 continue;
 
             DevInst = devInfoData.DevInst;
@@ -154,7 +141,7 @@ struct HardDrive : HardwareItem {
 
     }
 
-    void cleanup() override {
+    void cleanup() {
         SetupDiDestroyDeviceInfoList(hDevInfo);
     }
 
@@ -189,8 +176,8 @@ struct HardDrive : HardwareItem {
     //===============================================================================
     // FriendlyName
 
-    std::string FriendlyName() override {
-        if (_disk_path.empty()) return "";
+    std::string FriendlyName() {
+        if (disk_path.empty()) return "";
 
         WCHAR wideName[512] = { 0 };
         ULONG outLen = (ULONG)sizeof(wideName);
@@ -200,11 +187,11 @@ struct HardDrive : HardwareItem {
         return "";
     }
 
-    void setFriendlyName(std::string name) override {
+    void setFriendlyName(std::string name) {
 
         powershell("Set-PhysicalDisk -NewFriendlyName '"+name+"'");
 
-        if (_disk_path.empty()) return;
+        if (disk_path.empty()) return;
 
         std::wstring wideName = std::to_wstring(name);
 
@@ -221,7 +208,7 @@ struct HardDrive : HardwareItem {
     //===============================================================================
     // Usage
 
-    std::string Usage() override {
+    std::string Usage() {
 
         std::string jsonRaw = powershell("ConvertTo-Json");
 
@@ -230,7 +217,7 @@ struct HardDrive : HardwareItem {
         return diskData["Usage"].get<std::string>();
     }
 
-    void setUsage(std::string usage) override {
+    void setUsage(std::string usage) {
         powershell("Set-PhysicalDisk -Usage '"+usage+"'");
     }
 

@@ -4,7 +4,7 @@
     ignore = all
 
 [submodule "lib/diskutils/nlohmann"]
-	path = lib/diskutils/nlohmann
+	path = lib/pyobj/nlohmann
 	url = https://github.com/MineFartS/CPP-JSON
     ignore = all
 

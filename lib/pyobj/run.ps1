@@ -26,7 +26,9 @@ if (-not (Test-Path $outp)) {
         "$PSScriptRoot/main.cpp" `
         -o "$outp" `
         -L"$python\libs" `
-        -lpython314
+        -lpython314 `
+        -lsetupapi `
+        -lcfgmgr32
 
 }
 
