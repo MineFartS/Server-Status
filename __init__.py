@@ -16,7 +16,6 @@ except ModuleNotFoundError:
         'install', 'git+https://github.com/MineFartS/Server-PythonPackage.git'
     ])
 
-
     from .Items import Modules
 
     #=================================================================================
@@ -34,3 +33,9 @@ except ModuleNotFoundError:
         m.install()
 
     #=================================================================================
+
+finally:
+    from .Items import Modules
+
+    Modules[0].run('lib/pyobj/build')
+
