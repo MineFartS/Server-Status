@@ -39,13 +39,27 @@ struct HardDrive {
     bool Connected;
     HDEVINFO hDevInfo;
     DEVINST DevInst;
+    std::string Tower;
+    std::string Conn;
+    int ID;
+    std::string Name;
 
-    HardDrive(std::string sn) {
+    HardDrive(
+        std::string Tower,
+        std::string Conn,
+        int ID,
+        std::string SN
+    ) {
+        this->Tower = Tower;
+        this->Conn = Conn;
+        this->ID = ID;
 
-        //==================================
-        // Store the Serial Number (serial_number)
-
-        serial_number = sn;
+        std::ostringstream oss;
+        oss << std::setfill('0') << std::setw(2) << ID << "-" 
+            << Tower << " [" << Conn << "]";
+        Name = oss.str();
+        
+        serial_number = SN;
 
         //==================================
         // Get the Drive Path (disk_path, disk_num)
