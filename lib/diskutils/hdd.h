@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include <vector>
 #include <optional>
@@ -5,7 +7,6 @@
 #include <iostream>
 #include <algorithm>
 #include <iterator>
-#include <nlohmann/json.hpp>
 #include <windows.h>
 #include <winioctl.h>
 #include <comdef.h>
@@ -17,6 +18,7 @@
 #include <setupapi.h>
 #include <std.h>
 #include <nlohmann/json.hpp>
+#include <item.h>
 
 #pragma comment(lib, "wbemuuid.lib")
 #pragma comment(lib, "ole32.lib")
@@ -25,7 +27,7 @@
 
 using json = nlohmann::json;
 
-struct HardDrive {
+struct HardDrive : HardwareItem {
 
     //===============================================================================
     // Init
@@ -33,11 +35,23 @@ struct HardDrive {
     static constexpr GUID GUID_DEVCLASS_DISKDRIVE = { 0x4D36E967, 0xE325, 0x11CE, { 0xBF, 0xC1, 0x08, 0x00, 0x2B, 0xE1, 0x03, 0x18 } };
 
     std::string serial_number;
-    std::string disk_path = "";
-    std::string disk_num = "";
-    bool Connected;
+    std::string _disk_path = "";
+    std::string _disk_num = "";
+    bool _Connected;
     HDEVINFO hDevInfo;
     DEVINST DevInst;
+
+    bool Connected() override {
+        return this->_Connected;
+    }
+
+    std::string disk_path() override {
+        return this->_disk_path;
+    }
+
+    std::string disk_num() override {
+        return this->_disk_num;
+    }
 
     HardDrive(std::string sn) {
 
@@ -101,8 +115,8 @@ struct HardDrive {
 
                     // Check for a match (case-insensitive or exact depending on preference)
                     if (trim_serial_number(rawSerial) == serial_number) {
-                        disk_num = std::to_string(x);
-                        disk_path = drivePath;
+                        _disk_num = std::to_string(x);
+                        _disk_path = drivePath;
                         break;
                     }
                 }
@@ -114,7 +128,7 @@ struct HardDrive {
         //==================================
         // Get the Connected Status (Connected)
 
-        Connected = !disk_path.empty();
+        _Connected = !_disk_path.empty();
 
         //==================================
 
@@ -130,7 +144,7 @@ struct HardDrive {
             if (!SetupDiGetDeviceInstanceIdA(hDevInfo, &devInfoData, instanceId, (DWORD)sizeof(instanceId), NULL))
                 continue;
 
-            if (std::string(instanceId).find(disk_num) == std::string::npos) 
+            if (std::string(instanceId).find(_disk_num) == std::string::npos) 
                 continue;
 
             DevInst = devInfoData.DevInst;
@@ -138,6 +152,10 @@ struct HardDrive {
 
         }
 
+    }
+
+    void cleanup() override {
+        SetupDiDestroyDeviceInfoList(hDevInfo);
     }
 
     //===============================================================================
@@ -171,8 +189,8 @@ struct HardDrive {
     //===============================================================================
     // FriendlyName
 
-    std::string FriendlyName() {
-        if (disk_path.empty()) return "";
+    std::string FriendlyName() override {
+        if (_disk_path.empty()) return "";
 
         WCHAR wideName[512] = { 0 };
         ULONG outLen = (ULONG)sizeof(wideName);
@@ -182,11 +200,11 @@ struct HardDrive {
         return "";
     }
 
-    void setFriendlyName(std::string name) {
+    void setFriendlyName(std::string name) override {
 
         powershell("Set-PhysicalDisk -NewFriendlyName '"+name+"'");
 
-        if (disk_path.empty()) return;
+        if (_disk_path.empty()) return;
 
         std::wstring wideName = std::to_wstring(name);
 
@@ -203,7 +221,7 @@ struct HardDrive {
     //===============================================================================
     // Usage
 
-    std::string Usage() {
+    std::string Usage() override {
 
         std::string jsonRaw = powershell("ConvertTo-Json");
 
@@ -212,7 +230,7 @@ struct HardDrive {
         return diskData["Usage"].get<std::string>();
     }
 
-    void setUsage(std::string usage) {
+    void setUsage(std::string usage) override {
         powershell("Set-PhysicalDisk -Usage '"+usage+"'");
     }
 

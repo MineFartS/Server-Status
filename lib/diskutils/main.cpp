@@ -1,50 +1,59 @@
 #include <iostream>
 #include <string>
-#include <hdd.h>
 #include <nlohmann/json.hpp>
+#include <hdd.h>
+#include <item.h>
+#include <any>
+
+using namespace std::string_literals;
+
+// type = argv[1]; argc=2
+// id   = argv[2]; argc=3
+// prop = argv[3]; argc=4
+// val  = argv[4]; argc=5
 
 int main(int argc, char** argv) {
+
+    HardwareItem* item;
+
+    if (argv[1] == "disk"s) {
+        HardDrive hdd = HardDrive(argv[2]);
+        item = &hdd;
+    }
 
     nlohmann::json outp;
     outp["result"] = nullptr;
 
-    HardDrive hdd = HardDrive(argv[1]);
+    if (argc == 4) { // Get Value
 
-    std::string property = argv[2];
-
-    if (argc == 3) { // Get Value
-
-        if (property == "FriendlyName") {
-            outp["result"] = hdd.FriendlyName();
+        if (argv[3] == "FriendlyName"s) {
+            outp["result"] = item->FriendlyName();
         
-        } else if (property == "Connected") {
-            outp["result"] = hdd.Connected;
+        } else if (argv[3] == "Connected"s) {
+            outp["result"] = item->Connected();
 
-        } else if (property == "disk_path") {
-            outp["result"] = hdd.disk_path;
+        } else if (argv[3] == "disk_path"s) {
+            outp["result"] = item->disk_path();
 
-        } else if (property == "disk_num") {
-            outp["result"] = hdd.disk_num;        
+        } else if (argv[3] == "disk_num"s) {
+            outp["result"] = item->disk_num();
         
-        } else if (property == "Usage") {
-            outp["result"] = hdd.Usage();
-        
+        } else if (argv[3] == "Usage"s) {
+            outp["result"] = item->Usage();
         }
 
-    } else if (argc == 4) { // Set Value
+    } else { // Set Value
 
-        std::string value = argv[3];
+        if (argv[3] == "FriendlyName"s) {
+            item->setFriendlyName(argv[4]);
 
-        if (property == "FriendlyName") {
-            hdd.setFriendlyName(value);
-
-        } else if (property == "Usage") {
-            hdd.setUsage(value);
+        } else if (argv[3] == "Usage"s) {
+            item->setUsage(argv[4]);
         }
 
     }
 
-    SetupDiDestroyDeviceInfoList(hdd.hDevInfo);
+    item->cleanup();
 
     if (outp["result"] == "") {
         outp["result"] = nullptr;

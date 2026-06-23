@@ -14,7 +14,7 @@ class HardDrive:
         from . import Modules
         
         return Modules[0].runH(
-            'lib/diskutils/run', self.SN, *args
+            'lib/diskutils/run', 'disk', self.SN, *args
         ).output('json')['result'] # pyright: ignore[reportReturnType]
 
     #================
