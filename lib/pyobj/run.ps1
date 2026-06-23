@@ -11,7 +11,7 @@ $python = (Get-Item "$PSScriptRoot\..\python314").FullName
 
 Set-Location "$PSScriptRoot\..\msys2\ucrt64\bin"
 
-$outp = "$PSScriptRoot/main.pyd"
+$outp = "C:/Scripts/Items/_cpp.pyd"
 
 if ($Force) {
     Remove-Item $outp -Force -ErrorAction SilentlyContinue

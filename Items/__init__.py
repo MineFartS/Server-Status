@@ -4,8 +4,11 @@ from philh_myftp_biz.terminal import Log
 from philh_myftp_biz.pc import NAME
 from importlib import import_module
 
+import os
+os.add_dll_directory('C:/Scripts/lib/msys2/ucrt64/bin')
+
 from .VirtualDisk import VirtualDisk
-from .HardDrive import HardDrive
+from ._cpp import HardDrive
 from .Service import Service
 from .Tower import Tower
 from .PCIeCard import PCIeCard

@@ -1,4 +1,4 @@
-from ..HardDrive import HardDrive
+from .. import HardDrive
 
 Items: list[HardDrive] = [
 

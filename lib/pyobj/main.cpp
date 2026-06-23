@@ -6,7 +6,7 @@
 namespace py = pybind11;
 
 // Create the Python bindings
-PYBIND11_MODULE(main, m) {
+PYBIND11_MODULE(_cpp, m) {
 
     py::class_<HardDrive>(m, "HardDrive")
 
