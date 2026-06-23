@@ -7,3 +7,13 @@
 	path = lib/diskutils/nlohmann
 	url = https://github.com/MineFartS/CPP-JSON
     ignore = all
+
+[submodule "lib/pyobj/pybind11"]
+	path = lib/pyobj/pybind11
+	url = https://github.com/MineFartS/pybind
+    ignore = all
+
+[submodule "lib/python314"]
+	path = lib/python314
+	url = https://github.com/MineFartS/python-embed
+    ignore = all
