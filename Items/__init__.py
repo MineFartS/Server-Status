@@ -7,9 +7,8 @@ from importlib import import_module
 import os
 os.add_dll_directory('C:/Scripts/lib/msys2/ucrt64/bin')
 
-from ._cpp import HardDrive, PCIeCard
+from ._cpp import HardDrive, PCIeCard, VirtualDisk
 
-from .VirtualDisk import VirtualDisk
 from .Service import Service
 from .Tower import Tower
 

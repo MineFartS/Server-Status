@@ -3,6 +3,7 @@
 #include <string>
 #include <hdd.h>
 #include <pcie.h>
+#include <vdisk.h>
 
 namespace py = pybind11;
 
@@ -38,5 +39,15 @@ PYBIND11_MODULE(_cpp, m) {
         .def_readonly("DeviceId", &PCIeCard::DeviceId)
         .def_readonly("Name", &PCIeCard::Name)
         .def_property_readonly("Connected", &PCIeCard::Connected);
+
+    py::class_<VirtualDisk>(m, "VirtualDisk")
+        .def(py::init<std::string, std::string>(),
+            py::arg("Name"), 
+            py::arg("Mount")
+        )
+        .def_readonly("Name", &VirtualDisk::Name)
+        .def_readonly("Mount", &VirtualDisk::Mount)
+        .def_property("Connected", &VirtualDisk::Connected, &VirtualDisk::setConnected)
+        .def("Repair", &VirtualDisk::Repair);
 
 }

@@ -20,7 +20,7 @@ if ($Force) {
 if (-not (Test-Path $outp)) {
 
     .\g++.exe `
-        -O3 -shared -std=c++11 -fPIC `
+        -O3 -shared -std=c++17 -fPIC `
         -I"$python\include" `
         -I"$PSScriptRoot" `
         "$PSScriptRoot/main.cpp" `
