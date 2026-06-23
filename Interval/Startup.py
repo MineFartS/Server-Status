@@ -74,8 +74,9 @@ for vdisk in VirtualDisks:
 # ==================================================
 # FIREWALL
 
-FirewallException('RDP').set(3389)
-FirewallException('SSH').set(22)
+# TODO: Fix Hanging
+#FirewallException('RDP').set(3389)
+#FirewallException('SSH').set(22)
 
 # ===============================================================================================================
 
