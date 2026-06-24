@@ -378,6 +378,15 @@ POWER RESTART  | Restart system
             )
 
         @staticmethod
+        def vdisk() -> None:
+            from ...Items import VirtualDisks
+
+            Tree.check._hardware(
+                src = VirtualDisks,
+                mem = Memory.VDisks
+            )
+
+        @staticmethod
         def pcie() -> None:
             from ...Items import PCIeCards
 
