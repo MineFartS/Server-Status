@@ -1,0 +1,8 @@
+{
+    "files.exclude": {
+        "lib/msys2": true,
+        "lib/pyobj/nlohmann": true,
+        "lib/pyobj/pybind11": true,
+        "lib/python314": true
+    }
+}
