@@ -1,3 +1,6 @@
+from subprocess import run
+
+run(['Powershell.exe', '-File', 'C:/Scripts/lib/pyobj/build.ps1'])
 
 from philh_myftp_biz.modules import Module
 from philh_myftp_biz.terminal import Log
