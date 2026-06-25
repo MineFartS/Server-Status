@@ -3,14 +3,16 @@
 	url = https://github.com/MineFartS/MSYS2
     ignore = all
 
-[submodule "lib/diskutils/nlohmann"]
-	path = lib/pyobj/nlohmann
-	url = https://github.com/MineFartS/CPP-JSON
+[submodule "lib/json"]
+	path = lib/json
+	url = https://github.com/nlohmann/json
+	branch = develop
     ignore = all
 
-[submodule "lib/pyobj/pybind11"]
-	path = lib/pyobj/pybind11
-	url = https://github.com/MineFartS/pybind
+[submodule "lib/pybind11"]
+	path = lib/pybind11
+	url = https://github.com/pybind/pybind11
+	branch = stable
     ignore = all
 
 [submodule "lib/python314"]

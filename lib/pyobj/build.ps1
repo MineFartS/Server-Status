@@ -1,14 +1,8 @@
-param(
-    [Switch] $Force
-)
+param([Switch] $Force)
 
 git.exe submodule update --init --recursive --remote
 
 $prevloc = Get-Location
-
-# FIX: Convert the relative path to an absolute path before changing directory
-$python = (Get-Item "$PSScriptRoot\..\python314").FullName
-
 Set-Location "$PSScriptRoot\..\msys2\ucrt64\bin"
 
 $outp = "C:/Scripts/Items/_cpp.pyd"
@@ -17,15 +11,19 @@ if ($Force) {
     Remove-Item $outp -Force -ErrorAction SilentlyContinue
 }
 
+$lib = (Get-Item "$PSScriptRoot\..\").FullName
+
 if (-not (Test-Path $outp)) {
 
-    .\g++.exe `
+    .\g++.exe -v `
         -O3 -shared -std=c++17 -fPIC `
-        -I"$python\include" `
+        -I"$lib/python314/include" `
+        -I"$lib/pybind11/include" `
+        -I"$lib/json/include" `
         -I"$PSScriptRoot" `
         "$PSScriptRoot/main.cpp" `
         -o "$outp" `
-        -L"$python\libs" `
+        -L"$lib/python314/libs" `
         -lpython314 `
         -lsetupapi `
         -lcfgmgr32
