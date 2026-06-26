@@ -1,8 +1,10 @@
 param([Switch] $Force)
 
+$prevloc = Get-Location
+Set-Location "C:/Scripts/"
+
 git.exe submodule update --init --recursive --remote
 
-$prevloc = Get-Location
 Set-Location "$PSScriptRoot\..\msys2\ucrt64\bin"
 
 $outp = "C:/Scripts/Items/_cpp.pyd"
