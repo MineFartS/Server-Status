@@ -9,7 +9,7 @@ while True:
 
     try:
 
-        args: list[str] = split(input('\n\\> ').lower())
+        args: list[str] = split(input('\n\\> '))
 
         if len(args) > 0:
             Tree(*args)

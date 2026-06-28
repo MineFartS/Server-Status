@@ -11,7 +11,7 @@ class Branch:
             self._NoArgs()
 
         # If command does not exist
-        elif not hasattr(self, args[0]):
+        elif not hasattr(self, args[0].lower()):
             print()
             print(f'INVALID COMMAND')
             print("Type 'help' for a list of commands")
@@ -20,7 +20,7 @@ class Branch:
         else:
 
             # Run Command
-            getattr(self, args[0]) (*args[1:])
+            getattr(self, args[0].lower()) (*args[1:])
 
     @staticmethod
     def _NoArgs() -> None:
