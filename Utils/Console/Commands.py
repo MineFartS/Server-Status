@@ -111,17 +111,7 @@ DISABLE SERVICE | Disable the selected services
 """
             
         run = """
-RUN *SCRIPT*    | Run a script in a new tab (Ex: run Interval.Startup)
-RUN *SCRIPT* -v | Run a script in a new tab [VERBOSE] (Ex: run Interval.Startup -v)
-
-SCRIPTS:
-    - Utils.Update
-    - Utils.Status
-    - Utils.Console
-    - Interval.Hour
-    - Interval.Day
-    - Interval.Week
-    - Interval.Startup
+RUN MODULE *SCRIPT*    | Run a module script
 """
             
         args = """
@@ -142,23 +132,18 @@ POWER SHUTDOWN | Shutdown system
 POWER RESTART  | Restart system
 """
 
-    @staticmethod
-    def run( 
-        script: str,
-        *args: str
-    ) -> None:
-        from ...Items import Modules
+    class run(Branch):
 
-        Printer.RunFile(
-            path = f"C:/Scripts/{script.replace('.', '/')}.py",
-            args = args
-        )
-        
-        Modules[0].run(
-            'run', script.title(), 
-            'True', # VISIBLE
-            ('-v' in args) # VERBOSE
-        )
+        @staticmethod
+        def module( 
+            script: str,
+            *args: str
+        ) -> None:
+            for mod in Memory.Modules:
+
+                Printer.RunFile(mod.file(script).path, args)
+
+                mod.run(script, *args)
 
     class list(Branch):
 
