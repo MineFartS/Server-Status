@@ -33,16 +33,16 @@ struct HardDrive {
     //===============================================================================
     // Init
 
-    std::string serial_number;
+    std::string SN;
     std::string disk_path = "";
-    std::string disk_num = "";
+    std::string Index = "";
     bool Connected;
     HDEVINFO hDevInfo;
     DEVINST DevInst;
     std::string Tower;
     std::string Conn;
-    int ID;
     std::string Name;
+    int ID;
 
     HardDrive(
         std::string Tower,
@@ -53,16 +53,10 @@ struct HardDrive {
         this->Tower = Tower;
         this->Conn = Conn;
         this->ID = ID;
-
-        std::ostringstream oss;
-        oss << std::setfill('0') << std::setw(2) << ID << "-" 
-            << Tower << " [" << Conn << "]";
-        Name = oss.str();
-        
-        serial_number = SN;
+        this->SN = SN;
 
         //==================================
-        // Get the Drive Path (disk_path, disk_num)
+        // Get the Drive Path (disk_path, Index)
 
         for (UINT x = 0; x < 50; ++x) {
 
@@ -115,8 +109,8 @@ struct HardDrive {
                     const char* rawSerial = reinterpret_cast<const char*>(outputBuffer + deviceDescriptor->SerialNumberOffset);
 
                     // Check for a match (case-insensitive or exact depending on preference)
-                    if (trim_serial_number(rawSerial) == serial_number) {
-                        disk_num = std::to_string(x);
+                    if (trim_serial_number(rawSerial) == SN) {
+                        Index = std::to_string(x);
                         disk_path = drivePath;
                         break;
                     }
@@ -145,13 +139,21 @@ struct HardDrive {
             if (!SetupDiGetDeviceInstanceIdA(hDevInfo, &devInfoData, instanceId, (DWORD)sizeof(instanceId), NULL))
                 continue;
 
-            if (std::string(instanceId).find(disk_num) == std::string::npos) 
+            if (std::string(instanceId).find(Index) == std::string::npos) 
                 continue;
 
             DevInst = devInfoData.DevInst;
             break;
 
         }
+
+        //==================================
+        // Name
+
+        std::ostringstream oss;
+        oss << std::setfill('0') << std::setw(2) << ID << "-" << Tower;
+        oss << " [" << Index << ", " << SN << "]";
+        Name = oss.str();
 
     }
 
@@ -171,7 +173,7 @@ struct HardDrive {
 
     std::string powershell(std::string cmd) {
 
-        std::string command = "powershell.exe -Command \"Get-PhysicalDisk | Where-Object SerialNumber -eq '"+serial_number+"' | "+cmd+"\"";
+        std::string command = "powershell.exe -Command \"Get-PhysicalDisk | Where-Object SerialNumber -eq '"+SN+"' | "+cmd+"\"";
         std::string result = "";
         
         // Open the pipe and run the command (Windows-specific)

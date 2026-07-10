@@ -19,6 +19,7 @@ from philh_myftp_biz.modules import Module
 from philh_myftp_biz.terminal import Log
 from philh_myftp_biz.pc import NAME
 from importlib import import_module
+from wmi import WMI
 
 from ._cpp import HardDrive, PCIeCard, VirtualDisk
 from .Service import Service
@@ -40,7 +41,26 @@ def getItems(file:str) -> list:
     except ModuleNotFoundError:
         return []
 
+#=============
+
 HardDrives: list[HardDrive] = getItems('HardDrives')
+
+for disk in WMI().Win32_DiskDrive():
+
+    sn: str = disk.SerialNumber.strip()
+
+    if not any ([ 
+        sn.startswith('{'),
+        *((i.SN == sn) for i in HardDrives)
+    ]):
+        HardDrives += [HardDrive(
+            Tower = '?',
+            Conn = '?',
+            ID = 0,
+            SN = sn
+        )]
+
+#=============
 
 Modules: list[Module] = getItems('Modules')
 
