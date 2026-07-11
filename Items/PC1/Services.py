@@ -14,6 +14,8 @@ Items = [
 
     Service('E:/Plex/Torrenting/'),
 
+    Service('E:/Plex/Optimization/'),
+
     Service('E:/Minecraft/'),
 
     Service('E:/Users/FTP/'),
