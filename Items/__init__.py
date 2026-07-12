@@ -27,8 +27,8 @@ if '_cpp' in sys.modules:
 # SCAN ITEMS
 
 from philh_myftp_biz.modules import Module
+from philh_myftp_biz.pc import NAME, Path
 from philh_myftp_biz.terminal import Log
-from philh_myftp_biz.pc import NAME
 from importlib import import_module
 from wmi import WMI
 
@@ -73,11 +73,15 @@ for disk in WMI().Win32_DiskDrive():
 
 #=============
 
+Services: list[Service] = getItems('Services')
+
+Services += [Service(d) for d in Path('C:/Scripts/Services/').children if d.is_dir]
+
+#=============
+
 Modules: list[Module] = getItems('Modules')
 
 PCIeCards: list[PCIeCard] = getItems('PCIeCards')
-
-Services: list[Service] = getItems('Services')
 
 Towers: list[Tower] = getItems('Towers')
 
