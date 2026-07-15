@@ -1,3 +1,5 @@
+from .. import install # Run install.py
+
 from subprocess import run
 import os, sys
 
@@ -14,10 +16,7 @@ run(['Powershell.exe', '-File', 'C:/Scripts/lib/pyobj/build.ps1', '-v'])
 if not os.path.exists('C:/Scripts/Items/_cpp.pyi'):
     
     sys.path.append('C:/Scripts/Items/')
-    
-    run([sys.executable, '-m', 'pip', 'install', 'pybind11-stubgen'])
     from pybind11_stubgen import main
-
     main(['_cpp', '--output-dir', 'C:/Scripts/Items/'])
 
 if '_cpp' in sys.modules:

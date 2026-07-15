@@ -1,3 +1,5 @@
+from ... import install # Run install.py
+
 from philh_myftp_biz.terminal import warn
 from philh_myftp_biz.text import split
 from .Commands import Tree
