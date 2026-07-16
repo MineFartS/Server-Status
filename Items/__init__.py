@@ -3,12 +3,38 @@ from .. import install # Run install.py
 from subprocess import run
 import os, sys
 
+lib = 'C:/Scripts/lib'
+pyd = 'C:/Scripts/Items/_cpp.pyd'
+
+os.add_dll_directory(f'{lib}/msys2/ucrt64/bin')
+
 #==========================================================
 # BUILD
 
-os.add_dll_directory('C:/Scripts/lib/msys2/ucrt64/bin')
+if not os.path.exists(pyd):
 
-run(['Powershell.exe', '-File', 'C:/Scripts/lib/pyobj/build.ps1', '-v'])
+    run(
+        args = ['git', 'submodule', 'update', '--init', '--recursive', '--remote'],
+        cwd = "C:/Scripts/"
+    )
+
+    run(
+        args = [
+            'cmd', '/c', 'g++.exe', '-v',
+            '-O3', '-shared', '-std=c++17', '-fPIC',
+            f'-I{lib}/python314/include',
+            f'-I{lib}/pybind11/include',
+            f'-I{lib}/json/include',
+            f'-I{lib}/pyobj',
+            f'-L{lib}/python314/libs',
+            f"{lib}/pyobj/main.cpp",
+            '-o', pyd,
+            '-lpython314',
+            '-lsetupapi',
+            '-lcfgmgr32'
+        ],
+        cwd = f"{lib}/msys2/ucrt64/bin/"
+    )
 
 #==========================================================
 # STUBGEN
