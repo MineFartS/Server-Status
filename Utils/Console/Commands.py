@@ -155,7 +155,7 @@ POWER RESTART  | Restart system
         )
         
         Modules[0].run(
-            'run', script.title(), 
+            'vbs/run', script.title(), 
             'True', # VISIBLE
             ('-v' in args) # VERBOSE
         )

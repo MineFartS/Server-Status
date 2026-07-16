@@ -9,18 +9,7 @@
 '=======================================================
 
 ' Get Method Name from first arguement
-CMD = "python.exe -m Scripts."
-
-'=======================================================
-' MODULE [POSITIONAL ARG]
-
-if WScript.Arguments.Count = 1 then
-    Module = WScript.Arguments(0)
-else
-    Module = "Utils.Console"
-end if
-
-CMD = CMD & Module
+CMD = "python.exe -m Scripts." & WScript.Arguments(0)
 
 '=======================================================
 ' VISIBLE [POSITIONAL ARG]
@@ -49,10 +38,8 @@ end if
 ' Create a new Shell Object
 Set Shell = CreateObject("WScript.Shell")
 
-'
 Shell.CurrentDirectory = "C:\"
 
-'
 Shell.Run CMD, Visible, 0
 
 '=======================================================
