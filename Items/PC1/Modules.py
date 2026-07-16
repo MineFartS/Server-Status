@@ -2,18 +2,16 @@ from ..Module import Module
 
 Items = [
 
-    Module('C:/Scripts/'), # 0
+    Module('E:/AI/'),
 
-    Module('E:/AI/'), # 1
+    Module('E:/Minecraft/'),
 
-    Module('E:/Minecraft/'), # 2
+    Module('E:/Plex/'),
 
-    Module('E:/Plex/'), # 3
+    Module('E:/Users/'),
 
-    Module('E:/Users/'), # 4
+    Module('E:/Virtual Machines/'),
 
-    Module('E:/Virtual Machines/'), # 5
-
-    Module('E:/Website/') # 6
+    Module('E:/Website/')
 
 ]

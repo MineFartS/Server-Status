@@ -104,7 +104,11 @@ Services += [Service(d) for d in Path('C:/Scripts/Services/').children if d.is_d
 
 #=============
 
-Modules: list[Module] = getItems('Modules')
+Modules: list[Module] = []
+Modules += [Module('C:/Scripts/')]
+Modules += getItems('Modules')
+
+#=============
 
 PCIeCards: list[PCIeCard] = getItems('PCIeCards')
 
