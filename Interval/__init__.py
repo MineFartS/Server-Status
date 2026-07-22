@@ -22,11 +22,11 @@ def shutdown(
     Modules[0].start('vbs/abort')
 
     # Restart the Server
-    RunHidden([
+    RunHidden(
         'shutdown',
         f'/{mode}',
         '/t', t
-    ])
+    )
 
 def alert(msg:str) -> None:
 
