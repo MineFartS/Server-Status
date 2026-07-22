@@ -56,6 +56,7 @@ CHECK   | Get items' status
 ENABLE  | Enable items
 DISABLE | Disable items
 ARGS    | Set items' arguements
+LOGS    | Open items' logs
 
 ----------------------------------------
 
@@ -127,6 +128,11 @@ SCRIPTS:
         args = """
 ARGS SERVICE = *arg1* *arg2* ...   | Set the args for selected services
 """
+
+        logs = """
+LOGS SERVICE | Open the logs for the selected services
+"""
+
 
         name = """
 NAME   | Get the name of the current computer
@@ -463,6 +469,17 @@ POWER RESTART  | Restart system
                 serv.args = args
 
             Tree.list.service()
+
+    class logs(Branch):
+
+        @staticmethod
+        def service() -> None:
+            from philh_myftp_biz.process import RunHidden
+
+            for serv in Memory.Services:
+                if serv.logfile:
+                    Printer.RunFile(serv.logfile)
+                    RunHidden(serv.logfile)
 
     @staticmethod
     def name() -> None:
