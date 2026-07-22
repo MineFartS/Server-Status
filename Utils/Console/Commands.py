@@ -1,4 +1,5 @@
 from .Types import Branch, Memory, Printer
+from philh_myftp_biz.pc import Path
 
 def printx(x:int, val:str) -> None:
     print(f'{x:>2d}:', val)
@@ -57,6 +58,7 @@ ENABLE  | Enable items
 DISABLE | Disable items
 ARGS    | Set items' arguements
 LOGS    | Open items' logs
+EXPLORE | Open items in file explorer
 
 ----------------------------------------
 
@@ -133,6 +135,10 @@ ARGS SERVICE = *arg1* *arg2* ...   | Set the args for selected services
 LOGS SERVICE | Open the logs for the selected services
 """
 
+        explore = """
+EXPLORE SERVICE | Open the selected services in file explorer
+EXPLORE MODULE  | Open the selected modules in file explorer
+"""
 
         name = """
 NAME   | Get the name of the current computer
@@ -480,6 +486,23 @@ POWER RESTART  | Restart system
                 if serv.logfile:
                     Printer.RunFile(serv.logfile)
                     RunHidden(serv.logfile)
+
+    class explore(Branch):
+
+        def _open(items:list[Path]) -> None:
+            from philh_myftp_biz.process import RunHidden
+
+            for i in items:
+                Printer.RunFile(i.path)
+                RunHidden('explorer.exe', i.wpath)
+
+        @staticmethod
+        def service() -> None:
+            Tree.explore._open(Memory.Services)
+
+        @staticmethod
+        def module() -> None:
+            Tree.explore._open(Memory.Modules)
 
     @staticmethod
     def name() -> None:
